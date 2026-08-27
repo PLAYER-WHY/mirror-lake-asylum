@@ -628,16 +628,6 @@ function loadState(){try{var s=JSON.parse(localStorage.getItem('gameState'));ret
 function saveState(s){localStorage.setItem('gameState',JSON.stringify(s))}
 function updateState(patch){var s=loadState();Object.assign(s,patch);saveState(s);return s}
 
-/* 调试入口：地址带 ?unlock=1 或 ?debug=1 时直接解锁全部，便于测试 */
-(function(){
-  try{
-    if(/[?&](unlock|debug)=1/.test(location.search)){
-      updateState({unlockedLayers:6,archivesUnlocked:true,diaryUnlocked:true,pmsUnlocked:true,l6Unlocked:true,fangAccountFound:true,m3DrugFound:true,playerLoggedIn:true});
-      console.log('[debug] 已以解锁模式打开档案系统');
-    }
-  }catch(e){}
-})();
-
 /* 档案管理 · 资源管理器导航 */
 var FOLDERS=[
   {id:'oplog',name:'操作日志文件',desc:'被清理过的记录留档',icon:'🗂'},
