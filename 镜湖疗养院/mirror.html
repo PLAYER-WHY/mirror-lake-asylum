@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>镜湖疗养院 · 四楼活动室 · 镜像记录</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --face:#d4d0c8;--shadow:#808080;--light:#fff;--dark:#404040;
+  --text:#000;--text-dim:#808080;--blue:#0000a0;--red:#800000;
+  --green:#008000;--amber:#b26a00;--bg:#c0c0c0;--panel:#f5f5f0;
+}
+body{font-family:"宋体",SimSun,"Microsoft YaHei",serif;background:var(--bg);color:var(--text);font-size:12px;min-height:100vh;line-height:1.8}
+.hidden{display:none!important}
+
+/* 标题栏 */
+.win-title{background:linear-gradient(to right,var(--blue),#1084d0);color:#fff;padding:4px 10px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:bold}
+.win-title .wt-right{display:flex;gap:2px}
+.win-title .wt-btn{width:16px;height:14px;background:var(--face);border:1px solid var(--light);border-right-color:var(--shadow);border-bottom-color:var(--shadow);color:#000;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:default}
+.win-body{max-width:860px;margin:0 auto;padding:16px}
+body.maximized .win-body{max-width:100%}
+
+/* 镜子横幅 */
+.mirror-banner{background:#2a2a3a;color:#c0c8e0;padding:24px 20px;border:2px solid #000;border-radius:4px;margin-bottom:16px;position:relative;overflow:hidden}
+.mirror-banner::before{content:'';position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.06) 45%,transparent 50%);pointer-events:none}
+.mirror-title{text-align:center;font-size:14px;margin-bottom:14px;letter-spacing:2px;color:#7a9acc}
+.mirror-quote{text-align:center;font-family:"KaiTi",serif;font-size:18px;color:#d5a8e0;letter-spacing:4px;
+  transform:scaleX(-1);transform-origin:center;
+  padding:10px 0;filter:blur(.3px);opacity:.85}
+.mirror-quote-hint{text-align:center;font-size:10px;color:var(--text-dim);margin-top:8px;letter-spacing:1px}
+
+/* 操作记录卡片 */
+.record-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:20px}
+.record-card{background:var(--panel);border:2px solid;border-color:var(--light) var(--shadow) var(--shadow) var(--light);padding:12px;position:relative;min-height:150px;transition:box-shadow .2s}
+.record-card:hover{box-shadow:2px 2px 0 rgba(0,0,0,.2)}
+.rc-date{font-size:10px;color:var(--text-dim);letter-spacing:1px;margin-bottom:6px}
+.rc-title{font-size:12px;font-weight:bold;color:var(--blue);margin-bottom:8px;line-height:1.4}
+.rc-content{font-size:11px;color:#333;line-height:1.7}
+.rc-num{position:absolute;right:10px;bottom:8px;font-family:'Courier New',monospace;font-weight:bold;font-size:22px;color:#4a80d8;letter-spacing:2px;text-shadow:1px 1px 0 rgba(255,255,255,.9),0 0 3px rgba(74,128,216,.3)}
+
+/* 密码门 */
+.password-gate{max-width:360px;margin:16px auto;text-align:center;background:var(--panel);border:2px solid;border-color:var(--light) var(--shadow) var(--shadow) var(--light);padding:16px}
+.password-gate .pg-icon{font-size:28px;margin-bottom:6px;opacity:0.55}
+.password-gate .pg-title{color:var(--amber);font-size:13px;margin-bottom:4px;font-weight:bold;letter-spacing:1px}
+.password-gate .pg-hint{color:var(--text-dim);font-size:11px;margin-bottom:14px;line-height:1.8;padding:0 10px}
+.password-gate input{width:100%;padding:4px 8px;background:#fff;border:2px solid;border-color:var(--shadow) var(--light) var(--light) var(--shadow);color:var(--text);font-size:14px;font-family:"Courier New",monospace;text-align:center;letter-spacing:4px}
+.password-gate input:focus{outline:none;border-width:1px;border-color:var(--blue)}
+.password-gate button{padding:4px 28px;background:var(--face);border:2px solid;border-color:var(--light) var(--shadow) var(--shadow) var(--light);color:var(--text);font-size:12px;cursor:pointer;min-width:120px;margin-top:8px;font-family:"宋体",SimSun,sans-serif}
+.password-gate button:hover{background:var(--light)}
+.password-gate button:active{border-color:var(--shadow) var(--light) var(--light) var(--shadow)}
+.password-gate .pg-error{color:var(--red);font-size:11px;margin-top:8px;min-height:14px}
+
+/* 页脚返回 */
+.footer-note{margin-top:24px;text-align:center}
+.back-btn{display:inline-block;padding:4px 16px;background:var(--face);border:2px solid;border-color:var(--light) var(--shadow) var(--shadow) var(--light);color:var(--text);font-size:12px;font-family:"宋体",SimSun,sans-serif;cursor:pointer;text-decoration:none}
+.back-btn:hover{background:var(--light)}
+.back-btn:active{border-color:var(--shadow) var(--light) var(--light) var(--shadow)}
+.arc-entry-btn{padding:6px 28px;background:var(--blue);color:#fff;border:none;border-radius:2px;cursor:pointer;font-size:12px;font-family:"宋体",SimSun,sans-serif;display:inline-block;letter-spacing:2px;margin-top:10px}
+.arc-entry-btn:hover{background:#000080}
+
+/* 蓝笔批注（不突兀，像手写标注） */
+.blue-note{display:inline-block;margin-left:8px;font-family:'Courier New',monospace;font-size:11px;color:#204f9e;letter-spacing:1px;font-style:normal}
+</style>
+</head>
+<body>
+
+<div class="win-title">
+  <div>[档案] C-7 研究档案 · 镜像视图（四楼活动室 · 方致远私人批注）</div>
+  <div class="wt-right">
+    <div class="wt-btn" title="最小化" onclick="window.close()">_</div>
+    <div class="wt-btn" title="最大化" onclick="toggleMirrorMax()">□</div>
+    <div class="wt-btn" title="关闭" onclick="window.close()">×</div>
+  </div>
+</div>
+
+<div class="win-body">
+
+  <!-- 镜子横幅：只保留镜框本身的样子，不塞"说明"。线索挪到论坛（沈望川个人主页日志 + 病友回复） -->
+  <div class="mirror-banner">
+    <div class="mirror-title">◇ 四楼活动室 · 窗边镜 ◇</div>
+    <div class="mirror-quote" title="这是镜子里的反字，翻过来读">不要相信眼前的秩序</div>
+    <div class="mirror-quote-hint">※ 镜框内侧一行小字，照在镜子里，所以是反的。</div>
+  </div>
+
+  <!-- 操作记录六宫格 + 页脚蓝色数字 + L6蓝色碎片 -->
+  <div class="record-grid" id="record-grid">
+  </div>
+
+  <!-- 密码门 + 解锁后跳转 -->
+  <div id="gate-container"></div>
+
+  <div class="footer-note">
+    <a href="javascript:void(0)" onclick="window.close()" class="back-btn">← 返回病历系统</a>
+  </div>
+
+</div>
+
+<script>
+/* 状态读写（与主系统共享 localStorage） */
+const DEFAULT_STATE={unlockedLayers:0,endingChoice:null,forumNewPosts:[],forumNewReplies:[],forumNewPMs:[],fangAccountFound:false,m3DrugFound:false,archivesUnlocked:false,diaryUnlocked:false,pmsUnlocked:false,discoveredClues:[],countdownActive:false,countdownEndTime:null,readPosts:[],repliedPosts:{},triggeredFlashes:[],playerLoggedIn:false,shenBirthdayFound:false};
+function loadState(){try{var s=JSON.parse(localStorage.getItem('gameState'));return s?Object.assign({},DEFAULT_STATE,s):Object.assign({},DEFAULT_STATE)}catch(e){return Object.assign({},DEFAULT_STATE)}}
+function saveState(s){localStorage.setItem('gameState',JSON.stringify(s))}
+function updateState(patch){var s=loadState();Object.assign(s,patch);saveState(s);return s}
+
+/* 通知 */
+function showNotif(msg,color){
+  var n=document.createElement('div');
+  n.style.cssText='position:fixed;top:20px;right:20px;padding:8px 16px;background:#2c2c2c;color:#fff;border:1px solid #444;border-radius:3px;z-index:9999;font-size:12px;font-family:"宋体",SimSun,sans-serif;box-shadow:0 4px 12px rgba(0,0,0,.4);max-width:380px;line-height:1.7';
+  if(color==='green'){n.style.borderLeft='4px solid #27ae60'}
+  else if(color==='red'){n.style.borderLeft='4px solid #c0392b'}
+  else{n.style.borderLeft='4px solid #e67e22'}
+  n.textContent=msg;
+  document.body.appendChild(n);
+  setTimeout(function(){n.style.opacity='0';n.style.transition='opacity .6s';setTimeout(function(){n.remove()},600)},5500);
+}
+
+/* L4六张操作记录卡片
+   页脚数字（按时间顺序）：
+   7/14 启动 → 8    8/15 清除 → 4    8/20 林夏跑 → 7
+   10/7 留言 → 2     5/15 数据 → 9    7/14 三周年 → 5
+   正序拼: 8 4 7 2 9 5 = 847295
+   反转后: 5 9 2 7 4 8 = 592748
+   L6蓝色碎片（右上角小字，每层一个，L4是"1"） */
+const RECORDS=[
+  {date:'2023年7月14日 · 周五',
+   title:'C-7项目正式启动 · Subject Z入组',
+   content:'选定第一个实验对象。0714号。周明远。34岁。早发型认知衰退。<br>他会成为第一个——意识与记忆分离的证明。<br>M-3能救他——虽然代价是记忆。但记忆不是意识。记忆可以被重建。意识不能。<br>七月十四日。好日子。C-7项目正式启动。',
+   footNum:'8',
+   shard:'1',
+   shardLoc:'L4-1'},
+  {date:'2023年8月15日 · 周二',
+   title:'Subject Z 第三次给药 · 记忆清除确认成功',
+   content:'周明远的记忆清除成功了。他不再记得入院前的事。但他的推理能力完好。<br>他甚至还在病床上画建筑图——虽然他忘了自己为什么在画。<br>意识独立于记忆存在。我证明了。<br>王磊……走了。剂量问题。我会调整。<br>林夏的ALS无法逆转。但她还有意识。她还在。',
+   footNum:'4',
+   shard:null,
+   shardLoc:''},
+  {date:'2023年8月20日 · 周日',
+   title:'Subject L 逃离疗养院 · 去向不明',
+   content:'林夏跑了。她怎么跑出去的？她的腿已经不行了。<br>有人在帮她。谁？<br>沈望川不敢。老陈头不可能。<br>不管了。她跑不远。ALS会拖住她。<br>重要的是数据还在。周明远还在。0714号是活证据。<br>等风头过了，我可以继续。',
+   footNum:'7',
+   shard:null,
+   shardLoc:''},
+  {date:'2023年10月7日 · 周六',
+   title:'母亲生日 · 项目方向记录',
+   content:'母亲生日。她说"记得回来吃饭"。<br>我没能回去。但我做了更大的事。<br>沈望川今天站在我办公室门口站了十分钟。他没敲门。我也没开门。<br>他以前是我最好的朋友。医学院住一个宿舍。<br>他说"你不适合当医生，你适合当神。"<br>他不懂。等M-3被验证的那一天，他会懂。',
+   footNum:'2',
+   shard:null,
+   shardLoc:''},
+  {date:'2026年5月15日 · 周五',
+   title:'数据外发 · 与"救世者"对接',
+   content:'数据已打包。C-7和M-3完整实验记录、药物合成路径、认知评估量表、所有Subject原始数据。加密传输。<br>如果有一天我出事了——数据要继续有用。不能白费。<br>救世者说，这里没有你们那种繁琐的伦理审查。只要数据完整，三个月内可以复现。<br>方致远。你是真正的先驱者。历史会记住你。——也许吧。但我不在乎历史。我在乎真理。',
+   footNum:'9',
+   shard:null,
+   shardLoc:''},
+  {date:'2026年7月14日 · 周二',
+   title:'Subject Z 实验三周年 · 最终评估',
+   content:'今天是0714号实验三周年。<br>Subject Z还在正常生活。认知功能完好。记忆没有恢复——但衰退也没继续。这就是证据。一切都值了。<br>救世者那边，第一个受试者明天开始用药。<br>七月十四日。好日子。三年前的今天我开了这个头。三年后有人会接下去。<br>真理不死。',
+   footNum:'5',
+   shard:null,
+   shardLoc:''}
+];
+
+/* 最大化：加宽内容 */
+function toggleMirrorMax(){
+  document.body.classList.toggle('maximized');
+}
+
+/* 渲染卡片 */
+function renderRecords(){
+  var grid=document.getElementById('record-grid');
+  var html='';
+  RECORDS.forEach(function(r){
+    html+='<div class="record-card">';
+    html+='<div class="rc-date">📅 '+r.date+'</div>';
+    html+='<div class="rc-title">'+r.title+(r.shard?'<span class="blue-note">№ '+r.shard+'</span>':'')+'</div>';
+    html+='<div class="rc-content">'+r.content+'</div>';
+    html+='<div class="rc-num">'+r.footNum+'</div>';
+    html+='</div>';
+  });
+  grid.innerHTML=html;
+}
+
+/* 渲染密码门 */
+function renderGate(){
+  var state=loadState();
+  var c=document.getElementById('gate-container');
+  if(state.archivesUnlocked){
+    // 已解锁：镜像反转通过，档案文件请去桌面"档案管理"应用查看
+    c.innerHTML='<div class="password-gate" style="border-left:4px solid var(--green)">'+
+      '<div class="pg-icon" style="color:var(--green)">🔓</div>'+
+      '<div class="pg-title" style="color:var(--green)">第四层解锁</div>'+
+      '<div class="pg-hint">镜像反转验证通过。<br>沈望川："反着来，反着看——记忆被改写了，真相也是反过来的。"<br>完整的档案文件，请回到桌面，打开「档案管理」应用查看。</div>'+
+      '</div>';
+    return;
+  }
+  c.innerHTML='<div class="password-gate">'+
+    '<div class="pg-icon" style="color:var(--amber)">[锁]</div>'+
+    '<div class="pg-title">第四层 · 镜像病房密码</div>'+
+    '<div class="pg-hint">六条记录，<br>角落里的记号。<br>连不起来的时候……<span style="color:var(--red)">换个方向试试。</span></div>'+
+    '<input type="password" id="pw-l4" placeholder="请输入" maxlength="6" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,\'\')" autocomplete="off">'+
+    '<div style="margin:6px 0"><button onclick="checkL4()">验证</button></div>'+
+    '<div class="pg-error" id="pw-l4-error"></div>'+
+    '<div style="margin-top:10px;font-size:10px;color:var(--text-dim);line-height:1.8">'+
+      '记录自前而后，号码亦有先后。<br>'+
+      '镜子不会无缘无故摆在这里。</div>'+
+    '</div>';
+}
+
+/* 密码验证 */
+var wrongCount=0;
+function checkL4(){
+  var val=document.getElementById('pw-l4').value.trim();
+  var err=document.getElementById('pw-l4-error');
+  var forward='847295';
+  var correct='592748';
+  if(val===correct){
+    // 通关
+    updateState({archivesUnlocked:true,unlockedLayers:4});
+    showNotif('🔓 镜像反转验证通过。档案系统已解锁。','green');
+    setTimeout(function(){renderGate()},700);
+    return;
+  }
+  if(val===forward){
+    // 正序错误，给出暗示
+    wrongCount++;
+    err.textContent='错误。顺序是对的，但方向不对。你确定你看到的是"真相"吗？';
+    showNotif('顺序是对的，但方向不对。你确定你看到的是"真相"吗？','warn');
+    return;
+  }
+  // 其他错误
+  wrongCount++;
+  err.textContent='错误。六条记录有时间顺序，数字要按时间排。';
+  if(wrongCount>=2){
+    err.textContent+='\n另外——镜子里的字，读的时候要怎么翻？';
+    err.style.whiteSpace='pre-line';
+  }
+}
+
+/* 打开档案系统 */
+function openArchives(){
+  // 标记L4解锁完成，同步主系统可通知
+  window.open('archives.html','_blank','width=900,height=700');
+}
+
+/* 初始化 */
+renderRecords();
+renderGate();
+</script>
+</body>
+</html>

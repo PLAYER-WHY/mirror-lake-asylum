@@ -1,0 +1,16 @@
+# 临时文件
+_sign_css.txt
+*.tmp
+*.bak
+
+# 系统
+Thumbs.db
+.DS_Store
+
+# 编辑器
+.vscode/
+.idea/
+
+# 服务器日志
+*.log
+__pycache__/

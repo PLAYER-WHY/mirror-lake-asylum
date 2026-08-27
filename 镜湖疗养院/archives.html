@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>镜湖疗养院 · 内部档案系统</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#cfd6e0;--panel:#eef1f5;--border:#9aa7b8;--text:#2c3a4a;--text-dim:#6a7686;
+  --green:#2d7a4d;--amber:#b07818;--red:#b3433a;--blue:#1f4a80;--white:#fff;
+  --purple:#8a4da8;
+  --input-bg:#ffffff;
+}
+body{font-family:'SimSun','宋体',serif;
+  background:#cfd6e0;
+  color:var(--text);min-height:100vh;font-size:14px;line-height:1.8}
+.hidden{display:none!important}
+
+/* 顶栏（医院 HIS 标题栏） */
+.top-bar{
+  background: #1f3a5c;
+  background-image: linear-gradient(180deg, #2c4a72 0%, #1f3a5c 100%);
+  border-bottom: 2px solid #14283e;
+  padding: 8px 22px;
+  display:flex;justify-content:space-between;align-items:center;
+  box-shadow: 0 1px 3px rgba(0,0,0,.25);
+}
+.top-bar .tb-left{display:flex;align-items:center;gap:12px}
+.top-bar .tb-logo{
+  width:30px;height:30px;border:1px solid #7ea4c8;border-radius:4px;
+  display:flex;align-items:center;justify-content:center;font-size:15px;color:#dbe7f3;
+  background: #29476b;
+  font-family: 'SimSun','宋体',serif;
+  font-weight:700;
+}
+.top-bar h1{font-size:14px;color:#f2f6fb;font-weight:700;letter-spacing:2px;font-family:'Microsoft YaHei','SimHei',sans-serif;text-shadow:0 1px 0 rgba(0,0,0,.35)}
+.top-bar .tb-right{font-size:12px;color:#bcd0e4;display:flex;align-items:center;gap:10px}
+.top-bar .tb-back{color:#eaf2fa;cursor:pointer;font-size:12px;border:1px solid #6d93ba;padding:4px 10px;border-radius:2px}
+.top-bar .tb-back:hover{background:#2c4a72;text-decoration:none}
+
+/* 主体 */
+.main-wrap{max-width:1180px;margin:0 auto;padding:22px 24px 40px}
+
+/* Tab导航（卷宗分页） */
+.arc-tabs{
+  display:flex;gap:3px;
+  background: transparent;
+  border:none;
+  overflow:visible;
+  padding: 0 2px;
+}
+.arc-tab{
+  flex:1;
+  padding: 13px 10px 11px;
+  text-align:center;
+  font-size:13px;
+  color:#5a6470;
+  background: #dbe2ea;
+  border: 1px solid #9aa7b8;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  cursor:pointer;
+  transition: all .18s ease;
+  position: relative;
+  bottom: -1px;
+  font-family: 'Microsoft YaHei','SimHei',sans-serif;
+  font-weight: 600;
+  letter-spacing: 1px;
+  box-shadow: 0 -1px 0 rgba(255,255,255,.4) inset;
+}
+.arc-tab.active{
+  color:#26313f;
+  background: #eef1f5;
+  border-color:#8b9bb0;
+  box-shadow:
+    0 -2px 0 rgba(255,255,255,.7) inset,
+    0 -3px 0 #8b9bb0 inset;
+  transform: translateY(-1px);
+  z-index: 2;
+}
+.arc-tab:hover:not(.active){
+  background: #ccd5e0;
+  color:#2c3a4a;
+}
+.arc-tab .at-icon{
+  display:block;
+  font-size:16px;
+  margin-bottom:4px;
+  color:#4a5a6e;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+.arc-tab.active .at-icon{ color:#b3433a }
+
+/* 内容面板 */
+.arc-panel{
+  background: #eef1f5;
+  background-image:
+    radial-gradient(1000px 400px at 100% 0%, rgba(31,74,128,.05), transparent 60%),
+    linear-gradient(rgba(31,74,128,.02) 1px, transparent 1px);
+  background-size: 100% 24px;
+  border: 1px solid #8b9bb0;
+  border-top: 2px solid #8b9bb0;
+  border-radius: 0 0 6px 6px;
+  padding: 20px 22px 28px;
+  min-height: 520px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.6) inset,
+    0 6px 20px rgba(44,58,74,.12);
+  position: relative;
+}
+
+/* 文件管理器（档案管理）面包屑 + 文件夹 */
+.arc-crumb{max-width:1180px;margin:6px auto 0;padding:0 24px;font-size:12px;color:#6f7b89;letter-spacing:.3px}
+.arc-crumb .crumb-link{color:#1f4a80;cursor:pointer}
+.arc-crumb .crumb-link:hover{text-decoration:underline}
+.af-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px;padding:12px 6px 30px}
+.af-item{background:#eef1f5;border:1px solid #b8c2cf;border-radius:3px;padding:20px 14px;text-align:center;cursor:pointer;transition:all .15s;position:relative}
+.af-item:hover{background:#e3e9f0;border-color:#8b9bb0;box-shadow:0 4px 12px rgba(44,58,74,.14)}
+.af-item .af-icon{font-size:34px;margin-bottom:8px}
+.af-item .af-name{font-size:13px;color:#2c3a4a;font-weight:bold}
+.af-item .af-desc{font-size:11px;color:#6f7b89;margin-top:4px;line-height:1.5}
+.af-item .af-lock{position:absolute;top:8px;right:10px;font-size:14px}
+.af-item.locked{opacity:.72}
+.af-file{display:flex;align-items:flex-start;gap:12px;background:#fff;border:1px solid #b8c2cf;padding:14px 16px;margin-bottom:10px;border-radius:2px;font-family:'SimSun','宋体',serif}
+.af-file .ff-icon{font-size:22px;flex-shrink:0;line-height:1.6}
+.af-file .ff-name{font-size:13px;color:#2c3a4a;font-weight:bold;margin-bottom:4px}
+.af-file .ff-body{font-size:12.5px;color:#3a3a3a;line-height:1.9}
+.af-file.twocol .ff-body{color:#4a5f74}
+.af-backbtn{display:inline-block;padding:5px 16px;background:#eef1f5;border:1px solid #9aa7b8;color:#2c3a4a;font-size:12px;border-radius:2px;cursor:pointer}
+.af-backbtn:hover{background:#e3e9f0}
+.af-note{background:#eef4f0;border:1px solid #b7c9bf;border-left:4px solid #2d7a4d;padding:12px 16px;margin-bottom:12px;border-radius:2px;font-family:'KaiTi','楷体',serif;font-size:13px;color:#2f4a3b;line-height:2}
+.af-file.note-scan{background-image:url(assets/scans/handwritten-note.jpg);background-size:cover;background-position:center;background-blend-mode:multiply}
+.af-file.death-scan{background-image:url(assets/scans/death-report.jpg);background-size:cover;background-position:center;background-blend-mode:multiply}
+.pa-wrap.research-scan .pa-card{background-image:url(assets/scans/research-log.jpg);background-size:cover;background-position:center;background-blend-mode:multiply}
+/* 扫描件（知情同意书） */
+.scan-doc{background:#fdfdf6;background-image:url(assets/scans/consent-form.jpg);background-size:cover;background-position:center;background-blend-mode:multiply;border:1px solid #d8d2c0;border-radius:2px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:16px 22px 18px;margin-bottom:14px;position:relative;font-family:'SimSun','宋体',serif;color:#333;max-width:640px}
+.scan-doc.death{background-image:url(assets/scans/death-report.jpg)}
+.scan-doc.research{background-image:url(assets/scans/research-log.jpg)}
+.scan-doc.note{background-image:url(assets/scans/handwritten-note.jpg);font-family:'KaiTi','楷体',serif}
+.scan-doc::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(0,0,0,.02));pointer-events:none}
+.scan-doc .sd-title{text-align:center;font-size:18px;letter-spacing:10px;font-weight:bold;color:#2a2a2a;padding-bottom:9px;border-bottom:1px solid #d8d2c0;margin-bottom:12px}
+.scan-doc .sd-sub{font-size:10px;color:#aaa;text-align:center;margin-bottom:12px;letter-spacing:1px}
+.scan-doc .sd-row{display:flex;font-size:13px;line-height:2}
+.scan-doc .sd-row .sd-key{width:96px;color:#777;flex-shrink:0}
+.scan-doc .sd-row .sd-val{flex:1;color:#2a2a2a}
+.scan-doc .sd-sigline{display:flex;align-items:center;gap:14px;margin-top:14px;padding-top:12px;border-top:1px solid #e6e0d2}
+.scan-doc .sd-sig{font-family:'KaiTi','楷体','Segoe Script',cursive;font-size:20px;transform:rotate(-4deg);display:inline-block;padding:0 2px}
+.scan-doc .sd-sig.blue{color:#1a4fa0;font-weight:700}
+.scan-doc .sd-sig.black{color:#2a2a2a;font-weight:700}
+.scan-doc .sd-siglab{font-size:11px;color:#999}
+.scan-doc .sd-pen{position:absolute;right:16px;bottom:36px;font-family:'KaiTi','楷体','Segoe Script',cursive;font-size:26px;font-style:italic;transform:rotate(-14deg);color:#1a4fa0;line-height:1;letter-spacing:1px;text-shadow:0.5px 0.5px 0 rgba(26,79,160,.3)}
+.scan-doc .sd-pen.black{color:#2a2a2a;transform:rotate(-9deg);text-shadow:0.5px 0.5px 0 rgba(42,42,42,.3)}
+
+/* 操作记录 */
+.op-record{background:rgba(0,0,0,.2);border-left:3px solid var(--amber);padding:12px 16px;margin-bottom:8px;border-radius:0 4px 4px 0}
+.op-record.danger{border-left-color:var(--red)}
+.op-record .or-date{font-size:11px;color:var(--text-dim);margin-bottom:4px}
+.op-record .or-action{font-size:14px;color:var(--amber);font-weight:bold;margin-bottom:4px}
+.op-record.danger .or-action{color:var(--red)}
+.op-record .or-detail{font-size:13px;color:var(--text);line-height:1.6}
+
+/* 研究日志 */
+.log-entry{background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:4px;padding:14px;margin-bottom:12px}
+.log-entry .le-date{font-size:11px;color:var(--text-dim);margin-bottom:6px;display:flex;justify-content:space-between}
+.log-entry .le-title{font-size:14px;color:var(--green);font-weight:bold;margin-bottom:8px}
+.log-entry .le-content{font-size:13px;color:var(--text);line-height:1.8}
+.log-entry .le-tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:bold}
+.log-entry .le-tag.success{background:rgba(0,214,143,.15);color:var(--green)}
+.log-entry .le-tag.failed{background:rgba(255,71,87,.15);color:var(--red)}
+.log-entry .le-tag.death{background:rgba(85,85,85,.2);color:var(--text-dim)}
+.log-entry .le-tag.note{background:rgba(255,181,71,.15);color:var(--amber)}
+
+/* 私信记录 */
+.pm-record{padding:14px 16px;border-radius:8px;margin-bottom:12px}
+.pm-record.from-fang{background:rgba(192,57,43,.1);border-left:3px solid var(--red)}
+.pm-record.from-savior{background:rgba(44,62,80,.2);border-left:3px solid var(--blue)}
+.pm-record .pm-meta{font-size:11px;color:var(--text-dim);margin-bottom:6px;display:flex;justify-content:space-between}
+.pm-record .pm-body{font-size:13px;color:var(--text);line-height:1.8}
+
+/* 信纸 */
+.letter-page{background:#ecf0f5;border:1px solid #b3bfcb;padding:40px;max-width:600px;margin:20px auto;border-radius:2px;box-shadow:0 2px 12px rgba(0,0,0,.1);font-family:'KaiTi','楷体',serif;line-height:2.2;font-size:15px;color:#3a3a3a;min-height:300px}
+.letter-page .lp-text p{margin-bottom:6px}
+.letter-page .lp-sign{text-align:right;margin-top:30px;font-size:13px;color:#666}
+
+/* 返回 */
+.back-section{text-align:center;margin:30px 0;padding:20px;background:rgba(52,152,219,.08);border:1px solid var(--blue);border-radius:4px}
+.back-section .bs-title{color:var(--blue);font-size:15px;margin-bottom:8px}
+.back-section .bs-desc{color:var(--text-dim);font-size:12px;margin-bottom:16px}
+.back-section button{padding:12px 30px;background:var(--blue);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:14px;font-family:inherit}
+.back-section button:hover{background:#2980b9}
+
+/* 通知 */
+.notif{position:fixed;top:16px;right:16px;background:var(--panel);border:1px solid var(--green);border-radius:4px;padding:12px 16px;font-size:13px;color:var(--green);z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);animation:slideIn .3s}
+@keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* 密码门（L5+L6共用） */
+.password-gate{max-width:360px;margin:16px auto;text-align:center;background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:16px}
+.password-gate .pg-icon{font-size:28px;margin-bottom:6px;opacity:.55}
+.password-gate .pg-title{font-size:13px;margin-bottom:4px;font-weight:bold;letter-spacing:1px}
+.password-gate .pg-hint{color:var(--text-dim);font-size:11px;margin-bottom:14px;line-height:1.8;padding:0 10px}
+.password-gate input{width:100%;padding:5px 10px;background:#fff;color:#2c3a4a;border:1px solid var(--border);border-radius:2px;font-size:14px;font-family:'Courier New',monospace;text-align:center;letter-spacing:4px}
+.password-gate input:focus{outline:none;border-color:var(--blue)}
+.password-gate button{padding:5px 28px;background:var(--blue);color:#fff;border:none;border-radius:2px;font-size:12px;cursor:pointer;min-width:120px;margin-top:8px;font-weight:bold;font-family:'Microsoft YaHei',sans-serif}
+.password-gate button:hover{background:#16385f}
+.password-gate .pg-error{color:var(--red);font-size:11px;margin-top:8px;min-height:14px;line-height:1.6}
+
+/* L6 蓝色碎片（archives） */
+.blue-shard-a{
+  display:inline-block;margin-left:6px;font-family:'Courier New',monospace;font-weight:bold;font-size:13px;
+  color:#4a8acc;background:rgba(74,138,204,.1);padding:1px 6px;border-radius:2px;letter-spacing:1px;
+  border:1px solid rgba(74,138,204,.25);vertical-align:baseline;
+}
+
+/* ============================================================
+   卡片式档案系统（paper-archive）
+   仿真实档案卷宗：日历图标 / 日期周次 / 纸张纹理 / 阴影 / 大数字角标
+   ============================================================ */
+.pa-wrap{
+  padding: 10px 4px 30px;
+}
+.pa-monologue{
+  max-width: 560px;
+  margin: 30px auto;
+  padding: 26px 32px;
+  background: #eef1f5;
+  border: 1px solid #9aa7b8;
+  border-left: 4px solid #1f4a80;
+  border-radius: 2px;
+  font-size: 14px;
+  color: #2c3a4a;
+  line-height: 2.1;
+  font-family: 'SimSun','宋体',serif;
+  box-shadow: 0 1px 0 rgba(255,255,255,.6) inset;
+}
+.pa-monologue p{margin-bottom: 10px}
+.pa-header{
+  text-align:center;
+  padding: 20px 16px 18px;
+  border-bottom: 1px dashed rgba(0,0,0,.15);
+  margin-bottom: 22px;
+}
+.pa-header h3{
+  font-size: 18px;
+  color: #2c3a4a;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  font-family: 'SimSun','宋体',serif;
+}
+.pa-header .ph-meta{
+  font-size: 12px;
+  color: #8899aa;
+  letter-spacing: 1px;
+}
+.pa-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px 16px;
+}
+.pa-card{
+  position: relative;
+  background: #eef1f5;
+  border: 1px solid #b8c2cf;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.9) inset,
+    0 -1px 0 rgba(0,0,0,.04) inset,
+    0 2px 6px rgba(44,58,74,.10),
+    0 8px 18px rgba(44,58,74,.08);
+  border-radius: 2px;
+  padding: 14px 16px 16px;
+  overflow: hidden;
+  transition: transform .18s ease, box-shadow .18s ease;
+  font-family: 'SimSun','宋体',serif;
+  line-height: 1.85;
+}
+.pa-card::before{
+  content:'';
+  position:absolute; left:0; top:0; right:0; height: 3px;
+  background: linear-gradient(90deg, #7ea4c8 0%, #4a6f94 100%);
+  opacity: .55;
+}
+.pa-card:hover{
+  transform: translateY(-3px);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.9) inset,
+    0 -1px 0 rgba(0,0,0,.04) inset,
+    0 4px 10px rgba(44,58,74,.14),
+    0 14px 26px rgba(44,58,74,.12);
+}
+.pa-card-head{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(44,58,74,.16);
+}
+.pa-cal{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #5a6470;
+}
+.pa-cal .pc-icon{
+  display: inline-block;
+  width: 22px; height: 22px;
+  border: 1px solid #5a6470;
+  border-radius: 3px;
+  position: relative;
+  background: #eef1f5;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  color: #5a6470;
+  text-align: center;
+  line-height: 20px;
+  flex-shrink: 0;
+}
+.pa-cal .pc-icon::before{
+  content: '';
+  position: absolute;
+  top: -2px; left: 4px;
+  width: 2px; height: 4px;
+  background: #b3433a;
+  box-shadow: 10px 0 0 #b3433a;
+  border-radius: 1px;
+}
+.pa-cal .pc-day{
+  font-weight: bold;
+  color: #2c3a4a;
+  letter-spacing: .5px;
+}
+.pa-cal .pc-wk{
+  color: #6f7b89;
+}
+/* 蓝笔批注（不突兀，像手写标注） */
+.pa-note{
+  display:inline-block;margin-left:8px;font-family:'Courier New',monospace;font-size:12px;
+  color:#204f9e;letter-spacing:1px;font-style:normal;
+}
+.pa-note.black{color:#3a3a3a;}
+.pa-card-title{
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2d3d;
+  margin-bottom: 10px;
+  letter-spacing: .5px;
+  line-height: 1.5;
+  min-height: 44px;
+  font-family: 'Microsoft YaHei','SimHei',sans-serif;
+}
+.pa-card-body{
+  font-size: 13px;
+  color: #3a3a3a;
+  line-height: 1.85;
+}
+.pa-card-body p{ margin-bottom: 8px; }
+.pa-card-body .accent-red{ color:#b3433a; font-weight:600; }
+.pa-card-body .accent-green{ color:#2d7a4d; font-weight:600; }
+.pa-card-body .accent-amber{ color:#b07818; font-weight:600; }
+.pa-card-body .note-inline{
+  color: #5a6470;
+  font-style: italic;
+  font-family: 'KaiTi','楷体',serif;
+}
+.pa-tag{
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  letter-spacing: .5px;
+  font-family: 'Microsoft YaHei','SimHei',sans-serif;
+}
+.pa-tag.tag-success{ background: #e6f5ec; color:#2d7a4d; border:1px solid #b9dcbc }
+.pa-tag.tag-failed{ background:#fae6e4; color:#b3433a; border:1px solid #eabfbb }
+.pa-tag.tag-death{ background:#ececee; color:#5a5a6a; border:1px solid #d4d4dc }
+.pa-tag.tag-note{ background:#e7edf5; color:#1f4a80; border:1px solid #bfc9d6 }
+.pa-tag.tag-project{ background:#e5ecf7; color:#2d5fa8; border:1px solid #bfd0ea }
+
+/* 非卡片页面模块：操作日志、密码门、私信、信纸 */
+.pa-op-row{
+  position: relative;
+  padding: 14px 16px 14px 58px;
+  margin-bottom: 10px;
+  background: #eef1f5;
+  border: 1px solid #b8c2cf;
+  border-left: 4px solid #b07818;
+  border-radius: 2px;
+  box-shadow: 0 2px 6px rgba(44,58,74,.08);
+  font-family: 'SimSun','宋体',serif;
+}
+.pa-op-row.row-danger{
+  border-left-color:#b3433a;
+  background:#f5eded;
+}
+.pa-op-row::before{
+  content:'✎';
+  position:absolute;
+  left: 16px; top: 14px;
+  width: 30px; height: 30px;
+  line-height: 28px;
+  text-align:center;
+  border:1px solid #a4b0be;
+  border-radius: 50%;
+  background:#fff;
+  color:#5a6470;
+  font-size: 16px;
+}
+.pa-op-row.row-danger::before{
+  content:'⚠';
+  color: #b3433a;
+  border-color:#e2b9b6;
+}
+.pa-op-date{
+  font-size: 11.5px;
+  color:#6f7b89;
+  letter-spacing: .5px;
+  margin-bottom: 4px;
+}
+.pa-op-action{
+  font-size: 14px;
+  color:#2c3a4a;
+  font-weight: 700;
+  margin-bottom: 5px;
+  font-family: 'Microsoft YaHei','SimHei',sans-serif;
+}
+.pa-op-detail{
+  font-size: 12.5px;
+  color: #3a3a3a;
+  line-height: 1.8;
+}
+
+/* 私信条 */
+.pa-pm{
+  position: relative;
+  padding: 14px 16px 14px 56px;
+  margin-bottom: 10px;
+  background:#eef1f5;
+  border:1px solid #b8c2cf;
+  border-radius: 2px;
+  box-shadow:0 2px 6px rgba(44,58,74,.08);
+}
+.pa-pm::before{
+  content:'';
+  position:absolute;
+  left:14px; top:14px;
+  width:32px; height:32px;
+  border-radius: 4px;
+  text-align:center;
+  line-height:32px;
+  font-family: 'Microsoft YaHei','SimHei',sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color:#fff;
+}
+.pa-pm.from-fang{ border-left: 4px solid #b3433a; }
+.pa-pm.from-fang::before{ content:'正'; background:#b3433a; }
+.pa-pm.from-savior{ border-left: 4px solid #2d5fa8; }
+.pa-pm.from-savior::before{ content:'救'; background:#2d5fa8; }
+.pa-pm-meta{
+  display:flex; justify-content:space-between;
+  font-size: 11.5px; color:#8899aa;
+  margin-bottom: 6px;
+  letter-spacing: .4px;
+  font-family: 'Courier New',monospace;
+}
+.pa-pm-body{
+  font-size: 13px;
+  color: #3a3a3a;
+  line-height: 1.9;
+  font-family: 'SimSun','宋体',serif;
+}
+
+/* 手记 / 附件特殊卡片 */
+.pa-note-card{
+  background: #eef4f0;
+  border: 1px solid #b7c9bf;
+  box-shadow: 0 2px 6px rgba(44,58,74,.08), 0 8px 18px rgba(44,58,74,.06);
+  position: relative;
+  padding: 16px 20px;
+  border-radius: 2px;
+  margin-bottom: 12px;
+}
+.pa-note-card .pnc-tag{
+  display: inline-block;
+  font-size: 11.5px;
+  color: #2d7a4d;
+  background: #e6f5ec;
+  padding: 3px 10px;
+  border: 1px solid #b9dcbc;
+  border-radius: 2px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  font-family: 'Microsoft YaHei','SimHei',sans-serif;
+}
+.pa-note-card .pnc-body{
+  font-family: 'KaiTi','楷体',serif;
+  font-size: 13.5px;
+  color: #2f4a3b;
+  line-height: 2;
+}
+.pa-note-card .pnc-sign{
+  text-align: right;
+  font-size: 12px;
+  color: #6e8877;
+  margin-top: 8px;
+  font-family: 'SimSun','宋体',serif;
+}
+
+.pa-attach-card{
+  background: #eef1f5;
+  border: 1px dashed #8b9bb0;
+  padding: 14px 18px;
+  position: relative;
+  border-radius: 2px;
+  margin-bottom: 12px;
+  font-family: 'SimSun','宋体',serif;
+}
+.pa-attach-card .pac-title{
+  font-size: 13px; color: #5a6470; margin-bottom: 4px; font-weight: 700;
+}
+.pa-attach-card .pac-warn{ font-size:12px; color:#b07818; margin-left:6px; }
+.pa-attach-card .pac-sub{ font-size: 11.5px; color: #5a6470; }
+
+/* 通用模块信封 */
+.pa-section-wrap{ padding: 6px 4px; }
+
+@media (max-width: 900px){
+  .pa-grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px){
+  .pa-grid{ grid-template-columns: 1fr; gap: 14px; }
+  .pa-card{ padding: 12px 14px 14px; }
+  .pa-op-row{ padding-left: 52px; }
+}
+
+/* ============ Windows 2000 档案资源管理器 ============ */
+.exp-win{position:fixed;inset:0;background:#3a6ea5;font-family:Tahoma,'宋体',sans-serif;display:flex;flex-direction:column;overflow:hidden}
+.exp-shell{position:absolute;inset:6px;background:var(--face);border:1px solid;border-color:var(--white) var(--shadow) var(--shadow) var(--white);display:flex;flex-direction:column;box-shadow:2px 2px 8px rgba(0,0,0,.4)}
+body.maximized .exp-shell{inset:0}
+.exp-titlebar{height:26px;background:linear-gradient(180deg,#0a246a 0%,#0f3b9c 8%,#1550c8 40%,#0f3b9c 88%,#0a246a 100%);color:#fff;display:flex;align-items:center;padding:0 4px;gap:6px;font-size:12px;flex-shrink:0}
+.exp-titlebar .etb-ic{font-size:13px}
+.exp-titlebar .etb-title{flex:1;font-weight:bold;text-shadow:1px 1px 0 rgba(0,0,0,.6)}
+.exp-titlebar .etb-btn{width:20px;height:20px;background:linear-gradient(180deg,#e8e4d0,#c8c4a8);border:1px solid #fff;box-shadow:1px 1px 0 #555 inset;color:#000;font-size:11px;font-weight:bold;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.exp-titlebar .etb-btn.close{background:linear-gradient(180deg,#e07070,#c03030);color:#fff}
+.exp-menubar{height:20px;background:var(--face);border-bottom:1px solid var(--shadow);display:flex;align-items:center;padding:0 4px;gap:1px;font-size:11px;color:#000;flex-shrink:0}
+.exp-menubar span{padding:2px 8px;cursor:default}
+.exp-menubar span:hover{background:#316ac5;color:#fff}
+.exp-toolbar{height:38px;background:var(--face);border-bottom:1px solid var(--shadow);display:flex;align-items:center;padding:0 4px;gap:0;font-size:11px;flex-shrink:0;overflow-x:auto}
+.exp-tb-btn{height:30px;padding:0 8px;background:var(--face);border:1px solid var(--face);display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;color:#000;white-space:nowrap}
+.exp-tb-btn:hover{border:1px solid;border-color:var(--white) var(--shadow) var(--shadow) var(--white)}
+.exp-tb-btn .tb-ic{font-size:14px}
+.exp-tb-sep{width:1px;height:24px;background:var(--shadow);margin:0 4px}
+.exp-addr{height:28px;background:var(--face);border-bottom:1px solid var(--shadow);display:flex;align-items:center;gap:6px;padding:0 6px;font-size:12px;color:#000;flex-shrink:0}
+.exp-addr .ea-label{font-size:11px;color:#333}
+.exp-addr .ea-box{flex:1;height:22px;background:#fff;border:1px solid var(--shadow);display:flex;align-items:center;padding:0 4px;gap:4px;overflow:hidden;white-space:nowrap}
+.exp-addr .ea-go{width:22px;height:22px;background:var(--face);border:1px solid;border-color:var(--white) var(--shadow) var(--shadow) var(--white);display:flex;align-items:center;justify-content:center;font-size:10px}
+.exp-content{flex:1;display:flex;min-height:0;background:#fff}
+.exp-tree{flex:0 0 180px;border-right:1px solid var(--shadow);background:#fff;overflow:auto;padding:6px 4px;font-size:12px;color:#000}
+.exp-tree .tree-title{font-weight:bold;color:#5a5a5a;padding:4px 6px;font-size:11px}
+.exp-tree .tree-node{display:flex;align-items:center;gap:6px;padding:4px 6px;cursor:pointer;border-radius:2px;white-space:nowrap}
+.exp-tree .tree-node:hover{background:#e8f0fb}
+.exp-tree .tree-node.active{background:#316ac5;color:#fff}
+.exp-main{flex:1;overflow:auto;background:#fff;position:relative}
+.exp-statusbar{height:20px;background:var(--face);border-top:1px solid var(--white);font-size:11px;color:#333;display:flex;align-items:center;gap:16px;padding:0 8px;flex-shrink:0}
+.exp-statusbar .sb-sep{border-left:1px solid var(--shadow);height:14px}
+/* 资源管理器中的文件夹图标 */
+.af-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px;padding:16px}
+.af-item{background:transparent;border:1px solid transparent;border-radius:0;padding:10px 6px;text-align:center;cursor:pointer;position:relative}
+.af-item:hover{border:1px solid #b8c4d0;background:#eef4fc}
+.af-item .af-icon{font-size:44px;margin-bottom:6px;line-height:1}
+.af-item .af-name{font-size:12px;color:#000;word-break:break-all;line-height:1.2;margin-top:2px}
+.af-item .af-desc{font-size:10px;color:#777;margin-top:2px}
+.exp-win .arc-panel{background:#fff;border:none;border-radius:0;box-shadow:none;min-height:0;padding:0}
+.exp-win .pa-wrap{padding:6px 14px 20px}
+.exp-win .af-backbtn{background:var(--face);border:1px solid;border-color:var(--white) var(--shadow) var(--shadow) var(--white)}
+</style>
+</head>
+<body>
+
+<!-- Windows 2000 档案资源管理器 -->
+<div class="exp-win">
+  <div class="exp-shell">
+    <div class="exp-titlebar">
+      <span class="etb-ic">📁</span>
+      <span class="etb-title">档案管理</span>
+      <span class="etb-btn" title="最小化" onclick="window.close()">_</span>
+      <span class="etb-btn" title="最大化" onclick="toggleArchiveMax()">□</span>
+      <span class="etb-btn close" onclick="window.close()">×</span>
+    </div>
+    <div class="exp-menubar"><span>文件(F)</span><span>编辑(E)</span><span>查看(V)</span><span>收藏(A)</span><span>工具(T)</span><span>帮助(H)</span></div>
+    <div class="exp-toolbar">
+      <div class="exp-tb-btn" onclick="backToRoot()"><span class="tb-ic">◀</span>后退</div>
+      <div class="exp-tb-btn" onclick="backToRoot()"><span class="tb-ic">◆</span>向上</div>
+      <div class="exp-tb-sep"></div>
+      <div class="exp-tb-btn" onclick="openFolder('oplog')"><span class="tb-ic">🔍</span>搜索</div>
+      <div class="exp-tb-btn"><span class="tb-ic">📁</span>文件夹</div>
+    </div>
+    <div class="exp-addr">
+      <span class="ea-label">地址(D)：</span>
+      <div class="ea-box" id="exp-path">档案管理</div>
+      <div class="ea-go" onclick="backToRoot()">↵</div>
+    </div>
+    <div class="exp-content">
+      <div class="exp-tree" id="exp-tree"></div>
+      <div class="exp-main" id="arc-panel"></div>
+    </div>
+    <div class="exp-statusbar"><span id="exp-status">就绪</span><span class="sb-sep"></span><span id="exp-sb-count">4 个对象</span></div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_STATE={
+  unlockedLayers:0,endingChoice:null,
+  forumNewPosts:[],forumNewReplies:[],forumNewPMs:[],
+  fangAccountFound:false,m3DrugFound:false,
+  archivesUnlocked:false,diaryUnlocked:false,pmsUnlocked:false,
+  discoveredClues:[],countdownActive:false,countdownEndTime:null,
+  readPosts:[],repliedPosts:{},triggeredFlashes:[],
+  playerLoggedIn:false,shenBirthdayFound:false
+};
+function loadState(){try{var s=JSON.parse(localStorage.getItem('gameState'));return s?Object.assign({},DEFAULT_STATE,s):Object.assign({},DEFAULT_STATE)}catch(e){return Object.assign({},DEFAULT_STATE)}}
+function saveState(s){localStorage.setItem('gameState',JSON.stringify(s))}
+function updateState(patch){var s=loadState();Object.assign(s,patch);saveState(s);return s}
+
+/* 调试入口：地址带 ?unlock=1 或 ?debug=1 时直接解锁全部，便于测试 */
+(function(){
+  try{
+    if(/[?&](unlock|debug)=1/.test(location.search)){
+      updateState({unlockedLayers:6,archivesUnlocked:true,diaryUnlocked:true,pmsUnlocked:true,l6Unlocked:true,fangAccountFound:true,m3DrugFound:true,playerLoggedIn:true});
+      console.log('[debug] 已以解锁模式打开档案系统');
+    }
+  }catch(e){}
+})();
+
+/* 档案管理 · 资源管理器导航 */
+var FOLDERS=[
+  {id:'oplog',name:'操作日志文件',desc:'被清理过的记录留档',icon:'🗂'},
+  {id:'consent',name:'受试者同意签字归档',desc:'知情同意书 · 死亡报告',icon:'📁'},
+  {id:'research',name:'研究记录-机密文件',desc:'需密码解锁',icon:'🔒'},
+  {id:'notes',name:'手记文件夹',desc:'批注手记 · 附件',icon:'📝'}
+];
+function setPath(text){
+  var p=document.getElementById('exp-path');
+  if(p) p.textContent=text||'档案管理';
+}
+function toggleArchiveMax(){
+  document.body.classList.toggle('maximized');
+}
+function setStatus(text,n){
+  var s=document.getElementById('exp-status');
+  if(s) s.textContent=text||'就绪';
+  var c=document.getElementById('exp-sb-count');
+  if(c) c.textContent=(n!=null?n+' 个对象':'');
+}
+function buildTree(active){
+  var t=document.getElementById('exp-tree');
+  if(!t) return;
+  var html='<div class="tree-title">文件夹</div>';
+  html+='<div class="tree-node'+(active==='root'?' active':'')+'" onclick="backToRoot()">📁 档案管理</div>';
+  FOLDERS.forEach(function(f){
+    html+='<div class="tree-node'+(active===f.id?' active':'')+'" onclick="openFolder(\''+f.id+'\')">&nbsp;&nbsp;&nbsp;📁 '+f.name+'</div>';
+  });
+  t.innerHTML=html;
+}
+function backToRoot(){ showArchiveRoot(); }
+function showArchiveRoot(){
+  var state=loadState();
+  setPath('档案管理'); setStatus('就绪',4); buildTree('root');
+  var panel=document.getElementById('arc-panel');
+  var html='<div class="af-grid">';
+  FOLDERS.forEach(function(f){
+    var isResearch=(f.id==='research');
+    var icon = isResearch ? (state.diaryUnlocked?'🔓':'🔒') : f.icon;
+    var desc = isResearch ? (state.diaryUnlocked?'已解锁 · 可查看':'需密码解锁') : f.desc;
+    html+='<div class="af-item'+(isResearch&&!state.diaryUnlocked?' locked':'')+'" onclick="openFolder(\''+f.id+'\')">'
+      +'<div class="af-icon">'+icon+'</div>'
+      +'<div class="af-name">'+f.name+'</div>'
+      +'<div class="af-desc">'+desc+'</div></div>';
+  });
+  html+='</div>';
+  panel.innerHTML=html;
+}
+function openFolder(name){
+  setPath('档案管理 \\ '+name+'\\'); buildTree(name);
+  var counts={oplog:6,consent:5,research:9,notes:3};
+  setStatus('就绪',counts[name]||0);
+  var panel=document.getElementById('arc-panel');
+  if(name==='oplog'){ renderOpRecords(panel); }
+  else if(name==='consent'){ renderConsentArchive(panel); }
+  else if(name==='research'){ renderResearchGate(panel); }
+  else if(name==='notes'){ renderNotesFolder(panel); }
+}
+function appendBackBtn(){
+  return '<div style="text-align:center;margin:20px 0 6px"><span class="af-backbtn" onclick="backToRoot()">← 返回档案管理</span></div>';
+}
+
+/* 研究记录-机密：M20805 密码门 */
+function renderResearchGate(panel){
+  var state=loadState();
+  if(state.diaryUnlocked){
+    renderResearchLogs(panel);
+    var wrap=document.getElementById('arc-panel');
+    wrap.innerHTML+=appendBackBtn();
+    return;
+  }
+  panel.innerHTML=`
+    <div class="pa-wrap">
+      <div class="pa-header">
+        <h3>▣ 研究记录 · 机密文件</h3>
+        <div class="ph-meta">密级：机密 · 部分条目已被封存</div>
+      </div>
+      <div class="password-gate" style="background:#eef1f5;color:#3a3a3a;border:1px solid #b8c2cf">
+        <div class="pg-icon" style="color:#b3433a">⛔</div>
+        <div class="pg-title" style="color:#b07818">机密卷宗 · 访问验证</div>
+        <div class="pg-hint" style="color:#5a6470">
+          此卷宗已加密。
+        </div>
+        <input type="password" id="pw-l5" placeholder="请输入" maxlength="6" autocomplete="off"
+          style="background:#fff;color:#2c3a4a;border:1px solid #a7b2c0;text-align:center;letter-spacing:4px;font-family:'Courier New',monospace;padding:6px 10px">
+        <button onclick="checkL5()" style="background:#2d7a4d;color:#fff;border:none;border-radius:2px;padding:7px 32px;font-weight:700;margin-top:8px;cursor:pointer">验　证</button>
+        <div class="pg-error" id="pw-l5-error" style="color:#b3433a"></div>
+      </div>
+      ${appendBackBtn()}
+    </div>
+  `;
+}
+
+/* 受试者同意签字归档（免密） */
+function renderConsentArchive(panel){
+  panel.innerHTML=`
+    <div class="pa-wrap">
+      <div class="pa-header">
+        <h3>▣ 受试者同意签字归档</h3>
+        <div class="ph-meta">知情同意书扫描件 · 若干份 · 编号后缀一致（JH-*014）</div>
+      </div>
+
+      <div class="scan-doc">
+        <div class="sd-title">知 情 同 意 书</div>
+        <div class="sd-sub">（受试者试验方案 · 扫描件）</div>
+        <div class="sd-row"><span class="sd-key">受试者</span><span class="sd-val">周明远　编号：JH-Z014　年龄：34</span></div>
+        <div class="sd-row"><span class="sd-key">方案</span><span class="sd-val">M-3 试验性药物 · 项目 C-7</span></div>
+        <div class="sd-row"><span class="sd-key">日期</span><span class="sd-val">2023年7月14日</span></div>
+        <div class="sd-sigline"><span class="sd-siglab">受试者签字：</span><span class="sd-sig blue">周明远</span></div>
+      </div>
+
+      <div class="scan-doc">
+        <div class="sd-title">知 情 同 意 书</div>
+        <div class="sd-sub">（受试者试验方案 · 扫描件）</div>
+        <div class="sd-row"><span class="sd-key">受试者</span><span class="sd-val">林夏　编号：JH-L014　年龄：28</span></div>
+        <div class="sd-row"><span class="sd-key">方案</span><span class="sd-val">M-3 试验性药物 · 项目 C-7</span></div>
+        <div class="sd-row"><span class="sd-key">日期</span><span class="sd-val">2023年7月28日</span></div>
+        <div class="sd-sigline"><span class="sd-siglab">受试者签字：</span><span class="sd-sig blue">林夏</span></div>
+      </div>
+
+      <div class="scan-doc">
+        <span class="sd-pen blue">05</span>
+        <div class="sd-title">知 情 同 意 书</div>
+        <div class="sd-sub">（受试者试验方案 · 扫描件）</div>
+        <div class="sd-row"><span class="sd-key">受试者</span><span class="sd-val">王磊　编号：JH-W014　年龄：31</span></div>
+        <div class="sd-row"><span class="sd-key">方案</span><span class="sd-val">M-3 试验性药物 · 项目 C-7</span></div>
+        <div class="sd-row"><span class="sd-key">日期</span><span class="sd-val">2023年8月5日</span></div>
+        <div class="sd-sigline"><span class="sd-siglab">受试者签字：</span><span class="sd-sig blue">王磊</span></div>
+      </div>
+
+      <div class="scan-doc">
+        <span class="sd-pen black">3</span>
+        <div class="sd-title">知 情 同 意 书</div>
+        <div class="sd-sub">（特护病房患者 · 扫描件）</div>
+        <div class="sd-row"><span class="sd-key">患者</span><span class="sd-val">（姓名保密）　编号：JH-S001　特护病房</span></div>
+        <div class="sd-row"><span class="sd-key">方案</span><span class="sd-val">（不详）</span></div>
+        <div class="sd-row"><span class="sd-key">日期</span><span class="sd-val">（模糊）</span></div>
+        <div class="sd-sigline"><span class="sd-siglab">签字：</span><span class="sd-sig black">△△△</span></div>
+      </div>
+
+      <div class="af-file death-scan" style="border-left:4px solid #b3433a;max-width:640px">
+        <div class="ff-icon">🪦</div>
+        <div>
+          <div class="ff-name">死亡报告 · Subject W（王磊 JH-W014）</div>
+          <div class="ff-body">
+            死亡时间：2023年8月5日 16:42　　死亡地点：七楼特护病房·14床<br>
+            直接死因：心源性猝死　　根本死因：药物过量导致心律失常<br>
+            官方记录：「自杀」　　实际死因：剂量计算错误（使用 M-2 的参数）<br><br>
+            <em style="color:#6a7686">【备注】用量错了？……得记录下来……</em>
+          </div>
+        </div>
+      </div>
+      ${appendBackBtn()}
+    </div>
+  `;
+}
+
+/* 手记文件夹（蓝笔手记 + 附件 + 第七个医生） */
+function renderNotesFolder(panel){
+  var state=loadState();
+  if(state.l6Unlocked){
+    panel.innerHTML=`
+      <div class="pa-wrap">
+        <div class="pa-header">
+          <h3>▣ 手记文件夹 · 第七个医生</h3>
+          <div class="ph-meta">—— 蓝字拼合完成</div>
+        </div>
+        <div class="pa-monologue" style="max-width:560px;margin:20px auto;padding:24px 28px">
+          <p>蓝字连起来了。六个数字，拼出的是"第七个医生"。</p>
+          <p>从头到尾，一直用蓝色笔在给人做批注的那个人……</p>
+          <p style="margin-top:16px;border-top:1px dashed #9aa7b8;padding-top:16px">
+            <em style="color:#1f4a80">"我在离职前留下了一些东西。<br>账号：bystander&nbsp;&nbsp;&nbsp;密码：20230807"</em>
+          </p>
+          <p>回论坛，用这个账号登录。</p>
+        </div>
+        <div style="text-align:center;margin-top:24px">
+          <button onclick="finishAndReturn()" style="padding:10px 40px;background:#1f4a80;color:#fff;border:none;border-radius:2px;cursor:pointer;font-size:13px;font-weight:700;font-family:'Microsoft YaHei','SimHei',sans-serif">返回论坛 →</button>
+        </div>
+        ${appendBackBtn()}
+      </div>
+    `;
+    return;
+  }
+  panel.innerHTML=`
+    <div class="pa-wrap">
+      <div class="pa-header">
+        <h3>▣ 手记文件夹</h3>
+        <div class="ph-meta">批注手记 · 附件 · 一份没归位的字条</div>
+      </div>
+
+      <div class="af-file twocol note-scan">
+        <div class="ff-icon">📄</div>
+        <div>
+          <div class="ff-name">note · 手记（txt）</div>
+          <div class="ff-body">我，用平时用的最多的笔，做了一些记录。从第一份病历开始，顺着往下，别乱了。<br>
+            黑色太严肃，是不是像开罚单？哈哈，所以我跟着他用久了，也改不过来。<br>
+            论坛里那个病友也知道这事，我上次跟他在食堂碰见，他还问了我……诶，年纪大了，忘性大。</div>
+          <div style="text-align:right;margin-top:6px;color:#6f7b89;font-size:11px">落款：2023-08-07</div>
+        </div>
+      </div>
+
+      <div class="af-file">
+        <div class="ff-icon">📎</div>
+        <div>
+          <div class="ff-name">附件 · 知情同意书扫描件（×4）</div>
+          <div class="ff-body">原件参见「受试者同意签字归档」文件夹。</div>
+        </div>
+      </div>
+
+      <div class="password-gate" style="margin-top:22px;background:#eef1f5;color:#3a3a3a;border:1px solid #b8c2cf">
+        <div class="pg-icon" style="color:#2d5fa8">🗝</div>
+        <div class="pg-title" style="color:#2d5fa8;font-weight:700">第七个医生</div>
+        <div class="pg-hint" style="color:#5a6470">
+          记号是蓝的。<strong style="color:#b3433a">黑色的，不算。</strong>
+        </div>
+        <input type="password" id="pw-l6" placeholder="请输入" maxlength="6" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')" autocomplete="off"
+          style="background:#fff;color:#2c3a4a;border:1px solid #a7b2c0;text-align:center;letter-spacing:4px;font-family:'Courier New',monospace;padding:6px 10px">
+        <div style="margin:8px 0">
+          <button onclick="checkL6()" style="background:#2d5fa8;color:#fff;border:none;border-radius:2px;padding:7px 32px;font-weight:700;cursor:pointer">验　证</button>
+        </div>
+        <div class="pg-error" id="pw-l6-error" style="color:#b3433a"></div>
+      </div>
+      ${appendBackBtn()}
+    </div>
+  `;
+}
+
+/* 操作记录 */
+function renderOpRecords(panel){
+  panel.innerHTML=`
+    <div class="pa-wrap">
+      <div class="pa-header">
+        <h3>▣ 操作日志 · 文件</h3>
+        <div class="ph-meta">数据来源：系统审计日志（原始缓存副本）</div>
+      </div>
+      <div style="margin:0 4px 18px;padding:12px 16px;border:1px dashed #b07818;background:#e9eef5;border-radius:2px;font-size:12px;color:#5a6470;font-family:'KaiTi','楷体',serif;line-height:1.9">
+        ⓘ 以下是系统里被"清理"过的记录留档。<br>
+        「正式记录」中的删除/编辑操作，在这里能看到原始缓存。<br>
+        方致远从未删掉这些缓存。他以为没人能打开这个档案。他不知道，有人离开前留了一道后门。
+      </div>
+      <div class="pa-op-row">
+        <div class="pa-op-date">2024年2月20日 14:32 · 周二</div>
+        <div class="pa-op-action">删帖 × 3</div>
+        <div class="pa-op-detail">涉及关键词"七楼实验"。帖子内容提及七楼存在非标准治疗项目，已按管理规定删除。原帖作者：<strong>知情人士</strong>。</div>
+      </div>
+      <div class="pa-op-row">
+        <div class="pa-op-date">2024年5月15日 09:17 · 周三</div>
+        <div class="pa-op-action">封禁用户</div>
+        <div class="pa-op-detail">用户名：<strong>真相seekers</strong>。该用户持续发布涉及方致远个人信息的帖子，已永久封禁。IP 地址已记录。</div>
+      </div>
+      <div class="pa-op-row">
+        <div class="pa-op-date">2024年8月1日 22:45 · 周四</div>
+        <div class="pa-op-action">删帖 × 7</div>
+        <div class="pa-op-detail">涉及方致远真名。用户「知情人士」在多个版块发布含有前副院长真实姓名和研究项目代号的帖子，已全部删除并编辑原始帖。</div>
+      </div>
+      <div class="pa-op-row row-danger">
+        <div class="pa-op-date">2024年8月1日 23:02 · 周四</div>
+        <div class="pa-op-action">修改系统登录日志</div>
+        <div class="pa-op-detail">删除一次异常登录记录。该登录使用 <strong>0714 号患者账号</strong>，登录时间为 2024年8月1日 21:30。操作者：管理员。</div>
+      </div>
+      <div class="pa-op-row">
+        <div class="pa-op-date">2025年3月10日 16:20 · 周一</div>
+        <div class="pa-op-action">修改系统登录日志</div>
+        <div class="pa-op-detail">删除一次异常登录记录。该登录使用 <strong>0714 号患者账号</strong>，登录时间为 2025年3月10日 15:00。操作者：管理员。</div>
+      </div>
+      <div class="pa-op-row row-danger">
+        <div class="pa-op-date">2026年8月24日 · [当前]</div>
+        <div class="pa-op-action">检测到 0714 号账号登录</div>
+        <div class="pa-op-detail">[系统] 系统检测到 0714 号患者账号正在登录查询系统。管理员未执行任何拦截操作。<br>
+          <span class="note-inline">——最后的日志记录。</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* 研究日志（3列卡片） */
+function renderResearchLogs(panel){
+  panel.innerHTML=`
+    <div class="pa-wrap research-scan">
+      <div class="pa-header">
+        <h3>▣ C-7 项目 · 研究卷宗</h3>
+        <div class="ph-meta">项目代号：C-7 · 研究者：方致远 · 状态：<span style="color:#b3433a">已中止</span> · 档案编号：JH-RC-C7-0003</div>
+      </div>
+
+      <div class="pa-grid">
+
+        <!-- M-1 失败 -->
+        <div class="pa-card">
+          <div class="pa-card-head">
+            <div class="pa-cal">
+              <span class="pc-icon">4-7</span>
+              <span class="pc-day">2022年4月–7月</span>
+              <span class="pc-wk">· 春</span>
+            </div>
+            <span class="pa-tag tag-failed">M-1</span>
+          </div>
+          <div class="pa-card-title">广谱 NMDA 拮抗剂<br>· 整体失败</div>
+          <div class="pa-card-body">
+            M-1 目标路径：阻断全部 NMDA 受体。<br>
+            <strong class="accent-red">效果：完全阻断导致大面积认知损伤。</strong>实验对象意识模糊、语言功能丧失、空间定向力完全丧失。<br><br>
+            不可用。<em class="note-inline">靶向范围过大。需要更精准的亚型。</em>
+          </div>
+        </div>
+
+        <!-- 3. M-2 部分失败 -->
+        <div class="pa-card">
+          <div class="pa-card-head">
+            <div class="pa-cal">
+              <span class="pc-icon">8-12</span>
+              <span class="pc-day">2022年8月–12月</span>
+              <span class="pc-wk">· 秋冬</span>
+            </div>
+            <span class="pa-tag tag-failed">M-2</span>
+          </div>
+          <div class="pa-card-title">CA1 选择性拮抗<br>· 语义记忆被波及</div>
+          <div class="pa-card-body">
+            M-2：选择性 NMDA 拮抗剂，靶向 CA1 区。<br>
+            情景记忆清除成功，但语义记忆也被波及——实验对象不再记得「什么是钥匙」。<br><br>
+            <strong class="accent-red">语义记忆损伤不可接受。</strong><br>
+            下一步：缩小靶向范围至 <u>GluN2B 亚型</u>。
+          </div>
+        </div>
+
+        <!-- 4. M-3 成功 -->
+        <div class="pa-card">
+          <div class="pa-card-head">
+            <div class="pa-cal">
+              <span class="pc-icon">1-6</span>
+              <span class="pc-day">2023年1月–6月</span>
+              <span class="pc-wk">· 上半年</span>
+            </div>
+            <span class="pa-tag tag-success">M-3</span>
+          </div>
+          <div class="pa-card-title">M-3 研发成功<br>· GluN2B 亚型</div>
+          <div class="pa-card-body">
+            分子式：<strong>C₂₁H₂₈N₄O₃S</strong>（已加密）。<br>
+            作用机制：选择性阻断海马体 CA1 区突触后膜 GluN2B 亚型 NMDA 受体，抑制 LTP。<br>
+            <strong class="accent-green">效果：清除带时间标签的情景记忆，保留语义 & 程序性记忆。</strong><br><br>
+            <em class="note-inline accent-amber">认知功能（推理、判断、语言）保持完好。意识≠记忆。假说成立。</em>
+          </div>
+        </div>
+
+        <!-- C-7 项目正式启动 · Subject Z 入组 -->
+        <div class="pa-card">
+          <div class="pa-card-head">
+            <div class="pa-cal">
+              <span class="pc-icon">7·14</span>
+              <span class="pc-day">2023年7月14日</span>
+              <span class="pc-wk">· 周五</span>
+            </div>
+            <span class="pa-tag tag-project">启动</span>
+          </div>
+          <div class="pa-card-title">C-7 项目正式启动<br>· Subject Z 入组</div>
+          <div class="pa-card-body">
+            选定第一个实验对象。<strong>0714 号</strong>。周明远。34 岁。早发型认知衰退。<br><br>
+            他会成为第一个——<em class="note-inline">意识与记忆分离的证明。</em><br><br>
+            M-3 能救他——虽然代价是记忆。但记忆不是意识。记忆可以被重建。意识不能。<br><br>
+            <em class="note-inline accent-amber">七月十四日。好日子。C-7 项目正式启动。</em>
+          </div>
+        </div>
+
+        <!-- 5. Subject Z 首次给药 -->
+        <div class="pa-card">
+          <div class="pa-card-head">
+            <div class="pa-cal">
+              <span class="pc-icon">7·14</span>
+              <span class="pc-day">2023年7月14日</span>
+              <span class="pc-wk">· 周五</span>
+            </div>
+            <span class="pa-tag tag-success">Subject Z</span>
+          </div>
+          <div class="pa-card-title">Subject Z 首次给药<br>· 认知衰退停止</div>
+          <div class="pa-card-body">
+            患者：周明远（JH-Z014）· 34 岁 · MMSE 24/30 · 海马体轻度萎缩。<br>
+            用药：M-3 标准剂量。<br>
+            <strong class="accent-green">效果：认知衰退趋势停止。情景记忆清除成功。Subject Z 符合预期。</strong><br><br>
+            <em class="note-inline accent-amber">七月十四日——好日子。</em>
+          </div>
+        </div>
+
+        <!-- 6. Subject L (林夏) 首次给药 -->
+        <div class="pa-card">
+          <div class="pa-card-head">
+            <div class="pa-cal">
+              <span class="pc-icon">7·28</span>
+              <span class="pc-day">2023年7月28日</span>
+              <span class="pc-wk">· 周五</span>
+            </div>
+            <span class="pa-tag tag-failed">Subject L</span>
+          </div>
+          <div class="pa-card-title">Subject L 首次给药<br>· 渐冻症无逆转</div>
+          <div class="pa-card-body">
+            患者：林夏（JH-L014）· 28 岁 · ALS 渐冻症。运动神经元持续退化。<br>
+            用药：M-3 标准剂量。<br>
+            <strong class="accent-red">M-3 对运动神经元退化无作用。ALS 持续恶化。</strong><br><br>
+            <em class="note-inline">作为对照组存在。M-3 靶向情景记忆通路，无法逆转器质性损伤。</em>
+          </div>
+        </div>
+
+        <!-- 7. Subject W (王磊) 死亡 -->
+        <div class="pa-card">
+          <div class="pa-card-head">
+            <div class="pa-cal">
+              <span class="pc-icon">8·5</span>
+              <span class="pc-day">2023年8月5日</span>
+              <span class="pc-wk">· 周六</span>
+            </div>
+            <span class="pa-tag tag-death">Subject W</span>
+          </div>
+          <div class="pa-card-title">Subject W 首次给药<br>· 意外死亡</div>
+          <div class="pa-card-body">
+            患者：王磊（JH-W014）· <strong>31 岁</strong> · 抑郁症伴认知障碍。<br>
+            用药：<u>剂量计算错误（使用 M-2 的参数）</u>。<br>
+            <strong class="accent-red">效果：给药后 4 小时心脏骤停。抢救无效。</strong><br>
+            官方记录：「自杀」。实际死因：药物过量导致心律失常。<br><br>
+            <em class="note-inline">方致远批注：「WL 出现意外。剂量需要调整。但方向是对的。」</em>
+          </div>
+        </div>
+
+        <!-- 8. Subject Z 第三次给药 · 确认成功 -->
+        <div class="pa-card">
+          <div class="pa-card-head">
+            <div class="pa-cal">
+              <span class="pc-icon">8·15</span>
+              <span class="pc-day">2023年8月15日</span>
+              <span class="pc-wk">· 周二</span>
+            </div>
+            <span class="pa-tag tag-success">Subject Z</span>
+          </div>
+          <div class="pa-card-title">Subject Z 维持治疗<br>· 记忆清除确认成功</div>
+          <div class="pa-card-body">
+            第三次给药后观察：认知功能稳定。MMSE 回升至 27/30。<br>
+            <strong class="accent-green">情景记忆几乎完全丧失，但推理、判断、语言功能完好。</strong><br><br>
+            <em class="note-inline">方致远结论：「M-3 可有效停止早发型认知衰退，代价是情景记忆清除。Subject Z 为成功案例。意识独立于记忆存在。」</em>
+          </div>
+        </div>
+
+        <!-- 9. 项目中止（林夏逃离） -->
+        <div class="pa-card">
+          <div class="pa-card-head">
+            <div class="pa-cal">
+              <span class="pc-icon">8·20</span>
+              <span class="pc-day">2023年8月20日</span>
+              <span class="pc-wk">· 周日</span>
+            </div>
+            <span class="pa-tag tag-failed">中止</span>
+          </div>
+          <div class="pa-card-title">Subject L 逃离疗养院<br>· 去向不明</div>
+          <div class="pa-card-body">
+            林夏跑了。她怎么跑出去的？她的腿已经不行了。<br>
+            有人在帮她。谁？<br>
+            沈望川不敢。老陈头不可能。<br><br>
+            不管了。她跑不远。ALS 会拖住她。<br>
+            重要的是数据还在。周明远还在。0714 号是活证据。<br><br>
+            <em class="note-inline accent-amber">等风头过了，我可以继续。</em>
+          </div>
+        </div>
+
+      </div><!-- /pa-grid -->
+
+      <div style="text-align:center;margin-top:22px;font-size:12px;color:#5a6470;font-family:'KaiTi','楷体',serif">
+        —— C-7 项目 · 共 9 卷 · 最后一卷日期：2023年8月20日 ——
+      </div>
+    </div>
+  `;
+}
+
+function checkL5(){
+  var val=document.getElementById('pw-l5').value.trim();
+  var err=document.getElementById('pw-l5-error');
+  if(val.replace(/[-\s]/g,'').toUpperCase()==='M20805'){
+    updateState({diaryUnlocked:true});
+    showNotif('机密卷宗已解锁。');
+    setTimeout(function(){
+      renderResearchGate(document.getElementById('arc-panel'));
+    },600);
+  }else{
+    err.textContent='错误。';
+  }
+}
+
+/* L6 验证 */
+function checkL6(){
+  var val=document.getElementById('pw-l6').value.trim();
+  var err=document.getElementById('pw-l6-error');
+  if(val==='274159'){
+    updateState({l6Unlocked:true,unlockedLayers:6});
+    showNotif('蓝字拼好了。六个数字，指向的就是"第七个医生"。');
+    setTimeout(function(){renderNotesFolder(document.getElementById('arc-panel'))},900);
+  }else{
+    window._l6Wrong=(window._l6Wrong||0)+1;
+    if(val==='274139'||val==='273159'||val==='234159'){
+      err.textContent='错误。是不是带上了那个黑色的？方致远从来不用黑色笔签字。';
+    }else if(val==='27415'||val==='2741593'){
+      err.textContent='错误。数字个数不对——黑色的那个去掉之后正好6个。';
+    }else{
+      err.textContent='错误。蓝字的顺序乱了。';
+    }
+    if(window._l6Wrong>=3){
+      showNotif('不对，我好像在哪里看到过……病历 → 用药 → 实验 → 镜像 → 档案 → 论坛。','warn');
+      window._l6Wrong=0;
+    }
+  }
+}
+
+/* L6解锁后：返回论坛（结局入口在论坛） */
+function finishAndReturn(){
+  showNotif('请返回论坛。有些东西……你在论坛里见过的。','warn');
+  setTimeout(function(){window.close()},1600);
+}
+
+/* 通知 */
+function showNotif(msg,type){
+  var n=document.createElement('div');
+  n.className='notif';
+  if(type==='warn'){n.style.borderColor='var(--amber)';n.style.color='var(--amber)'}
+  n.textContent=msg;
+  n.style.whiteSpace='pre-line';
+  document.body.appendChild(n);
+  setTimeout(function(){
+    n.style.opacity='0';
+    n.style.transition='opacity .5s';
+    setTimeout(function(){n.remove()},500);
+  },5000);
+}
+
+/* 初始化 */
+window.addEventListener('load',function(){
+  showArchiveRoot();
+});
+</script>
+</body>
+</html>

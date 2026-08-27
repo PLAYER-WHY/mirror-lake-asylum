@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>镜湖疗养院 · 患者查询系统</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --face:#c0c0c0;--face-dark:#a0a0a0;--shadow:#808080;--light:#dfdfdf;--white:#fff;
+  --text:#000;--text-dim:#404040;
+  --title-1:#000080;--title-2:#1084d0;
+  --green:#008000;--dark-green:#006400;--amber:#808000;--red:#800000;--blue:#000080;
+  --input-bg:#fff;--desktop:#008080;
+}
+body{font-family:"宋体",SimSun,"Microsoft YaHei",sans-serif;background:var(--desktop);color:var(--text);min-height:100vh;font-size:13px;line-height:1.7}
+a{color:#0000ee;text-decoration:underline}
+.hidden{display:none!important}
+
+/* ===== 窗口标题栏 ===== */
+.top-bar{background:linear-gradient(90deg,var(--title-1),var(--title-2));color:#fff;padding:3px 4px;display:flex;justify-content:space-between;align-items:center;height:28px;border:2px solid;border-color:var(--white) var(--shadow) var(--shadow) var(--white)}
+.top-bar .tb-left{display:flex;align-items:center;gap:8px;padding-left:4px;min-width:0}
+.top-bar .tb-logo{width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:13px;white-space:nowrap;flex-shrink:0;font-weight:bold}
+.top-bar h1{font-size:13px;font-weight:bold;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-bar .tb-right{font-size:11px;display:flex;align-items:center;gap:12px;padding-right:4px}
+.top-bar .tb-right span{color:#fff}
+.top-bar .tb-status{display:flex;align-items:center;gap:4px}
+.top-bar .tb-dot{width:7px;height:7px;background:#0f0;border:1px solid #080}
+.top-bar .tb-btn{width:18px;height:16px;background:var(--face);border:1px solid;border-color:var(--white) var(--shadow) var(--shadow) var(--white);display:flex;align-items:center;justify-content:center;font-size:10px;color:#000;cursor:pointer;font-family:Marlett,sans-serif}
+.tb-back{color:#fff;cursor:pointer;font-size:11px;text-decoration:underline}
+.tb-back:hover{color:#ffff00}
+
+/* ===== 窗口主体 ===== */
+.main-wrap{max-width:820px;margin:8px auto;padding:0;background:var(--face);border:2px solid;border-color:var(--shadow) var(--white) var(--white) var(--shadow)}
+body.maximized .main-wrap{max-width:100%;margin:0;border:none}
+
+/* ===== 登录页 ===== */
+.login-page{margin:20px;padding:20px;background:var(--face);border:1px solid;border-color:var(--shadow) var(--white) var(--white) var(--shadow)}
+.login-page .lp-title{text-align:center;margin-bottom:20px}
+.login-page .lp-title h2{color:var(--title-1);font-size:16px;font-weight:bold;margin-bottom:4px}
+.login-page .lp-title p{color:var(--text-dim);font-size:11px}
+.login-form{max-width:320px;margin:0 auto}
+.login-form .lf-group{margin-bottom:12px}
+.login-form .lf-label{font-size:12px;color:var(--text);margin-bottom:4px;display:block}
+.login-form .lf-label .lf-hint{color:var(--text-dim);font-size:11px;margin-left:6px}
+.login-form input{width:100%;padding:3px 4px;background:var(--white);border:2px solid;border-color:var(--shadow) var(--white) var(--white) var(--shadow);color:var(--text);font-size:13px;font-family:"宋体",SimSun,monospace}
+.login-form input:focus{outline:none;border-width:1px}
+.login-form .lf-error{color:var(--red);font-size:11px;margin-top:2px;min-height:14px}
+.login-form .lf-submit{padding:4px 20px;background:var(--face);border:2px solid;border-color:var(--white) var(--shadow) var(--shadow) var(--white);color:var(--text);font-size:13px;font-family:"宋体",SimSun,sans-serif;cursor:pointer;min-width:100px}
+.login-form .lf-submit:hover{background:var(--light)}
+.login-form .lf-submit:active{border-color:var(--shadow) var(--white) var(--white) var(--shadow)}
+.login-form .lf-submit:disabled{color:var(--shadow);cursor:not-allowed}
+
+/* ===== 病历主界面 · 左右布局（真实HIS风格） ===== */
+.his-body{display:flex;margin:0 4px;}
+.his-nav{flex:0 0 150px;background:var(--face);border:2px solid;border-color:var(--shadow) var(--white) var(--white) var(--shadow);border-right:none;padding:6px 3px 6px 3px;display:flex;flex-direction:column;gap:2px}
+.his-nav .hn-title{font-size:11px;color:var(--title-1);font-weight:bold;padding:2px 8px 4px;border-bottom:1px solid var(--shadow);margin-bottom:4px;letter-spacing:1px}
+.his-nav .hn-foot{font-size:10px;color:var(--text-dim);text-align:center;margin-top:auto;padding-top:6px;border-top:1px solid var(--shadow)}
+.his-main{flex:1;min-width:0}
+.layer-tab{display:flex;align-items:center;gap:7px;padding:7px 8px;font-size:12px;color:var(--text-dim);background:var(--face);border:1px solid;border-color:var(--shadow) var(--white) var(--white) var(--shadow);cursor:pointer;user-select:none}
+.layer-tab .lt-icon{font-size:12px;width:16px;text-align:center;flex:none}
+.layer-tab .lt-name{line-height:1.2}
+.layer-tab.unlocked{color:var(--text)}
+.layer-tab.active{color:var(--text);font-weight:bold;background:var(--light);border-color:var(--white) var(--shadow) var(--shadow) var(--white);box-shadow:inset 1px 1px 0 var(--white)}
+.layer-tab.active .lt-icon{color:var(--title-1)}
+.layer-tab.locked{color:var(--shadow);cursor:not-allowed}
+.layer-tab:hover:not(.locked):not(.active){background:var(--light)}
+.hn-back{display:flex;align-items:center;gap:7px;padding:7px 8px;font-size:12px;color:var(--title-1);background:var(--light);border:1px solid;border-color:var(--white) var(--shadow) var(--shadow) var(--white);cursor:pointer;user-select:none;margin-top:6px}
+.hn-back .lt-icon{font-size:12px;width:16px;text-align:center;flex:none}
+.hn-back:hover{background:#e4efe9}
+
+/* ===== 记录面板 ===== */
+.record-panel{background:var(--white);border:2px solid;border-color:var(--shadow) var(--white) var(--white) var(--shadow);border-top:2px solid var(--shadow);margin:0 0 4px;padding:20px;min-height:400px;overflow-y:auto;max-height:70vh}
+.record-panel .rp-header{text-align:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--face-dark)}
+.record-panel .rp-header h3{color:var(--title-1);font-size:15px;font-weight:bold;margin-bottom:4px}
+.record-panel .rp-header .rp-meta{font-size:11px;color:var(--text-dim)}
+
+/* ===== 病历表格 ===== */
+.med-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px;border:1px solid var(--shadow);background:var(--white)}
+.med-table td{padding:6px 8px;vertical-align:top;border:1px solid var(--face-dark)}
+.med-table tr:nth-child(even){background:#f0f0f0}
+.med-table .mt-label{color:var(--text-dim);width:130px;font-size:11px;background:var(--face)}
+.med-table .mt-value{color:var(--text)}
+.med-table .mt-value.red{color:var(--red);font-weight:bold}
+.med-table .mt-value.green{color:var(--dark-green);font-weight:bold}
+.med-table .mt-value.amber{color:var(--amber);font-weight:bold}
+.med-table .mt-value.bold{font-weight:bold}
+
+/* ===== 用药记录 ===== */
+.med-log{margin-bottom:14px}
+.med-log .ml-entry{background:#f8f8f8;border:1px solid var(--face-dark);border-left:3px solid var(--green);padding:8px 12px;margin-bottom:6px}
+.med-log .ml-entry.danger{border-left-color:var(--red);background:#fff0f0}
+.med-log .ml-entry .ml-date{font-size:11px;color:var(--text-dim);margin-bottom:3px}
+.med-log .ml-entry .ml-drug{font-size:13px;color:var(--title-1);font-weight:bold;margin-bottom:4px}
+.med-log .ml-entry.danger .ml-drug{color:var(--red)}
+.med-log .ml-entry .ml-note{font-size:12px;color:var(--text);line-height:1.6}
+.med-log .ml-entry .ml-effect{font-size:11px;color:var(--amber);margin-top:4px;font-style:italic;border-top:1px dotted var(--face-dark);padding-top:4px}
+
+/* ===== 实验记录 ===== */
+.exp-section{margin-bottom:16px}
+.exp-section .es-title{font-size:13px;color:var(--title-1);font-weight:bold;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--face-dark);background:var(--face);padding:4px 8px}
+.exp-subject{background:#f8f8f8;border:1px solid var(--face-dark);padding:10px;margin-bottom:8px}
+.exp-subject .es-id{font-size:13px;color:var(--amber);font-weight:bold;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--face-dark)}
+.exp-subject .es-row{display:flex;gap:10px;margin-bottom:3px;font-size:12px}
+.exp-subject .es-label{color:var(--text-dim);min-width:80px}
+.exp-subject .es-val{color:var(--text)}
+.exp-subject.success{border-left:3px solid var(--green)}
+.exp-subject.failed{border-left:3px solid var(--red)}
+.exp-subject.deceased{border-left:3px solid var(--shadow);opacity:0.7}
+.exp-subject.success .es-id{color:var(--dark-green)}
+.exp-subject.failed .es-id{color:var(--red)}
+.exp-subject.deceased .es-id{color:var(--text-dim)}
+
+/* ===== 密码输入 ===== */
+.password-gate{max-width:320px;margin:32px auto;text-align:center}
+.password-gate .pg-icon{font-size:32px;margin-bottom:10px;opacity:0.5}
+.password-gate .pg-title{color:var(--amber);font-size:14px;margin-bottom:4px;font-weight:bold}
+.password-gate .pg-hint{color:var(--text-dim);font-size:11px;margin-bottom:16px;line-height:1.8}
+.password-gate input{width:100%;padding:3px 6px;background:var(--white);border:2px solid;border-color:var(--shadow) var(--white) var(--white) var(--shadow);color:var(--text);font-size:13px;font-family:"宋体",SimSun,monospace;text-align:center;letter-spacing:2px}
+.password-gate input:focus{outline:none;border-width:1px}
+.password-gate button{padding:4px 24px;background:var(--face);border:2px solid;border-color:var(--white) var(--shadow) var(--shadow) var(--white);color:var(--text);font-size:12px;font-family:"宋体",SimSun,sans-serif;cursor:pointer;min-width:120px;margin-top:6px}
+.password-gate button:hover{background:var(--light)}
+.password-gate button:active{border-color:var(--shadow) var(--white) var(--white) var(--shadow)}
+.password-gate .pg-error{color:var(--red);font-size:11px;margin-top:6px;min-height:14px}
+
+/* ===== 蓝笔批注（不突兀，像手写标注） ===== */
+.blue-note{
+  display:inline-block;margin-left:8px;font-family:'Courier New',monospace;font-size:12px;
+  color:#204f9e;letter-spacing:1px;vertical-align:baseline;font-style:normal;
+}
+
+/* ===== 病历图片容器 + 蓝笔签字叠加 ===== */
+.med-img-wrap{position:relative;display:inline-block}
+.med-img-wrap img{max-width:100%;border:1px solid var(--shadow);box-shadow:2px 2px 6px rgba(0,0,0,.15);display:block}
+.fang-sign{
+  position:absolute;right:14px;bottom:16px;
+  font-family:"KaiTi","楷体",serif;color:#1a3a8a;font-size:22px;font-weight:bold;
+  letter-spacing:4px;transform:rotate(-6deg);opacity:.65;
+  text-shadow:0 0 1px rgba(26,58,138,.4);pointer-events:none;line-height:1;
+}
+.fang-sign::after{content:"";display:block;width:32px;height:2px;background:#1a3a8a;margin-top:3px;transform:rotate(-2deg);opacity:.5;border-radius:1px}
+
+/* ===== 档案入口 ===== */
+.archives-entry{text-align:center;margin:24px 0;padding:16px;background:#e8e8f0;border:1px solid var(--face-dark)}
+.archives-entry .ae-title{color:var(--title-1);font-size:14px;margin-bottom:4px;font-weight:bold}
+.archives-entry .ae-desc{color:var(--text-dim);font-size:11px;margin-bottom:12px;line-height:1.7}
+.archives-entry button{padding:4px 28px;background:var(--face);border:2px solid;border-color:var(--white) var(--shadow) var(--shadow) var(--white);color:var(--text);font-size:13px;font-family:"宋体",SimSun,sans-serif;cursor:pointer}
+.archives-entry button:hover{background:var(--light)}
+.archives-entry button:active{border-color:var(--shadow) var(--white) var(--white) var(--shadow)}
+
+/* ===== 隐藏层 ===== */
+.hidden-layer{background:#fff0f0;border:1px solid var(--red);padding:16px;margin:16px 0}
+.hidden-layer .hl-title{color:var(--red);font-size:14px;text-align:center;margin-bottom:14px;font-weight:bold}
+.hidden-layer .hl-entry{background:var(--white);border-left:3px solid var(--red);padding:10px;margin-bottom:8px}
+.hidden-layer .hl-date{font-size:11px;color:var(--text-dim);margin-bottom:4px}
+.hidden-layer .hl-content{font-size:12px;color:var(--text);line-height:1.8}
+
+/* ===== 返回论坛 ===== */
+.back-to-forum{text-align:center;margin:24px 0}
+.back-to-forum a{display:inline-block;padding:4px 24px;background:var(--face);border:2px solid;border-color:var(--white) var(--shadow) var(--shadow) var(--white);color:#0000ee;font-size:12px;text-decoration:none}
+.back-to-forum a:hover{background:var(--light)}
+
+/* ===== 通知 ===== */
+.notif{position:fixed;top:16px;right:16px;background:var(--face);border:2px solid;border-color:var(--white) var(--shadow) var(--shadow) var(--white);padding:8px 12px;font-size:12px;color:var(--dark-green);z-index:100;box-shadow:2px 2px 4px rgba(0,0,0,.15)}
+@keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* ===== 状态栏 ===== */
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:3px 8px;background:var(--face);border:2px solid;border-color:var(--shadow) var(--white) var(--white) var(--shadow);font-size:11px;color:var(--text-dim)}
+.status-bar .sb-left{display:flex;align-items:center;gap:6px}
+.status-bar .sb-right{display:flex;align-items:center;gap:6px}
+.status-bar .sb-sep{color:var(--shadow)}
+
+/* ===== 响应式 ===== */
+@media(max-width:768px){
+  .main-wrap{margin:0;border:none}
+  .login-page{padding:14px}
+  .top-bar{height:24px}
+  .top-bar h1{font-size:11px}
+  .his-body{flex-direction:column;margin:0}
+  .his-nav{flex:none;width:auto;flex-direction:row;border-right:2px solid var(--shadow);border-bottom:none;padding:4px;overflow-x:auto}
+  .his-nav .hn-title{display:none}
+  .his-nav .hn-foot{display:none}
+  .layer-tab{font-size:11px;padding:6px 9px;flex:none;white-space:nowrap}
+  .layer-tab .lt-name{display:none}
+  .record-panel{padding:12px;margin:0 0 4px}
+  .med-table .mt-label{width:90px;font-size:10px}
+  .top-bar .tb-right{gap:6px;font-size:10px}
+}
+
+/* ===== 病历列表（医生工作台） ===== */
+.cl-header{padding:14px 20px;background:var(--white);border:2px solid;border-color:var(--shadow) var(--white) var(--white) var(--shadow);margin:0 4px 4px}
+.cl-header .cl-title{color:var(--title-1);font-size:15px;font-weight:bold;margin-bottom:6px}
+.cl-header .cl-meta{color:var(--text-dim);font-size:11px}
+.cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;padding:4px 4px 4px;margin:0 4px}
+.case-card{background:var(--white);border:2px solid;border-color:var(--shadow) var(--white) var(--white) var(--shadow);padding:12px;cursor:pointer;position:relative;transition:box-shadow .15s}
+.case-card:hover{box-shadow:2px 2px 0 rgba(0,0,0,.12)}
+.case-card.focus{border-left:3px solid var(--title-1)}
+.case-card .cc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.case-card .cc-no{font-size:13px;font-weight:bold;color:var(--title-1);font-family:"Courier New",monospace}
+.case-card.focus .cc-no{color:var(--red)}
+.case-card .cc-status{font-size:10px;color:var(--text-dim)}
+.case-card .cc-name{font-size:14px;font-weight:bold;color:var(--text);margin-bottom:3px}
+.case-card .cc-dept{font-size:11px;color:var(--text-dim);margin-bottom:8px}
+.case-card .cc-key{font-size:11px;color:var(--text);line-height:1.5;margin-bottom:8px}
+.case-card .cc-lock{font-size:10px;color:var(--amber);font-weight:bold}
+@media(max-width:768px){
+  .cl-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;padding:0}
+  .cl-header{padding:10px 12px}
+}
+</style>
+</head>
+<body>
+
+<!-- 顶栏（窗口标题栏） -->
+<div class="top-bar">
+  <div class="tb-left">
+    <div class="tb-logo">镜</div>
+    <h1>镜湖疗养院患者查询系统 - v3.2.1</h1>
+  </div>
+  <div class="tb-right">
+    <div class="tb-status"><span class="tb-dot"></span><span id="sys-status">系统运行中</span></div>
+    <span class="tb-back" onclick="backToForum()">返回论坛</span>
+    <div class="tb-btn" title="最小化" onclick="recordsMinimize()">_</div>
+    <div class="tb-btn" title="最大化" onclick="toggleRecordsMax()">□</div>
+    <div class="tb-btn" title="关闭" onclick="window.close()">×</div>
+  </div>
+</div>
+
+<!-- 主体 -->
+<div class="main-wrap">
+
+<!-- ===== 登录页 ===== -->
+<div id="page-login" class="login-page">
+  <div class="lp-title">
+    <h2>镜湖疗养院 · 病历查询系统</h2>
+    <p>医生专用 · 请输入您的工号与登录密码 · 系统已运行1095天</p>
+  </div>
+  <div class="login-form">
+    <div class="lf-group">
+      <label class="lf-label">医生工号</label>
+      <input type="text" id="login-pid" placeholder="请输入医生工号" autocomplete="off">
+    </div>
+    <div class="lf-group">
+      <label class="lf-label">登录密码</label>
+      <input type="password" id="login-pass" placeholder="请输入密码" maxlength="20" autocomplete="off">
+    </div>
+    <div class="lf-error" id="login-error"></div>
+    <button class="lf-submit" onclick="tryLogin()">登 录 查 询</button>
+  </div>
+</div>
+
+<!-- ===== 病历列表（医生工作台） ===== -->
+<div id="page-caselist" class="hidden">
+  <div class="cl-header">
+    <div class="cl-title">[病历] 病历列表 · 全部患者</div>
+    <div class="cl-meta">登录医生：沈望川 JH-008 · 本院病历共 8 份 · 权限：主治医生</div>
+  </div>
+  <div class="cl-grid" id="cl-grid"></div>
+  <div class="back-to-forum">
+    <a href="javascript:void(0)" onclick="backToForum()">返回论坛</a>
+  </div>
+</div>
+
+<!-- ===== 病历主界面 ===== -->
+<div id="page-records" class="hidden">
+  <div class="his-body">
+    <!-- 左侧：功能导航（真实HIS风格） -->
+    <div class="his-nav" id="layer-nav">
+      <div class="hn-title">导　航</div>
+      <div class="layer-tab active" id="tab-1" onclick="switchLayer(1)">
+        <span class="lt-icon">[档]</span><span class="lt-name">患者信息</span>
+      </div>
+      <div class="layer-tab locked" id="tab-2" onclick="switchLayer(2)">
+        <span class="lt-icon">[锁]</span><span class="lt-name">用药记录</span>
+      </div>
+      <div class="layer-tab locked" id="tab-3" onclick="switchLayer(3)">
+        <span class="lt-icon">[锁]</span><span class="lt-name">项目记录</span>
+      </div>
+      <div class="layer-tab locked" id="tab-4" onclick="switchLayer(4)">
+        <span class="lt-icon">[锁]</span><span class="lt-name">批注档案</span>
+      </div>
+      <div class="hn-back" onclick="backToCaseList()">
+        <span class="lt-icon">←</span><span class="lt-name">返回病历列表</span>
+      </div>
+      <div class="hn-foot">权限级别</div>
+    </div>
+
+    <!-- 右侧：记录面板 -->
+    <div class="his-main">
+      <div class="record-panel" id="record-panel"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 状态栏 -->
+<div class="status-bar">
+  <div class="sb-left" id="sb-status">就绪</div>
+  <div class="sb-right">
+    <span id="sb-layer">患者信息</span>
+    <span class="sb-sep">|</span>
+    <span>镜湖疗养院信息系统 ©2003</span>
+  </div>
+</div>
+
+</div>
+
+<script>
+/* ================================================================
+   游戏状态 & 跨页面联动
+   ================================================================ */
+const DEFAULT_STATE={
+  unlockedLayers:0,endingChoice:null,
+  forumNewPosts:[],forumNewReplies:[],forumNewPMs:[],
+  fangAccountFound:false,m3DrugFound:false,
+  archivesUnlocked:false,diaryUnlocked:false,pmsUnlocked:false,
+  discoveredClues:[],countdownActive:false,countdownEndTime:null,
+  readPosts:[],repliedPosts:{},triggeredFlashes:[],
+  playerLoggedIn:false,shenBirthdayFound:false
+};
+function loadState(){try{var s=JSON.parse(localStorage.getItem('gameState'));return s?Object.assign({},DEFAULT_STATE,s):Object.assign({},DEFAULT_STATE)}catch(e){return Object.assign({},DEFAULT_STATE)}}
+function saveState(s){localStorage.setItem('gameState',JSON.stringify(s))}
+function updateState(patch){const s=loadState();Object.assign(s,patch);saveState(s);return s}
+
+/* ================================================================
+   登录验证
+   ================================================================ */
+function tryLogin(){
+  const pid=document.getElementById('login-pid').value.trim();
+  const pass=document.getElementById('login-pass').value.trim().toLowerCase();
+  const err=document.getElementById('login-error');
+  err.textContent='';
+  if(!pid||!pass){
+    err.textContent='请填写工号与密码。';
+    return;
+  }
+  // 医生专用登录：工号为沈望川 JH-008（或兼容格式）；
+  // 密码=纸条上那串电码解出的 shenwangchuan（医生本人拼音）。
+  const workId = (pid==='JH-008'||pid==='JH008'||pid==='008'||pid==='8');
+  const workPass = (pass==='shenwangchuan'||pass==='008');
+  if(workId&&workPass){
+    // 登录成功 → 进入病历列表（医生工作台）
+    updateState({playerLoggedIn:true,unlockedLayers:1});
+    showNotif('登录成功。病历系统已授权。','success');
+    setTimeout(function(){
+      document.getElementById('page-login').classList.add('hidden');
+      document.getElementById('page-caselist').classList.remove('hidden');
+      renderCaseList();
+    },800);
+  }else{
+    err.textContent='工号或密码错误，请检查后重试。';
+  }
+}
+
+/* ================================================================
+   病历列表（医生工作台）
+   ================================================================ */
+const CASES=[
+  {id:'z',no:'0714',name:'周明远',dept:'神经科 · 四楼',bed:'14床',status:'已出院',birth:'1992年8月16日',
+   key:'主诉：反复头痛伴失眠3月。现病史：神经衰弱倾向，对症处理后好转出院。',focus:false,locked:false},
+  {id:'l',no:'JH-L014',name:'林夏',dept:'七楼',bed:'14床',status:'失踪',birth:'1995年3月12日',
+   key:'主诉：进行性四肢无力6月。现病史：美术教师，渐现握力下降与肢体僵硬。',focus:true,locked:true,pass:'JH-L014'},
+  {id:'w',no:'JH-W014',name:'王磊',dept:'七楼',bed:'08床',status:'已故',birth:'1988年11月20日',
+   key:'主诉：情绪低落伴认知波动4月。现病史：抑郁症史，近期记忆评估异常。',focus:true,locked:true,pass:'JH-W014'},
+  {id:'s',no:'JH-S001',name:'（保密）',dept:'特护病房',bed:'—',status:'已故',birth:'1953年10月7日',
+   key:'主诉：[记录涂黑]。现病史：大部分病程已销毁，仅余编号信息。',focus:true,locked:true,pass:'JH-S001'},
+  {id:'n1',no:'023',name:'孙建国',dept:'内科',bed:'03床',status:'已出院',birth:'1948年5月3日',
+   key:'主诉：头晕伴血压升高2年。现病史：高血压3级，规律服药后控制平稳。',focus:false,locked:false},
+  {id:'n2',no:'045',name:'赵桂芳',dept:'骨科',bed:'07床',status:'已出院',birth:'1952年7月18日',
+   key:'主诉：左臂外伤疼痛1天。现病史：跌倒致左桡骨远端骨折，石膏固定。',focus:false,locked:false},
+  {id:'n3',no:'058',name:'刘德顺',dept:'呼吸内科',bed:'11床',status:'已出院',birth:'1945年12月8日',
+   key:'主诉：咳嗽发热5天。现病史：社区获得性肺炎，抗感染治疗后好转。',focus:false,locked:false},
+  {id:'n4',no:'061',name:'钱玉兰',dept:'神经内科',bed:'02床',status:'住院中',birth:'1942年9月25日',
+   key:'主诉：近期记忆力减退2月。现病史：老年女性，认知功能评估待查。',focus:false,locked:false}
+];
+
+function renderCaseList(){
+  const g=document.getElementById('cl-grid');
+  if(!g) return;
+  let html='';
+  CASES.forEach(function(c){
+    html+='<div class="case-card'+(c.focus?' focus':'')+'" onclick="openCase(\''+c.id+'\')">';
+    html+='<div class="cc-top">';
+    html+='<div class="cc-no">'+c.no+'</div>';
+    html+='</div>';
+    html+='<div class="cc-name">'+c.name+'</div>';
+    html+='<div class="cc-dept">'+c.dept+' · '+c.bed+'</div>';
+    html+='<div class="cc-key">'+c.key+'</div>';
+    html+='<div class="cc-lock">'+((c.locked)?'[归档]':'[可查]')+'</div>';
+    html+='</div>';
+  });
+  g.innerHTML=html;
+  // 标记状态栏
+  const st=document.getElementById('sb-status');
+  if(st) st.textContent='病历列表';
+  const sl=document.getElementById('sb-layer');
+  if(sl) sl.textContent='全部患者';
+}
+
+function openCase(id){
+  const c=CASES.filter(function(x){return x.id===id})[0];
+  if(!c) return;
+  if(c.locked){
+    const pw=prompt('该病历已归档，请输入授权码：');
+    if(pw===null) return;
+    if(pw.trim().toUpperCase()===c.pass){
+      showCaseView(c);
+    }else{
+      showNotif('密码错误。','error');
+    }
+    return;
+  }
+  showCaseView(c);
+}
+
+function showCaseView(c){
+  if(c.id==='z'){
+    // 主角：进入完整图层链，恢复左导航
+    const nav=document.getElementById('layer-nav');
+    if(nav) nav.style.display='';
+    document.getElementById('page-caselist').classList.add('hidden');
+    document.getElementById('page-records').classList.remove('hidden');
+    switchLayer(1);
+    return;
+  }
+  // 其他病历：显示独立简化视图（含方母JH-S001的反转内容）
+  const panel=document.getElementById('record-panel');
+  document.getElementById('page-caselist').classList.add('hidden');
+  document.getElementById('page-records').classList.remove('hidden');
+  // 隐藏导航条，只显示该病历详情
+  const nav=document.getElementById('layer-nav');
+  if(nav) nav.style.display='none';
+  const sl=document.getElementById('sb-layer');
+  if(sl) sl.textContent=c.name;
+  // 切换扫描件背景图：方母机密、王磊死亡报告、其余普通
+  panel.classList.remove('confidential','death');
+  if(c.id==='s') panel.classList.add('confidential');
+  else if(c.id==='w') panel.classList.add('death');
+  panel.innerHTML=renderSimpleCase(c);
+}
+
+// 病历ID → 扫描件图片名映射
+const CASE_IMG={z:'medical-record-0714',l:'medical-record-JH-L014',w:'medical-record-JH-W014',s:'medical-record-JH-S001',n1:'medical-record-023',n2:'medical-record-045',n3:'medical-record-058',n4:'medical-record-061'};
+
+function renderSimpleCase(c){
+  var img=CASE_IMG[c.id]||'medical-record-0714';
+  var panel=document.getElementById('record-panel');
+  panel.classList.remove('confidential','death');
+  if(c.id==='s') panel.classList.add('confidential');
+  else if(c.id==='w') panel.classList.add('death');
+  var fangSigned=['l','w','s'].indexOf(c.id)>=0;
+  var html='';
+  html+='<div style="text-align:center;margin-bottom:8px">';
+  html+='<button onclick="backToCaseList()" style="padding:3px 12px;background:var(--face);border:1px solid var(--shadow);cursor:pointer;font-size:11px">← 返回病历列表</button>';
+  html+='</div>';
+  html+='<div style="text-align:center">';
+  html+='<div class="med-img-wrap">';
+  html+='<img src="assets/scans/'+img+'.jpg" alt="病历扫描件">';
+  if(fangSigned) html+='<div class="fang-sign">方致远</div>';
+  html+='</div>';
+  html+='</div>';
+  return html;
+}
+
+function backToCaseList(){
+  document.getElementById('page-records').classList.add('hidden');
+  document.getElementById('page-caselist').classList.remove('hidden');
+  const nav=document.getElementById('layer-nav');
+  if(nav) nav.style.display='';
+  renderCaseList();
+}
+
+/* 最小化/最大化：在病历视图 → 回病例列表；其余 → 关窗回论坛；最大化 → 加宽内容 */
+/* 返回论坛：若是由论坛弹出的子窗口则关闭并切回父窗口；否则退回论坛首页 */
+function backToForum(){
+  var opener=null;
+  try{ opener=window.opener; }catch(e){}
+  if(opener && !opener.closed){
+    try{ if(typeof opener.focus==='function') opener.focus(); }catch(e){}
+    try{ window.close(); }catch(e){}
+    // 若 close 被浏览器拦截（如被当作独立标签打开），则本页直接回论坛
+    if(!window.closed){
+      try{ window.location.href='index.html'; }catch(e){}
+    }
+    return;
+  }
+  try{ window.location.href='index.html'; }catch(e){}
+}
+function recordsMinimize(){
+  var pr=document.getElementById('page-records');
+  if(pr && !pr.classList.contains('hidden')){ backToCaseList(); }
+  else{ window.close(); }
+}
+function toggleRecordsMax(){
+  document.body.classList.toggle('maximized');
+}
+
+/* ================================================================
+   层级切换
+   ================================================================ */
+function switchLayer(n){
+  const state=loadState();
+  // 真正锁定未解锁的层级：防止点击仍带 .locked 的 tab 提前跳转（例如直接打开档案系统绕过镜像）
+  const targetTab=document.getElementById('tab-'+n);
+  if(targetTab&&targetTab.classList.contains('locked')){
+    showNotif('该层级尚未解锁，请先完成上一层验证。','warn');
+    return;
+  }
+  const maxUnlocked=state.unlockedLayers;
+  // 对于未解锁的层级（L2/L3/L4前序门/L5/L6前序门），依然允许进入并渲染密码验证面板，
+  // 只有密码验证通过后才会推进 unlockedLayers
+  if(n>maxUnlocked&&n!==4&&n>maxUnlocked+1){
+    // 限制只能跳到当前解锁层+1（允许进入密码门），超过则阻断
+    showNotif('该层级尚未解锁','warn');
+    return;
+  }
+  // 更新tab状态
+  for(var i=1;i<=5;i++){
+    var tab=document.getElementById('tab-'+i);
+    if(!tab){continue;}
+    tab.classList.remove('active');
+    if(i<=maxUnlocked){
+      tab.classList.remove('locked');
+      tab.classList.add('unlocked');
+    }
+  }
+  document.getElementById('tab-'+n).classList.add('active');
+  // 状态栏同步当前功能名（替代"第X层"）
+  const layerName=['患者信息','用药记录','项目记录','批注档案'];
+  const st=document.getElementById('sb-layer');
+  if(st) st.textContent=(layerName[n-1]||'—');
+  const sts=document.getElementById('sb-status');
+  if(sts) sts.textContent='就绪';
+  // 渲染对应内容
+  const panel=document.getElementById('record-panel');
+  if(n===1){renderLayer1(panel)}
+  else if(n===2){renderLayer2(panel)}
+  else if(n===3){renderLayer3(panel)}
+  else if(n===4){renderLayer4Gate(panel)}
+}
+
+/* ================================================================
+   第一层：基本信息
+   ================================================================ */
+function renderLayer1(panel){
+  panel.innerHTML=`
+    <div style="text-align:center">
+      <img src="assets/scans/medical-record-0714.jpg" alt="病历扫描件" style="max-width:100%;border:1px solid var(--shadow);box-shadow:2px 2px 6px rgba(0,0,0,.15);display:block;margin:0 auto">
+    </div>
+    <div style="text-align:center;margin-top:20px;padding:16px;background:rgba(255,181,71,.08);border:1px solid var(--amber);border-radius:4px">
+      <div style="color:var(--amber);font-size:13px;margin-bottom:6px">[系统] 第二层已锁定</div>
+      <div style="color:var(--text-dim);font-size:12px">用药记录需要额外授权。</div>
+      <div style="color:var(--text-dim);font-size:11px;margin-top:6px">该药来源未标注，未在院内目录登记。</div>
+    </div>
+  `;
+  // 解锁第二层tab
+  document.getElementById('tab-2').classList.remove('locked');
+}
+
+/* ================================================================
+   第二层：用药记录
+   ================================================================ */
+function renderLayer2(panel){
+  const state=loadState();
+  if(state.m3DrugFound){
+    // 已解锁，显示用药记录
+    panel.innerHTML=`
+      <div class="rp-header">
+        <h3>用药记录</h3>
+        <div class="rp-meta">患者编号：0714 | 用药周期：2023.07.14 - 2023.09.15</div>
+      </div>
+      <div class="med-log">
+        <div class="ml-entry">
+          <div class="ml-date">2023年7月14日</div>
+          <div class="ml-drug">多奈哌齐（Donepezil）5mg/日</div>
+          <div class="ml-note">标准治疗方案。用于改善认知功能。</div>
+          <div class="ml-effect">效果：不明显。患者主观感觉"没什么变化"。</div>
+        </div>
+        <div class="ml-entry">
+          <div class="ml-date">2023年7月22日</div>
+          <div class="ml-drug">美金刚（Memantine）10mg/日</div>
+          <div class="ml-note">联合用药方案。沈望川医师处方。</div>
+          <div class="ml-effect">效果：空间定向力略有改善，但短期记忆持续恶化。</div>
+        </div>
+        <div class="ml-entry danger">
+          <div class="ml-date">2023年8月1日</div>
+          <div class="ml-drug">M-3（实验性药物）—— 方致远医师会诊后建议 <span class="blue-note">批 07</span></div>
+          <div class="ml-note">非标准用药。药物来源未标注。方致远医师口头说明：新型神经递质调节剂，"靶向记忆编码通路"。无书面知情同意书。</div>
+          <div class="ml-effect">效果记录：用药后患者出现显著嗜睡、意识模糊。约48小时后恢复清醒。清醒后表现为近事遗忘加重。</div>
+        </div>
+        <div class="ml-entry danger">
+          <div class="ml-date">2023年8月15日</div>
+          <div class="ml-drug">M-3 第二次给药</div>
+          <div class="ml-note">方致远医师亲自执行。沈望川医师未参与。给药后48小时观察期内，患者情景记忆出现大面积空白——不再记得入院前两个月的事件。</div>
+          <div class="ml-effect">效果记录：认知评估——MMSE回升至27/30，但情景记忆几乎完全丧失。方致远记录："认知功能保持，记忆清除成功。Subject Z符合预期。"</div>
+        </div>
+        <div class="ml-entry danger">
+          <div class="ml-date">2023年9月5日</div>
+          <div class="ml-drug">M-3 第三次给药（维持剂量）</div>
+          <div class="ml-note">方致远医师执行。此后患者认知功能衰退趋势停止，维持在当前水平。但已丧失的记忆未能恢复。</div>
+          <div class="ml-effect">效果记录：认知功能稳定。方致远结论："M-3可有效停止早发型认知衰退进程，代价是情景记忆清除。Subject Z为成功案例。"</div>
+        </div>
+      </div>
+      <div style="background:rgba(255,71,87,.08);border:1px solid var(--red);border-radius:4px;padding:14px;margin:16px 0">
+        <div style="color:var(--red);font-size:13px;font-weight:bold;margin-bottom:8px">[警告] 异常用药警告</div>
+        <div style="color:var(--text);font-size:13px;line-height:1.8">
+          该患者的用药记录中包含未批准的实验性药物（M-3）。该药物未在院内药品目录中登记，无知情同意书，且由非主治医师（方致远）执行给药。<br>
+          建议进一步查阅研究项目记录。
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:20px;padding:16px;background:rgba(255,181,71,.08);border:1px solid var(--amber);border-radius:4px">
+        <div style="color:var(--amber);font-size:13px;margin-bottom:6px">[系统] 第三层已锁定</div>
+        <div style="color:var(--text-dim);font-size:12px">实验记录需要额外授权。</div>
+        <div style="color:var(--text-dim);font-size:11px;margin-top:6px">部分记录仅在最终版本中留存，原始内容不可恢复。</div>
+      </div>
+    `;
+    document.getElementById('tab-3').classList.remove('locked');
+  }else{
+    // 显示密码门
+    panel.innerHTML=`
+      <div class="password-gate">
+        <div class="pg-icon">[授权]</div>
+        <div class="pg-title">第二层 · 用药记录</div>
+        <div class="pg-hint">该记录仅对项目参与方开放。</div>
+        <input type="text" id="pw-m3" placeholder="请输入" maxlength="3" autocomplete="off">
+        <button onclick="checkM3()">验证</button>
+        <div class="pg-error" id="pw-error"></div>
+      </div>
+    `;
+  }
+}
+
+function checkM3(){
+  const val=document.getElementById('pw-m3').value.trim().toUpperCase();
+  const err=document.getElementById('pw-error');
+  if(val==='M-3'||val==='M3'){
+    updateState({m3DrugFound:true,unlockedLayers:2});
+    showNotif('用药记录已解锁','success');
+    setTimeout(function(){switchLayer(2)},600);
+  }else{
+    err.textContent='验证失败。该药未在院内正式登记，编号应该在方致远的会诊记录或论坛讨论里出现过。';
+  }
+}
+
+/* ================================================================
+   第三层：实验记录
+   ================================================================ */
+function renderLayer3(panel){
+  const state=loadState();
+  if(state.c7Unlocked){
+    panel.innerHTML=`
+      <div class="rp-header">
+        <h3>C-7项目 · 实验记录</h3>
+        <div class="rp-meta">项目代号：C-7 | 负责人：方致远 <span class="blue-note">批 04</span> | 审批状态：无伦理审查记录</div>
+      </div>
+      <div style="background:rgba(255,71,87,.08);border:1px solid var(--red);border-radius:4px;padding:14px;margin-bottom:20px">
+        <div style="color:var(--red);font-size:13px;font-weight:bold;margin-bottom:8px">[机密] 机密文件</div>
+        <div style="color:var(--text);font-size:13px;line-height:1.8">
+          项目名称：意识与记忆分离研究（Consciousness-Memory Separation）<br>
+          代号含义：C=Consciousness，7=七楼<br>
+          负责人：方致远（七楼主任兼疗养院副院长）<br>
+          起始日期：2022年3月<br>
+          终止日期：2023年8月（因"镜湖事件"中止）<br>
+          研究目标：验证人类情景记忆可被独立清除而不影响核心认知功能，以此探索"意识独立保存"的可能性。
+        </div>
+      </div>
+      <div class="exp-section">
+        <div class="es-title">实验对象记录</div>
+        <div class="exp-subject success">
+          <div class="es-id">Subject Z（JH-Z014 · 周明远）</div>
+          <div class="es-row"><span class="es-label">诊断</span><span class="es-val">早发型认知功能衰退</span></div>
+          <div class="es-row"><span class="es-label">用药</span><span class="es-val">M-3 × 3次</span></div>
+          <div class="es-row"><span class="es-label">结果</span><span class="es-val" style="color:var(--green)">成功 · 认知衰退停止，情景记忆清除</span></div>
+          <div class="es-row"><span class="es-label">方致远批注</span><span class="es-val">"意识独立于记忆存在。Z证明了一切。"</span></div>
+        </div>
+        <div class="exp-subject failed">
+          <div class="es-id">Subject L（JH-L014 · 林夏）</div>
+          <div class="es-row"><span class="es-label">诊断</span><span class="es-val">渐冻症（ALS）</span></div>
+          <div class="es-row"><span class="es-label">用药</span><span class="es-val">M-3 × 2次</span></div>
+          <div class="es-row"><span class="es-label">结果</span><span class="es-val" style="color:var(--red)">无效 · ALS持续恶化，M-3对运动神经元无作用</span></div>
+          <div class="es-row"><span class="es-label">方致远批注</span><span class="es-val">"L的神经损伤为器质性，M-3无法逆转。但她能作为对照组。"</span></div>
+          <div class="es-row"><span class="es-label">现状</span><span class="es-val" style="color:var(--amber)">2023年8月"失踪"。实际逃离疗养院，目前在逃。</span></div>
+        </div>
+        <div class="exp-subject deceased">
+          <div class="es-id">Subject W（JH-W014 · 王磊）</div>
+          <div class="es-row"><span class="es-label">诊断</span><span class="es-val">抑郁症伴认知障碍</span></div>
+          <div class="es-row"><span class="es-label">用药</span><span class="es-val">M-3 × 1次（剂量超标）</span></div>
+          <div class="es-row"><span class="es-label">结果</span><span class="es-val" style="color:var(--red)">死亡 · 用药后4小时心脏骤停</span></div>
+          <div class="es-row"><span class="es-label">官方结论</span><span class="es-val">"自杀"</span></div>
+          <div class="es-row"><span class="es-label">方致远批注</span><span class="es-val">"ZL出现意外。剂量需要调整。但方向是对的。"</span></div>
+        </div>
+      </div>
+      <div style="background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;padding:14px;margin-bottom:16px">
+        <div style="color:var(--text-dim);font-size:12px;margin-bottom:8px">M-3药物机制（方致远笔记摘要）</div>
+        <div style="color:var(--text);font-size:13px;line-height:1.8">
+          M-3作用于海马体CA1区的突触后膜，选择性阻断情景记忆编码通路中的NMDA受体亚型，实现"记忆清除"效果。<br>
+          与传统遗忘症不同，M-3不损害语义记忆和程序性记忆，仅清除带有时间标签的情景记忆。<br>
+          这意味着患者"忘记发生了什么"，但"记得事物是什么"。<br>
+          认知功能（推理、判断、语言）保持完好。<br>
+          <span style="color:var(--red)">这正是方致远理论的核心：意识≠记忆。即使清除了全部情景记忆，人仍然能思考、判断、做选择。</span>
+        </div>
+      </div>
+      <div style="background:rgba(255,181,71,.08);border:1px solid var(--amber);border-radius:4px;padding:14px;margin-top:20px">
+        <div style="color:var(--amber);font-size:13px;margin-bottom:6px">[系统] 第四层·镜像病房已激活</div>
+        <div style="color:var(--text-dim);font-size:12px">系统检测到更深层数据。</div>
+        <div style="color:var(--text-dim);font-size:11px;margin-top:6px">此层设密者以个人纪年记忆密钥。</div>
+      </div>
+    `;
+    document.getElementById('tab-4').classList.remove('locked');
+  }else{
+    panel.innerHTML=`
+      <div class="password-gate">
+        <div class="pg-icon">[授权]</div>
+        <div class="pg-title">第三层 · 实验记录</div>
+        <div class="pg-hint">该项目已被封存存档。</div>
+        <input type="text" id="pw-c7" placeholder="请输入" maxlength="3" autocomplete="off">
+        <button onclick="checkC7()">验证</button>
+        <div class="pg-error" id="pw-c7-error"></div>
+      </div>
+    `;
+  }
+}
+
+function checkC7(){
+  const val=document.getElementById('pw-c7').value.trim().toUpperCase();
+  const err=document.getElementById('pw-c7-error');
+  if(val==='C-7'||val==='C7'){
+    updateState({c7Unlocked:true,unlockedLayers:3});
+    showNotif('实验记录已解锁。','success');
+    // 桌面新增"档案管理"应用（方致远的研究藏在档案里）
+    setTimeout(function(){ showNotif('桌面新增「档案管理」应用。回桌面去看看。','warn'); },1600);
+    // 触发倒计时
+    var state=loadState();
+    if(!state.countdownActive){
+      var endTime=Date.now()+24*60*60*1000; // 24小时
+      updateState({countdownActive:true,countdownEndTime:endTime});
+    }
+    setTimeout(function(){switchLayer(3)},600);
+  }else{
+    err.textContent='代号失配。请核对档案里的项目名称与楼层。';
+  }
+}
+
+/* ================================================================
+   隐藏层：研究者私人笔记
+   ================================================================ */
+function renderLayer4Gate(panel){
+  const state=loadState();
+  if(state.archivesUnlocked||state.mirrorUnlocked){
+    panel.innerHTML=`
+      <div class="rp-header">
+        <h3 style="color:var(--red)">方致远 · 临床工作记录（节选）</h3>
+        <div class="rp-meta">[机密] 机密等级：最高 | 来源：七楼病区存档 · 行政归档</div>
+      </div>
+      <div class="hidden-layer">
+        <div class="hl-title">方致远 · 病程与研究工作记录</div>
+        <div class="hl-entry">
+          <div class="hl-date">2022年3月15日</div>
+          <div class="hl-content">患者（方母）送诊，主诉进行性认知减退。初判早发型认知功能衰退。<br>患者已无法识别亲属面容，仍保留基本语言与情绪反应。<br>病程推演提示：意识与记忆或可分离。该假说值得作为研究方向验证。</div>
+        </div>
+        <div class="hl-entry">
+          <div class="hl-date">2022年6月8日</div>
+          <div class="hl-content">M-1实验失败。广谱NMDA受体拮抗剂导致大面积认知损伤，不可用。<br>M-2部分成功，但语义记忆亦被波及，不可接受。<br>需进一步缩小靶向范围。</div>
+        </div>
+        <div class="hl-entry">
+          <div class="hl-date">2023年1月20日</div>
+          <div class="hl-content">M-3分子式稳定，靶向CA1区GluN2B亚型。理论上仅清除情景记忆编码，保留语义与程序性记忆。<br>认知功能预期保持完好。<br>若验证成功，将证明"意识≠记忆"，为相关认知障碍提供干预可能。</div>
+        </div>
+        <div class="hl-entry">
+          <div class="hl-date">2026年8月24日</div>
+          <div class="hl-content">系统检测到0714号账号登录查询系统。<br>该对象认知功能保持，具备独立检索与推理能力。<br>如需了解本研究的个人背景与情感脉络，请前往四楼活动室查阅方主任私人批注。</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin:20px 0">
+        <div style="color:var(--text-dim);font-size:12px;margin-bottom:12px">以上为归档工作记录。方主任另有私人批注，存于四楼活动室未归档记录中。<br>完整的档案文件，可在桌面「档案管理」应用里查看。</div>
+        <button onclick="openMirror()" style="padding:10px 24px;background:var(--amber);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px">查看四楼活动室批注（前往镜像病房）</button>
+      </div>
+    `;
+  }else{
+    panel.innerHTML=`
+      <div class="password-gate">
+        <div class="pg-icon" style="color:var(--red)">[锁]</div>
+        <div class="pg-title" style="color:var(--red)">第四层 · 批注档案</div>
+        <div class="pg-hint">此层需研究者级认证。密钥内容为研究者个人纪年。</div>
+        <input type="password" id="pw-1007" placeholder="请输入" maxlength="4" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')" autocomplete="off">
+        <button onclick="check1007()">验证</button>
+        <div class="pg-error" id="pw-1007-error"></div>
+      </div>
+    `;
+  }
+}
+
+function openMirror(){
+  window.open('mirror.html','_blank','width=920,height=720');
+}
+
+function check1007(){
+  const val=document.getElementById('pw-1007').value.trim();
+  const err=document.getElementById('pw-1007-error');
+  if(val==='1007'){
+    updateState({mirrorUnlocked:true,unlockedLayers:4});
+    showNotif('第四层·批注档案已解锁。','success');
+    setTimeout(function(){switchLayer(4)},600);
+  }else{
+    err.textContent='纪年失配。该密钥存于个人记忆，非系统记录。';
+  }
+}
+
+/* ================================================================
+   通知
+   ================================================================ */
+function showNotif(msg,type){
+  var n=document.createElement('div');
+  n.className='notif';
+  if(type==='warn'){n.style.borderColor='var(--amber)';n.style.color='var(--amber)'}
+  else if(type==='error'){n.style.borderColor='var(--red)';n.style.color='var(--red)'}
+  n.textContent=msg;
+  document.body.appendChild(n);
+  setTimeout(function(){n.style.opacity='0';n.style.transition='opacity .5s';setTimeout(function(){n.remove()},500)},3000);
+}
+
+/* ================================================================
+   初始化
+   ================================================================ */
+window.addEventListener('load',function(){
+  // 检查是否已登录（医生）
+  var state=loadState();
+  if(state.playerLoggedIn&&state.unlockedLayers>=1){
+    document.getElementById('page-login').classList.add('hidden');
+    document.getElementById('page-caselist').classList.remove('hidden');
+    renderCaseList();
+    // 若已解锁到具体层（曾进入0714病历），恢复记录面板
+  }
+});
+
+// 回车登录
+document.getElementById('login-pass').addEventListener('keydown',function(e){
+  if(e.key==='Enter')tryLogin();
+});
+</script>
+</body>
+</html>
