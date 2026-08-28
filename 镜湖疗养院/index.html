@@ -281,9 +281,33 @@ img{max-width:100%}
 .memory-flash .mf-label.show{opacity:1}
 
 /* ========== 倒计时 ========== */
-.countdown-bar{position:fixed;top:0;left:0;right:0;background:var(--danger);color:#fff;padding:4px 20px;text-align:center;font-size:12px;font-weight:bold;z-index:400;display:none;border-bottom:1px solid #7A0000}
+.countdown-bar{position:fixed;top:0;left:0;right:0;background:var(--danger);color:#fff;padding:4px 20px;text-align:center;font-size:12px;font-weight:bold;z-index:400;display:none;border-bottom:1px solid #7A0000;pointer-events:none}
+.countdown-active{padding-top:30px}
 .countdown-bar.show{display:block}
 .countdown-bar .cd-time{font-family:Tahoma,Arial,sans-serif;font-size:13px}
+.countdown-bar.warn{animation:cdWarn 1.2s infinite}
+@keyframes cdWarn{0%,100%{background:#b3122a}50%{background:#7a0000}}
+/* 红色闪屏 */
+.cd-flash{position:fixed;inset:0;z-index:630;background:radial-gradient(circle at 50% 40%,rgba(255,60,60,.45),rgba(120,0,0,.55));pointer-events:none;opacity:0}
+.cd-flash.on{animation:cdFlash .75s ease}
+@keyframes cdFlash{0%{opacity:0}18%{opacity:1}45%{opacity:.4}100%{opacity:0}}
+/* 系统警示弹窗 */
+.cd-modal{position:fixed;inset:0;z-index:640;background:rgba(0,0,0,.38);display:none;align-items:center;justify-content:center}
+.cd-modal.show{display:flex}
+.cd-modal .cdm-box{width:430px;max-width:92%;background:#ece9d8;border:2px solid #0a246a;box-shadow:4px 4px 14px rgba(0,0,0,.45);font-family:'宋体',Tahoma;font-size:13px;color:#000}
+.cd-modal .cdm-title{background:linear-gradient(180deg,#a3382b,#6d1611);color:#fff;padding:6px 12px;font-weight:bold;font-size:12px;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;cursor:default}
+.cd-modal .cdm-title .cdm-x{cursor:pointer;font-size:14px}
+.cd-modal .cdm-body{padding:16px 18px;font-size:13px;line-height:1.9;color:#4a2a20}
+.cd-modal .cdm-body strong{color:#a02222}
+.cd-modal .cdm-time{font-size:22px;color:#a02222;font-weight:bold;text-align:center;margin:12px 0;font-family:Tahoma,Arial,sans-serif}
+.cd-modal .cdm-foot{text-align:center;padding:10px;border-top:1px solid #b8a;background:#f0ede3}
+.cd-modal .cdm-foot button{padding:6px 28px;background:#a3382b;color:#fff;border:1px solid #6d1611;cursor:pointer;font-size:13px;font-weight:bold}
+.cd-modal .cdm-foot button:hover{background:#7a3224}
+/* 倒计时警报音开关 */
+.cd-sound-toggle{position:fixed;right:14px;bottom:48px;z-index:660;width:34px;height:34px;border-radius:50%;background:rgba(20,20,20,.75);border:1px solid rgba(255,255,255,.3);color:#ffd966;font-size:16px;cursor:pointer;display:none;box-shadow:0 1px 5px rgba(0,0,0,.4)}
+.cd-sound-toggle:hover{background:rgba(60,10,10,.85)}
+
+
 
 /* ========== 结局页 ========== */
 .ending-page{position:fixed;inset:0;background:#0a0a0a;z-index:800;overflow-y:auto;color:#ccc}
@@ -347,6 +371,7 @@ img{max-width:100%}
 .search-results .sr-item .sri-snippet{font-size:11px;color:#888;margin-top:2px}
 .search-results .sr-item.deleted .sri-title{color:var(--text-light);text-decoration:line-through}
 .search-results .sr-item.deleted .sri-snippet{color:var(--danger)}
+.search-results .sri-snippet.redacted{color:#c4c4c4;letter-spacing:1px;filter:blur(.4px)}
 .search-results .sr-empty{text-align:center;padding:16px;color:var(--text-light);font-size:12px}
 
 /* ========== 底部 ========== */
@@ -901,6 +926,8 @@ img{max-width:100%}
 <div class="countdown-bar" id="countdown-bar">
   [系统警告] 检测到异常访问，将于 <span class="cd-time" id="cd-time">24:00:00</span> 后自动关闭并清空数据
 </div>
+<div class="cd-flash" id="cd-flash"></div>
+<div class="cd-modal" id="cd-modal"></div>
 
 <!-- ==================== 结局页 ==================== -->
 <div class="ending-page hidden" id="ending-page">
@@ -979,9 +1006,10 @@ function onCrossPageChange(newState){
   }
   // 检查倒计时
   if(newState.countdownActive && !window._countdownRunning){ startCountdown(newState.countdownEndTime); }
-  // 检查档案解锁
+  // 剧情驱动：解锁关键档案时，倒计时大幅前跳（营造被追踪、时间在烧的压迫感）
   if(newState.archivesUnlocked && !oldState.archivesUnlocked){
     showNotification('unlock','[解锁]','档案系统已解锁，可在病历系统中查阅');
+    advanceCountdown('4F加密文件',8);
   }
   // 检查M-3发现
   if(newState.m3DrugFound && !oldState.m3DrugFound){
@@ -993,6 +1021,7 @@ function onCrossPageChange(newState){
   }
   // 检查 L6 解锁（第七个医生）→ 弹内心独白 + 显示切换账号按钮，引导登录方致远账号
   if(newState.l6Unlocked && !oldState.l6Unlocked){
+    advanceCountdown('七楼核心档案',12);
     var sab=document.getElementById('switch-account-btn');
     if(sab){sab.style.display='inline-block';}
     setTimeout(function(){
@@ -1039,10 +1068,10 @@ function checkEndingTrigger(state){
 function checkPendingNotifications(state){
   // 显示玩家离开期间积累的通知
   if(state.m3DrugFound){
-    showNotification('unlock','[解锁]','用药记录已解锁（病历系统第二层）');
+    showNotification('unlock','[解锁]','用药记录已解锁');
   }
   if(state.archivesUnlocked){
-    showNotification('unlock','[解锁]','实验记录已解锁（病历系统第三层）');
+    showNotification('unlock','[解锁]','实验记录已解锁');
   }
   if(state.l6Unlocked){
     var sab=document.getElementById('switch-account-btn');
@@ -1085,7 +1114,7 @@ const USERS={
     ],
     messages:[{from:'不放弃的人',date:'2024-05-20',content:'你认识我妹妹吗？她叫林夏，在镜湖住过七楼。如果你有她的消息请联系我。'}]
   },
-  '知情人士':{name:'知情人士',avatar:'沈',color:'#4a7aa6',bio:'前镜湖医护 · 现居外地 · 偶尔回来看看',regDate:'2023-11-15',lastActive:'6天前',posts:5,replies:18,
+  '知情人士':{name:'知情人士',avatar:'知',color:'#4a7aa6',bio:'前镜湖医护 · 现居外地 · 偶尔回来看看',regDate:'2023-11-15',lastActive:'6天前',posts:5,replies:18,
     nightPct:40,dayPct:40,eveningPct:20,
     logs:[
       {date:'2022-05-02',content:'今天帮方主任搬了新办公室。他坚持要在正对着办公桌的墙上装一面落地镜，自己掏钱请工人来的。我问他又不是女同志臭美什么，他说"每次做重大决定前都要照一照，看看自己是不是还认识这个人。"我当玩笑听了。现在翻到这条日志，想起来那面镜子镜框内侧，他让刻字师傅写了一行小字。反着写的。我当时问过，他笑了笑没答。'},
@@ -1133,8 +1162,8 @@ const USERS={
       {date:'2024-05-10',content:'出院了。收拾东西的时候沈医生来送我，手里攥了盒排骨——周三的。他说"老陈头，记得按时吃药，别再自己偷偷减了。"我问他七楼怎么样了，他沉默半天说"别管。走你的。"'}
     ],
     messages:[
-      {from:'四楼护士小张',date:'2024-03-12',content:'陈大爷，您昨天把体温计藏枕头底下了对吧？'},
-      {from:'沈望川医生',date:'2024-04-20',content:'陈大爷，楼下药房说您少拿了一盒药。方便的话来四楼护士站补一下，我帮您留着。'}
+      {from:'护士小张',date:'2024-03-12',content:'陈大爷，您昨天把体温计藏枕头底下了对吧？'},
+      {from:'医生',date:'2024-04-20',content:'陈大爷，楼下药房说您少拿了一盒药。方便的话来四楼护士站补一下，我帮您留着。'}
     ]
   },
   '旧家属':{name:'旧家属',avatar:'旧',color:'#a08060',bio:'当年常去七楼探视，至今仍有未解答的疑问。',regDate:'2024-03-05',lastActive:'1个月前',posts:1,replies:5,
@@ -1199,6 +1228,12 @@ const USERS={
     nightPct:10,dayPct:80,eveningPct:10,logs:[],messages:[]
   },
   '值班医生小吴':{name:'值班医生小吴',avatar:'吴',color:'#6a7a9a',bio:'镜湖疗养院 · 内科值班医师',regDate:'2023-12-01',lastActive:'昨天',posts:1,replies:1,logs:0,online:false,
+    nightPct:30,dayPct:50,eveningPct:20,logs:[],messages:[]
+  },
+  '护士小张':{name:'护士小张',avatar:'小',color:'#7a9ab0',bio:'镜湖疗养院 · 病房护士',regDate:'2023-10-20',lastActive:'2周前',posts:0,replies:0,logs:0,online:false,
+    nightPct:40,dayPct:45,eveningPct:15,logs:[],messages:[]
+  },
+  '匿名用户':{name:'匿名用户',avatar:'匿',color:'#8a8a8a',bio:'',regDate:'2024-09-01',lastActive:'2周前',posts:0,replies:0,logs:0,online:false,
     nightPct:30,dayPct:50,eveningPct:20,logs:[],messages:[]
   }
 };
@@ -1314,13 +1349,14 @@ const POSTS={
       {author:'湖底的鱼',time:'3天前',daytime:false,content:'有人说过，吃饭的时候最不孤单。'}
     ]
   },
-  'painter':{section:'memories',title:'【回忆】七楼有个画画姑娘，每周二和周五下来',author:'四楼老病友',time:'2个月前',daytime:true,reads:298,replies:5,
+  'painter':{section:'memories',title:'【回忆】七楼有个画画姑娘，每周二和周五下来',author:'四楼老病友',time:'2个月前',daytime:true,reads:298,replies:6,
     content:'<p>突然想起一件事。</p><p>当年在镜湖四楼住的时候，活动室每周二和周五下午会来一个姑娘。</p><p>她是七楼的，但方医生特批她到四楼活动室来画画。说是"康复活动"。</p><p>她叫林夏，喜欢画画，喜欢看湖。手有点不方便，但画得特别好。</p><p>有一个四楼的病友经常帮她，好像姓周。帮她修画架、削铅笔什么的。</p><p>后来突然就不来了。也没人说什么。</p><p>现在想想……她后来到底怎么了？</p>',
     replies:[
       {author:'不放弃的人',time:'2个月前',daytime:true,content:'那个帮她的姓周的病友……是不是叫周明远？建筑设计师？如果他在的话，请联系我。'},
       {author:'四楼老病友',time:'2个月前',daytime:true,content:'回复1楼：好像是叫这个名字！但我不确定。他后来也出院了。',isOP:true},
+      {author:'老陈头',time:'1个月前',daytime:true,content:'说到他俩能凑一块儿，其实怪巧的——全院就他俩睡的都是14号床，一个七楼一个四楼。大概是号码一样的见着面，就熟了。"你也14号？"就这么搭上的。'},
       {author:'画画的姑娘',time:'1个月前',daytime:false,content:'她最后一幅画，画的是湖底。'},
-      {author:'四楼老病友',time:'1个月前',daytime:true,content:'回复3楼：你知道她去哪了吗？',isOP:true},
+      {author:'四楼老病友',time:'1个月前',daytime:true,content:'回复4楼：你知道她去哪了吗？',isOP:true},
       {author:'湖底的鱼',time:'1个月前',daytime:false,content:'她在湖底。她一直都在。'}
     ]
   },
@@ -1339,7 +1375,7 @@ const POSTS={
       {author:'三号楼老住户',time:'3个月前',daytime:true,content:'我半夜上厕所的时候确实看到过七楼的窗户透出蓝光。当时以为是什么医疗设备的光。'},
       {author:'有疑问的人',time:'3个月前',daytime:true,content:'回复1楼：真的有蓝光？那说明凌晨七楼确实在做什么。',isOP:true},
       {author:'知情人士',time:'2个月前',daytime:true,content:'蓝灯是应急灯。但凌晨开应急灯说明当时有特殊操作。方致远的研究大多在凌晨进行。'},
-      {author:'知情人士',time:'1个月前',daytime:true,content:'对了，提个不相关的——方致远主任办公室墙上挂了一面大镜子，镜框内侧写着几行小字，我路过瞟到一眼。大概是"不要相信……"后面几个字记不清了。年纪大了就是忘性大。'},
+      {author:'知情人士',time:'1个月前',daytime:true,content:'对了，说件不太相关的事——四楼活动室窗边一直立着一面大镜子，是方主任让人搬来的。镜框内侧刻着一行小字，我留意过，是<b>反着写</b>的，正着看不成句，得倒过来读。好像是"不要相信……"后面几个字，我记不全了。'},
       {author:'湖底的鱼',time:'2个月前',daytime:false,content:'蓝色。很安静。走廊很长。她说不害怕。'}
     ]
   },
@@ -1467,7 +1503,7 @@ const POSTS={
     replies:[]
   },
   'fang-research':{section:'discussion',progressive:true,unlockLayer:2,title:'【科普】记忆是怎么形成的？从海马体说起',author:'正义的光',time:'1年前',daytime:true,reads:89,replies:2,
-    content:'<p>最近在重温神经科学的经典文献，想跟大家分享一些关于记忆的基础知识。</p><p>记忆的形成主要依赖海马体——一个位于大脑深处的海马形结构。</p><p>有趣的是，海马体的损伤会严重影响新记忆的形成，但不会影响已有的记忆。这意味着记忆的形成和存储是两个不同的过程。</p><p>更有趣的是：某些化学物质可以特异性地干预记忆形成过程，而不影响其他认知功能。</p><p>也就是说——即使你失去了记忆，你的思维能力、判断力、人格都还在。</p><p>意识不等于记忆。</p><p>这是否意味着，即使一个人失去了所有记忆，他依然"是他"？</p><p>（如果有人好奇我们实验室那几款.M开头的药——最早那版一上来就伤了认知，删了；第二版能清记忆，可连"钥匙是什么"都忘了，也不行；直到第三版，才刚好只擦掉那些带时间的事，别的一样没动。）</p>',
+    content:'<p>最近在重温神经科学的经典文献，想跟大家分享一些关于记忆的基础知识。</p><p>记忆的形成主要依赖海马体——一个位于大脑深处的海马形结构。</p><p>有趣的是，海马体的损伤会严重影响新记忆的形成，但不会影响已有的记忆。这意味着记忆的形成和存储是两个不同的过程。</p><p>更有趣的是：某些化学物质可以特异性地干预记忆形成过程，而不影响其他认知功能。</p><p>也就是说——即使你失去了记忆，你的思维能力、判断力、人格都还在。</p><p>意识不等于记忆。</p><p>我把这叫做「<em>意识与记忆分离</em>」——英文呢，是 <em>Consciousness-Memory Separation</em>。是个很有意思的方向，我也在七楼试着做。</p><p>这是否意味着，即使一个人失去了所有记忆，他依然"是他"？</p><p>（如果有人好奇我们实验室那几款.M开头的药——最早那版一上来就伤了认知，删了；第二版能清记忆，可连"钥匙是什么"都忘了，也不行；直到第三版，才刚好只擦掉那些带时间的事，别的一样没动。）</p>',
     replies:[
       {author:'湖底的鱼',time:'1年前',daytime:false,content:'你说的是对的。他忘了。但他还在。'},
       {author:'正义的光',time:'1年前',daytime:false,content:'所以我在做这件事。',isOP:true}
@@ -1518,9 +1554,9 @@ const POSTS={
    ================================================================ */
 const PMS={
   'pm-shen-1':{from:'知情人士',time:'登录成功后',unlockTrigger:'login',body:'0714。你是那个病人。小心，管理员在看你。'},
-  'pm-linxia-1':{from:'湖底的鱼',time:'通过第一层后',unlockTrigger:'layer1',body:'你不记得我了。但我记得你。你帮我修过画架。'},
-  'pm-shen-2':{from:'知情人士',time:'通过第二层后',unlockTrigger:'layer2',body:'论坛里有些人不像是普通病友。发帖内容太专业了，不像业余爱好者。'},
-  'pm-shen-3':{from:'知情人士',time:'通过第三层后',unlockTrigger:'layer3',body:'我手里有备份。你查到的那份记录不是全部。仔细看看论坛里有些人的个人主页。'},
+  'pm-linxia-1':{from:'湖底的鱼',time:'读到患者信息后',unlockTrigger:'layer1',body:'你不记得我了。但我记得你。你帮我修过画架。'},
+  'pm-shen-2':{from:'知情人士',time:'读到用药记录后',unlockTrigger:'layer2',body:'论坛里有些人不像是普通病友。发帖内容太专业了，不像业余爱好者。'},
+  'pm-shen-3':{from:'知情人士',time:'读到实验记录后',unlockTrigger:'layer3',body:'我手里有备份。你查到的那份记录不是全部。仔细看看论坛里有些人的个人主页。'},
   'pm-linxia-2':{from:'湖底的鱼',time:'倒计时开始后',unlockTrigger:'countdown',body:'系统要关了。他在销毁证据。你来得及的。密码是那天的真相。'},
   'pm-fang-threat':{from:'管理员',time:'倒计时最后1小时',unlockTrigger:'countdown-end',body:'周明远先生。我知道你在看。劝你到此为止。'}
 };
@@ -1538,12 +1574,12 @@ const REPLY_KEYWORDS={
     {triggers:['排骨','糖醋','食堂'],response:'哈哈你也问排骨！我说了很好吃的！可惜吃不到了。',type:'chat'}
   ],
   'insider':[
-    {triggers:['正义的光','方致远','方医生','方主任'],response:'方主任那几篇"科普帖"，写得跟论文似的，业余的写不出那种东西。你要是不信，去"镜湖周边"翻翻——他把自己那点执念也写进去了。',type:'clue'},
-    {triggers:['C-7','研究','项目','实验','代号'],response:'那个研究项目的代号在档案里应该有记录。你去研究日志里找找——方致远的批注里常藏线索。',type:'clue'},
+    {triggers:['正义的光','方致远','方医生','方主任'],response:'"正义的光"？那账号写的帖子挺有水平，不像普通人。是不是医生？我也说不好——只是有些细节，懂行的才写得出来。具体是谁，你自己去翻翻他的帖子。',type:'clue'},
+    {triggers:['C-7','研究','项目','实验','代号'],response:'那个项目，方致远自己叫它「意识与记忆分离」，英文名是 Consciousness-Memory Separation，项目就设在七楼。代号怎么来的，你自己拼拼看。',type:'clue'},
     {triggers:['0714','周明远','0714号'],response:'0714不是床号。是日期。那天的情形……（他摇摇头）我到现在都记得。你要是翻到那几页，就知道了。',type:'clue'},
     {triggers:['沈医生','沈望川'],response:'沈望川……疗养院关门之前就不在了。具体怎么回事我也不清楚。',type:'clue'},
     {triggers:['王磊','死','自杀'],response:'王磊不是自杀。是药物过量。入院前他状态很好，不可能突然自杀。但尸检报告说是自杀。你觉得呢？',type:'clue'},
-    {triggers:['林夏','14号','七楼14'],response:'林夏。七楼14号床。方致远的核心实验对象。她不是家属接走的。出院手续是伪造的。',type:'clue'}
+    {triggers:['林夏','14号','七楼14'],response:'林夏。七楼14号床。她的出院手续……有点不对劲。具体哪里不对劲，我说不清，你得自己去翻档案。',type:'clue'}
   ],
   'painter':[
     {triggers:['林夏','她叫','名字'],response:'对，她叫林夏。每周二和周五下来画画。手不方便，但画得很好。',type:'clue'},
@@ -2828,7 +2864,7 @@ function doSearch(){
       results.push({id:id,title:post.title,author:post.author,time:post.time,snippet:snippet,deleted:false});
     }
   });
-  // 搜索被删帖
+  // 被删帖：以"已删除"出现，正文预览全部灰色打码（保留删帖痕迹但不剧透）
   const deletedResults=DELETED_POSTS.filter(function(dp){
     return dp.title.toLowerCase().indexOf(keyword.toLowerCase())>=0||dp.snippet.toLowerCase().indexOf(keyword.toLowerCase())>=0;
   });
@@ -2840,7 +2876,7 @@ function doSearch(){
       html+='<div class="sr-item" onclick="openPost(\''+r.id+'\')"><div class="sri-title">'+r.title+'</div><div class="sri-meta">'+r.author+' | '+r.time+'</div><div class="sri-snippet">'+r.snippet+'...</div></div>';
     });
     deletedResults.forEach(function(r){
-      html+='<div class="sr-item deleted"><div class="sri-title">'+r.title+'</div><div class="sri-meta">'+r.author+' | 已删除</div><div class="sri-snippet">'+r.snippet+'</div></div>';
+      html+='<div class="sr-item deleted"><div class="sri-title">'+r.title+'</div><div class="sri-meta">'+r.author+' | 已删除</div><div class="sri-snippet redacted">'+maskText(r.snippet)+'</div></div>';
     });
   }
   html+='</div>';
@@ -2852,6 +2888,8 @@ function doSearch(){
   document.getElementById('search-container').classList.remove('hidden');
 }
 
+/* 被删帖（搜索仅显示标题+已删除，正文灰色打码） */
+function maskText(s){ return String(s).replace(/[^\s]/g,'▮'); }
 const DELETED_POSTS=[
   {title:'【揭露】方致远在七楼做的非法实验，代号C-7',author:'匿名',snippet:'方致远在七楼使用未经审批的实验药物，编号C-7和M-3。患者王磊因此死亡，官方伪造为自杀……'},
   {title:'【举报】七楼14号床患者林夏非正常出院',author:'匿名',snippet:'林夏的出院手续签字并非家属本人。出院记录存在异常……'},
@@ -2868,26 +2906,121 @@ function openRecords(){
 /* ================================================================
    倒计时
    ================================================================ */
+/* ---- 倒计时警示工具：闪屏 / 警报音 / 系统弹窗 ---- */
+function cdFlash(){
+  const fl=document.getElementById('cd-flash');
+  if(!fl) return;
+  fl.classList.remove('on'); void fl.offsetWidth; fl.classList.add('on');
+}
+function cdBeep(){
+  if(window._cdMuted) return;
+  try{
+    const ctx=(window._cdActx||(window._cdActx=new (window.AudioContext||window.webkitAudioContext)()));
+    const osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.type='square';osc.frequency.value=440;
+    gain.gain.setValueAtTime(0.0001,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.18,ctx.currentTime+0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.7);
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.75);
+    const osc2=ctx.createOscillator(),g2=ctx.createGain();
+    osc2.type='square';osc2.frequency.value=330;
+    g2.gain.setValueAtTime(0.0001,ctx.currentTime+0.35);
+    g2.gain.exponentialRampToValueAtTime(0.16,ctx.currentTime+0.37);
+    g2.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.75);
+    osc2.connect(g2);g2.connect(ctx.destination);
+    osc2.start(ctx.currentTime+0.35);osc2.stop(ctx.currentTime+0.78);
+  }catch(e){}
+}
+function showCdModal(opts){
+  const mdl=document.getElementById('cd-modal');
+  if(!mdl) return;
+  opts=opts||{};
+  let html='<div class="cdm-box">';
+  html+='<div class="cdm-title"><span>⚠ '+(opts.title||'系统安全中心')+'</span><span class="cdm-x" onclick="closeCdModal()">×</span></div>';
+  html+='<div class="cdm-body">'+(opts.body||'')+(opts.time!=null?'<div class="cdm-time">'+opts.time+'</div>':'')+'</div>';
+  html+='<div class="cdm-foot"><button onclick="closeCdModal()">'+(opts.btn||'继续')+'</button></div>';
+  html+='</div>';
+  mdl.innerHTML=html;
+  mdl.classList.add('show');
+}
+function closeCdModal(){
+  const mdl=document.getElementById('cd-modal');
+  if(mdl) mdl.classList.remove('show');
+}
+/* 倒计时声音开关（右下角小按钮，倒计时期间显示） */
+function showCdSoundToggle(show){
+  let btn=document.getElementById('cd-sound-toggle');
+  if(!btn){
+    btn=document.createElement('button');
+    btn.id='cd-sound-toggle';
+    btn.className='cd-sound-toggle';
+    btn.onclick=function(){
+      window._cdMuted=!window._cdMuted;
+      btn.textContent=window._cdMuted?'🔇':'♪';
+      btn.title=window._cdMuted?'点击开启警报音':'点击静音';
+    };
+    document.body.appendChild(btn);
+  }
+  btn.textContent=window._cdMuted?'🔇':'♪';
+  btn.title=window._cdMuted?'点击开启警报音':'点击静音';
+  btn.style.display=show?'block':'none';
+}
+
 function startCountdown(endTime){
   if(window._countdownRunning) return;
   window._countdownRunning=true;
+  window._cdEndTime = endTime||(Date.now()+24*3600*1000);
   const bar=document.getElementById('countdown-bar');
-  // E4：给倒计时一句"后果预告"，而不是干巴巴的数字
-  bar.innerHTML='[系统警告] 检测到 0714 号账号正在深入受限数据。是否立即中止？';
+  // 里程碑（剩余毫秒阈值），每个只触发一次
+  window._cdMilestones={_6h:6*3600e3,_1h:3600e3,_10m:600e3,_1m:60e3};
+  window._cdFired={};
+  bar.classList.add('show');
+  document.body.classList.add('countdown-active');
+  bar.innerHTML='[系统警告] 检测到 0714 号账号正在深入受限数据。';
+  // 启动即制造压迫感：闪屏 + 警报音 + 阻断式警示弹窗
+  cdFlash(); cdBeep();
+  showCdModal({
+    title:'系统安全中心',
+    btn:'知道了',
+    body:'你正<strong>越权访问</strong>受限数据区域。<br>本系统已启动<strong> 24 小时自动销毁程序</strong>。<br>倒计时归零，全部记录将被清除，<strong>无法中止</strong>。',
+    time:'24:00:00'
+  });
+  showCdSoundToggle(true);
   setTimeout(function(){
     if(window._countdownRunning){
       bar.innerHTML='[系统警告] 未收到中止指令。系统将于 <span class="cd-time" id="cd-time">24:00:00</span> 后自动关闭并清空全部记录。';
-      startCountdownTick(endTime);
+      startCountdownTick();
     }
   },4200);
-  bar.classList.add('show');
 }
-/* 倒计时主体逻辑独立出来，避免上面预告语被覆盖 */
-function startCountdownTick(endTime){
-  // bar 在 startCountdown 里是局部变量，这里需重新获取根容器
+/* 剧情驱动：解锁关键档案时，倒计时大幅前跳，营造"被追踪/时间在烧"的压迫感 */
+function advanceCountdown(label,hours){
+  if(!window._countdownRunning||!window._cdEndTime) return;
+  window._cdEndTime -= (hours||0)*3600*1000;
+  updateState({countdownEndTime:window._cdEndTime});
+  cdFlash(); cdBeep();
+  const rem=Math.max(0,window._cdEndTime-Date.now());
+  showCdModal({title:'系统安全中心',btn:'继续',
+    body:'检测到你在读取<strong>'+label+'</strong>。系统判定你已被长期追踪，安全时限大幅消耗。',
+    time:fmtCD(rem)});
+}
+function fmtCD(ms){
+  const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+/* 倒计时主体逻辑独立出来，并加入阶段性升级警示。实时读取 window._cdEndTime（供 advanceCountdown 前跳） */
+function startCountdownTick(){
   const bar=document.getElementById('countdown-bar');
+  function fmt(ms){ return fmtCD(ms); }
+  function fire(key,timeLabel,body){
+    if(window._cdFired[key]) return;
+    window._cdFired[key]=true;
+    cdFlash(); cdBeep();
+    showCdModal({title:'系统安全中心',btn:'继续',body:body,time:timeLabel});
+  }
   function update(){
-    const remaining=endTime-Date.now();
+    const remaining=(window._cdEndTime||0)-Date.now();
     if(remaining<=0){
       bar.innerHTML='[系统] 数据已清空';
       clearInterval(countdownTimer);
@@ -2895,11 +3028,14 @@ function startCountdownTick(endTime){
       triggerBadEnding();
       return;
     }
-    const h=Math.floor(remaining/3600000);
-    const m=Math.floor((remaining%3600000)/60000);
-    const s=Math.floor((remaining%60000)/1000);
-    document.getElementById('cd-time').textContent=
-      String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    const m=window._cdMilestones||{};
+    if(remaining<=m._6h&&!window._cdFired._6h){window._cdFired._6h=true;cdFlash();cdBeep();}
+    if(remaining<=m._1h) fire('_1h',fmt(3600e3),'<strong>剩余时间不足 1 小时。</strong><br>销毁程序进入最后阶段。系统已锁定你的访问路径。');
+    if(remaining<=m._10m) fire('_10m',fmt(600e3),'<strong>不到 10 分钟。</strong><br>请立即完成操作。全部记录即将清空。');
+    if(remaining<=m._1m) fire('_1m',fmt(60e3),'<strong>最后 1 分钟。</strong><br>任何未保存的记录将永久丢失。');
+    if(remaining<=m._1h) bar.classList.add('warn');
+    const el=document.getElementById('cd-time');
+    if(el) el.textContent=fmt(remaining);
   }
   update();
   countdownTimer=setInterval(update,1000);

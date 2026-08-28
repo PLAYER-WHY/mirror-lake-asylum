@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>镜湖疗养院 · 患者查询系统</title>
+<title>镜湖疗养院 · 病历查询系统</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -129,6 +129,12 @@ body.maximized .main-wrap{max-width:100%;margin:0;border:none}
   color:#204f9e;letter-spacing:1px;vertical-align:baseline;font-style:normal;
 }
 
+/* ===== 匿名打码（灰色马赛克）：盖住研究者姓名，切"正义的光"实名才揭晓 ===== */
+.maskname{
+  background:#b9b9b9;color:#b9b9b9;border-radius:2px;padding:0 5px;
+  user-select:none;filter:blur(.5px);
+}
+
 /* ===== 病历图片容器 + 蓝笔签字叠加 ===== */
 .med-img-wrap{position:relative;display:inline-block}
 .med-img-wrap img{max-width:100%;border:1px solid var(--shadow);box-shadow:2px 2px 6px rgba(0,0,0,.15);display:block}
@@ -215,7 +221,7 @@ body.maximized .main-wrap{max-width:100%;margin:0;border:none}
 <div class="top-bar">
   <div class="tb-left">
     <div class="tb-logo">镜</div>
-    <h1>镜湖疗养院患者查询系统 - v3.2.1</h1>
+    <h1>镜湖疗养院病历查询系统 - v3.2.1</h1>
   </div>
   <div class="tb-right">
     <div class="tb-status"><span class="tb-dot"></span><span id="sys-status">系统运行中</span></div>
@@ -455,7 +461,7 @@ function renderSimpleCase(c){
   html+='<div style="text-align:center">';
   html+='<div class="med-img-wrap">';
   html+='<img src="assets/scans/'+img+'.jpg" alt="病历扫描件">';
-  if(fangSigned) html+='<div class="fang-sign">方致远</div>';
+  if(fangSigned) html+='<div class="fang-sign"><span class="maskname">方致远</span></div>';
   html+='</div>';
   html+='</div>';
   return html;
@@ -507,8 +513,8 @@ function switchLayer(n){
   }
   const maxUnlocked=state.unlockedLayers;
   // 对于未解锁的层级（L2/L3/L4前序门/L5/L6前序门），依然允许进入并渲染密码验证面板，
-  // 只有密码验证通过后才会推进 unlockedLayers
-  if(n>maxUnlocked&&n!==4&&n>maxUnlocked+1){
+  // 只有密码验证通过后才会推进 unlockedLayers（最多只能进入当前解锁层+1，防止跳关）
+  if(n>maxUnlocked&&n>maxUnlocked+1){
     // 限制只能跳到当前解锁层+1（允许进入密码门），超过则阻断
     showNotif('该层级尚未解锁','warn');
     return;
@@ -547,7 +553,7 @@ function renderLayer1(panel){
       <img src="assets/scans/medical-record-0714.jpg" alt="病历扫描件" style="max-width:100%;border:1px solid var(--shadow);box-shadow:2px 2px 6px rgba(0,0,0,.15);display:block;margin:0 auto">
     </div>
     <div style="text-align:center;margin-top:20px;padding:16px;background:rgba(255,181,71,.08);border:1px solid var(--amber);border-radius:4px">
-      <div style="color:var(--amber);font-size:13px;margin-bottom:6px">[系统] 第二层已锁定</div>
+      <div style="color:var(--amber);font-size:13px;margin-bottom:6px">[系统] 用药记录已锁定</div>
       <div style="color:var(--text-dim);font-size:12px">用药记录需要额外授权。</div>
       <div style="color:var(--text-dim);font-size:11px;margin-top:6px">该药来源未标注，未在院内目录登记。</div>
     </div>
@@ -583,32 +589,32 @@ function renderLayer2(panel){
         </div>
         <div class="ml-entry danger">
           <div class="ml-date">2023年8月1日</div>
-          <div class="ml-drug">M-3（实验性药物）—— 方致远医师会诊后建议 <span class="blue-note">批 07</span></div>
-          <div class="ml-note">非标准用药。药物来源未标注。方致远医师口头说明：新型神经递质调节剂，"靶向记忆编码通路"。无书面知情同意书。</div>
+          <div class="ml-drug">M-3（实验性药物）—— <span class="maskname">方致远</span>医师会诊后建议 <span class="blue-note">批 07</span></div>
+          <div class="ml-note">非标准用药。药物来源未标注。<span class="maskname">方致远</span>医师口头说明：新型神经递质调节剂，"靶向记忆编码通路"。无书面知情同意书。</div>
           <div class="ml-effect">效果记录：用药后患者出现显著嗜睡、意识模糊。约48小时后恢复清醒。清醒后表现为近事遗忘加重。</div>
         </div>
         <div class="ml-entry danger">
           <div class="ml-date">2023年8月15日</div>
           <div class="ml-drug">M-3 第二次给药</div>
-          <div class="ml-note">方致远医师亲自执行。沈望川医师未参与。给药后48小时观察期内，患者情景记忆出现大面积空白——不再记得入院前两个月的事件。</div>
-          <div class="ml-effect">效果记录：认知评估——MMSE回升至27/30，但情景记忆几乎完全丧失。方致远记录："认知功能保持，记忆清除成功。Subject Z符合预期。"</div>
+          <div class="ml-note"><span class="maskname">方致远</span>医师亲自执行。沈望川医师未参与。给药后48小时观察期内，患者情景记忆出现大面积空白——不再记得入院前两个月的事件。</div>
+          <div class="ml-effect">效果记录：认知评估——MMSE回升至27/30，但情景记忆几乎完全丧失。<span class="maskname">方致远</span>记录："认知功能保持，记忆清除成功。Subject Z符合预期。"</div>
         </div>
         <div class="ml-entry danger">
           <div class="ml-date">2023年9月5日</div>
           <div class="ml-drug">M-3 第三次给药（维持剂量）</div>
-          <div class="ml-note">方致远医师执行。此后患者认知功能衰退趋势停止，维持在当前水平。但已丧失的记忆未能恢复。</div>
-          <div class="ml-effect">效果记录：认知功能稳定。方致远结论："M-3可有效停止早发型认知衰退进程，代价是情景记忆清除。Subject Z为成功案例。"</div>
+          <div class="ml-note"><span class="maskname">方致远</span>医师执行。此后患者认知功能衰退趋势停止，维持在当前水平。但已丧失的记忆未能恢复。</div>
+          <div class="ml-effect">效果记录：认知功能稳定。<span class="maskname">方致远</span>结论："M-3可有效停止早发型认知衰退进程，代价是情景记忆清除。Subject Z为成功案例。"</div>
         </div>
       </div>
       <div style="background:rgba(255,71,87,.08);border:1px solid var(--red);border-radius:4px;padding:14px;margin:16px 0">
         <div style="color:var(--red);font-size:13px;font-weight:bold;margin-bottom:8px">[警告] 异常用药警告</div>
         <div style="color:var(--text);font-size:13px;line-height:1.8">
-          该患者的用药记录中包含未批准的实验性药物（M-3）。该药物未在院内药品目录中登记，无知情同意书，且由非主治医师（方致远）执行给药。<br>
+          该患者的用药记录中包含未批准的实验性药物（M-3）。该药物未在院内药品目录中登记，无知情同意书，且由非主治医师（<span class="maskname">方致远</span>）执行给药。<br>
           建议进一步查阅研究项目记录。
         </div>
       </div>
       <div style="text-align:center;margin-top:20px;padding:16px;background:rgba(255,181,71,.08);border:1px solid var(--amber);border-radius:4px">
-        <div style="color:var(--amber);font-size:13px;margin-bottom:6px">[系统] 第三层已锁定</div>
+        <div style="color:var(--amber);font-size:13px;margin-bottom:6px">[系统] 项目记录已锁定</div>
         <div style="color:var(--text-dim);font-size:12px">实验记录需要额外授权。</div>
         <div style="color:var(--text-dim);font-size:11px;margin-top:6px">部分记录仅在最终版本中留存，原始内容不可恢复。</div>
       </div>
@@ -619,7 +625,7 @@ function renderLayer2(panel){
     panel.innerHTML=`
       <div class="password-gate">
         <div class="pg-icon">[授权]</div>
-        <div class="pg-title">第二层 · 用药记录</div>
+        <div class="pg-title">用药记录</div>
         <div class="pg-hint">该记录仅对项目参与方开放。</div>
         <input type="text" id="pw-m3" placeholder="请输入" maxlength="3" autocomplete="off">
         <button onclick="checkM3()">验证</button>
@@ -637,7 +643,7 @@ function checkM3(){
     showNotif('用药记录已解锁','success');
     setTimeout(function(){switchLayer(2)},600);
   }else{
-    err.textContent='验证失败。该药未在院内正式登记，编号应该在方致远的会诊记录或论坛讨论里出现过。';
+    err.textContent='验证失败。该药未在院内正式登记，编号应该在<span class="maskname">方致远</span>的会诊记录或论坛讨论里出现过。';
   }
 }
 
@@ -650,14 +656,14 @@ function renderLayer3(panel){
     panel.innerHTML=`
       <div class="rp-header">
         <h3>C-7项目 · 实验记录</h3>
-        <div class="rp-meta">项目代号：C-7 | 负责人：方致远 <span class="blue-note">批 04</span> | 审批状态：无伦理审查记录</div>
+        <div class="rp-meta">项目代号：C-7 | 负责人：<span class="maskname">方致远</span> <span class="blue-note">批 04</span> | 审批状态：无伦理审查记录</div>
       </div>
       <div style="background:rgba(255,71,87,.08);border:1px solid var(--red);border-radius:4px;padding:14px;margin-bottom:20px">
         <div style="color:var(--red);font-size:13px;font-weight:bold;margin-bottom:8px">[机密] 机密文件</div>
         <div style="color:var(--text);font-size:13px;line-height:1.8">
           项目名称：意识与记忆分离研究（Consciousness-Memory Separation）<br>
           代号含义：C=Consciousness，7=七楼<br>
-          负责人：方致远（七楼主任兼疗养院副院长）<br>
+          负责人：<span class="maskname">方致远</span>（七楼主任兼疗养院副院长）<br>
           起始日期：2022年3月<br>
           终止日期：2023年8月（因"镜湖事件"中止）<br>
           研究目标：验证人类情景记忆可被独立清除而不影响核心认知功能，以此探索"意识独立保存"的可能性。
@@ -669,40 +675,39 @@ function renderLayer3(panel){
           <div class="es-id">Subject Z（JH-Z014 · 周明远）</div>
           <div class="es-row"><span class="es-label">诊断</span><span class="es-val">早发型认知功能衰退</span></div>
           <div class="es-row"><span class="es-label">用药</span><span class="es-val">M-3 × 3次</span></div>
-          <div class="es-row"><span class="es-label">结果</span><span class="es-val" style="color:var(--green)">成功 · 认知衰退停止，情景记忆清除</span></div>
-          <div class="es-row"><span class="es-label">方致远批注</span><span class="es-val">"意识独立于记忆存在。Z证明了一切。"</span></div>
+          <div class="es-row"><span class="es-label">结果</span><span class="es-val" style="color:var(--green)">认知衰退停止，情景记忆清除</span></div>
+          <div class="es-row"><span class="es-label"><span class="maskname">方致远</span>批注</span><span class="es-val">"意识独立于记忆存在。Z证明了一切。"</span></div>
         </div>
         <div class="exp-subject failed">
           <div class="es-id">Subject L（JH-L014 · 林夏）</div>
           <div class="es-row"><span class="es-label">诊断</span><span class="es-val">渐冻症（ALS）</span></div>
           <div class="es-row"><span class="es-label">用药</span><span class="es-val">M-3 × 2次</span></div>
-          <div class="es-row"><span class="es-label">结果</span><span class="es-val" style="color:var(--red)">无效 · ALS持续恶化，M-3对运动神经元无作用</span></div>
-          <div class="es-row"><span class="es-label">方致远批注</span><span class="es-val">"L的神经损伤为器质性，M-3无法逆转。但她能作为对照组。"</span></div>
+          <div class="es-row"><span class="es-label">结果</span><span class="es-val" style="color:var(--red)">ALS持续恶化，M-3对运动神经元无作用</span></div>
+          <div class="es-row"><span class="es-label"><span class="maskname">方致远</span>批注</span><span class="es-val">"L的神经损伤为器质性，M-3无法逆转。但她能作为对照组。"</span></div>
           <div class="es-row"><span class="es-label">现状</span><span class="es-val" style="color:var(--amber)">2023年8月"失踪"。实际逃离疗养院，目前在逃。</span></div>
         </div>
         <div class="exp-subject deceased">
           <div class="es-id">Subject W（JH-W014 · 王磊）</div>
           <div class="es-row"><span class="es-label">诊断</span><span class="es-val">抑郁症伴认知障碍</span></div>
           <div class="es-row"><span class="es-label">用药</span><span class="es-val">M-3 × 1次（剂量超标）</span></div>
-          <div class="es-row"><span class="es-label">结果</span><span class="es-val" style="color:var(--red)">死亡 · 用药后4小时心脏骤停</span></div>
+          <div class="es-row"><span class="es-label">结果</span><span class="es-val" style="color:var(--red)">用药后4小时心脏骤停</span></div>
           <div class="es-row"><span class="es-label">官方结论</span><span class="es-val">"自杀"</span></div>
-          <div class="es-row"><span class="es-label">方致远批注</span><span class="es-val">"ZL出现意外。剂量需要调整。但方向是对的。"</span></div>
+          <div class="es-row"><span class="es-label"><span class="maskname">方致远</span>批注</span><span class="es-val">"ZL出现意外。剂量需要调整。但方向是对的。"</span></div>
         </div>
       </div>
       <div style="background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;padding:14px;margin-bottom:16px">
-        <div style="color:var(--text-dim);font-size:12px;margin-bottom:8px">M-3药物机制（方致远笔记摘要）</div>
+        <div style="color:var(--text-dim);font-size:12px;margin-bottom:8px">M-3药物机制（<span class="maskname">方致远</span>笔记摘要）</div>
         <div style="color:var(--text);font-size:13px;line-height:1.8">
           M-3作用于海马体CA1区的突触后膜，选择性阻断情景记忆编码通路中的NMDA受体亚型，实现"记忆清除"效果。<br>
           与传统遗忘症不同，M-3不损害语义记忆和程序性记忆，仅清除带有时间标签的情景记忆。<br>
           这意味着患者"忘记发生了什么"，但"记得事物是什么"。<br>
           认知功能（推理、判断、语言）保持完好。<br>
-          <span style="color:var(--red)">这正是方致远理论的核心：意识≠记忆。即使清除了全部情景记忆，人仍然能思考、判断、做选择。</span>
         </div>
       </div>
       <div style="background:rgba(255,181,71,.08);border:1px solid var(--amber);border-radius:4px;padding:14px;margin-top:20px">
-        <div style="color:var(--amber);font-size:13px;margin-bottom:6px">[系统] 第四层·镜像病房已激活</div>
-        <div style="color:var(--text-dim);font-size:12px">系统检测到更深层数据。</div>
-        <div style="color:var(--text-dim);font-size:11px;margin-top:6px">此层设密者以个人纪年记忆密钥。</div>
+        <div style="color:var(--amber);font-size:13px;margin-bottom:6px">[系统] 四楼活动室那面镜子的留字已调出</div>
+        <div style="color:var(--text-dim);font-size:12px">设密者用一段自己的纪念日作钥。</div>
+        <div style="color:var(--text-dim);font-size:11px;margin-top:6px">（镜框内侧的字，是反着刻的。）</div>
       </div>
     `;
     document.getElementById('tab-4').classList.remove('locked');
@@ -710,8 +715,8 @@ function renderLayer3(panel){
     panel.innerHTML=`
       <div class="password-gate">
         <div class="pg-icon">[授权]</div>
-        <div class="pg-title">第三层 · 实验记录</div>
-        <div class="pg-hint">该项目已被封存存档。</div>
+        <div class="pg-title">实验记录</div>
+        <div class="pg-hint">该项目已被封存归档。</div>
         <input type="text" id="pw-c7" placeholder="请输入" maxlength="3" autocomplete="off">
         <button onclick="checkC7()">验证</button>
         <div class="pg-error" id="pw-c7-error"></div>
@@ -748,14 +753,14 @@ function renderLayer4Gate(panel){
   if(state.archivesUnlocked||state.mirrorUnlocked){
     panel.innerHTML=`
       <div class="rp-header">
-        <h3 style="color:var(--red)">方致远 · 临床工作记录（节选）</h3>
+        <h3 style="color:var(--red)">管理员 · 临床工作记录（节选）</h3>
         <div class="rp-meta">[机密] 机密等级：最高 | 来源：七楼病区存档 · 行政归档</div>
       </div>
       <div class="hidden-layer">
-        <div class="hl-title">方致远 · 病程与研究工作记录</div>
+        <div class="hl-title">管理员 · 病程与研究工作记录</div>
         <div class="hl-entry">
           <div class="hl-date">2022年3月15日</div>
-          <div class="hl-content">患者（方母）送诊，主诉进行性认知减退。初判早发型认知功能衰退。<br>患者已无法识别亲属面容，仍保留基本语言与情绪反应。<br>病程推演提示：意识与记忆或可分离。该假说值得作为研究方向验证。</div>
+          <div class="hl-content">患者（JH-S001）送诊，主诉进行性认知减退。初判早发型认知功能衰退。<br>患者已无法识别亲属面容，仍保留基本语言与情绪反应。<br>病程推演提示：意识与记忆或可分离。该假说值得作为研究方向验证。</div>
         </div>
         <div class="hl-entry">
           <div class="hl-date">2022年6月8日</div>
@@ -767,11 +772,11 @@ function renderLayer4Gate(panel){
         </div>
         <div class="hl-entry">
           <div class="hl-date">2026年8月24日</div>
-          <div class="hl-content">系统检测到0714号账号登录查询系统。<br>该对象认知功能保持，具备独立检索与推理能力。<br>如需了解本研究的个人背景与情感脉络，请前往四楼活动室查阅方主任私人批注。</div>
+          <div class="hl-content">系统检测到近期有账号登录查询系统。<br>此账号个人背景与情感脉络未知，需要前往四楼查阅资料。</div>
         </div>
       </div>
       <div style="text-align:center;margin:20px 0">
-        <div style="color:var(--text-dim);font-size:12px;margin-bottom:12px">以上为归档工作记录。方主任另有私人批注，存于四楼活动室未归档记录中。<br>完整的档案文件，可在桌面「档案管理」应用里查看。</div>
+        <div style="color:var(--text-dim);font-size:12px;margin-bottom:12px">以上为归档工作记录。管理员另有私人批注，存于四楼活动室未归档记录中。<br>完整的档案文件，可在桌面「档案管理」应用里查看。</div>
         <button onclick="openMirror()" style="padding:10px 24px;background:var(--amber);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px">查看四楼活动室批注（前往镜像病房）</button>
       </div>
     `;
@@ -779,7 +784,7 @@ function renderLayer4Gate(panel){
     panel.innerHTML=`
       <div class="password-gate">
         <div class="pg-icon" style="color:var(--red)">[锁]</div>
-        <div class="pg-title" style="color:var(--red)">第四层 · 批注档案</div>
+        <div class="pg-title" style="color:var(--red)">批注档案</div>
         <div class="pg-hint">此层需研究者级认证。密钥内容为研究者个人纪年。</div>
         <input type="password" id="pw-1007" placeholder="请输入" maxlength="4" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')" autocomplete="off">
         <button onclick="check1007()">验证</button>
@@ -798,7 +803,7 @@ function check1007(){
   const err=document.getElementById('pw-1007-error');
   if(val==='1007'){
     updateState({mirrorUnlocked:true,unlockedLayers:4});
-    showNotif('第四层·批注档案已解锁。','success');
+    showNotif('批注档案已解锁。','success');
     setTimeout(function(){switchLayer(4)},600);
   }else{
     err.textContent='纪年失配。该密钥存于个人记忆，非系统记录。';

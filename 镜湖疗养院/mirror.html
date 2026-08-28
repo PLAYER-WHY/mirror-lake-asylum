@@ -37,7 +37,7 @@ body.maximized .win-body{max-width:100%}
 .rc-date{font-size:10px;color:var(--text-dim);letter-spacing:1px;margin-bottom:6px}
 .rc-title{font-size:12px;font-weight:bold;color:var(--blue);margin-bottom:8px;line-height:1.4}
 .rc-content{font-size:11px;color:#333;line-height:1.7}
-.rc-num{position:absolute;right:10px;bottom:8px;font-family:'Courier New',monospace;font-weight:bold;font-size:22px;color:#4a80d8;letter-spacing:2px;text-shadow:1px 1px 0 rgba(255,255,255,.9),0 0 3px rgba(74,128,216,.3)}
+.rc-num{position:absolute;right:10px;bottom:8px;font-family:'Courier New',monospace;font-weight:bold;font-size:22px;color:#c9982a;letter-spacing:2px;text-shadow:1px 1px 0 rgba(255,255,255,.9),0 0 3px rgba(201,152,42,.3)}
 
 /* 密码门 */
 .password-gate{max-width:360px;margin:16px auto;text-align:center;background:var(--panel);border:2px solid;border-color:var(--light) var(--shadow) var(--shadow) var(--light);padding:16px}
@@ -80,7 +80,7 @@ body.maximized .win-body{max-width:100%}
   <div class="mirror-banner">
     <div class="mirror-title">◇ 四楼活动室 · 窗边镜 ◇</div>
     <div class="mirror-quote" title="这是镜子里的反字，翻过来读">不要相信眼前的秩序</div>
-    <div class="mirror-quote-hint">※ 镜框内侧一行小字，照在镜子里，所以是反的。</div>
+    <div class="mirror-quote-hint">（……病友说的那面镜子，应该就是它了——方医生常照的那面。镜框内侧果然刻着一行小字，映在镜子里，就变成了反的……得倒过来读。）</div>
   </div>
 
   <!-- 操作记录六宫格 + 页脚蓝色数字 + L6蓝色碎片 -->
@@ -91,7 +91,7 @@ body.maximized .win-body{max-width:100%}
   <div id="gate-container"></div>
 
   <div class="footer-note">
-    <a href="javascript:void(0)" onclick="window.close()" class="back-btn">← 返回病历系统</a>
+    <a href="javascript:void(0)" onclick="returnToForum()" class="back-btn">← 返回论坛</a>
   </div>
 
 </div>
@@ -142,20 +142,20 @@ const RECORDS=[
    shard:null,
    shardLoc:''},
   {date:'2023年10月7日 · 周六',
-   title:'母亲生日 · 项目方向记录',
-   content:'母亲生日。她说"记得回来吃饭"。<br>我没能回去。但我做了更大的事。<br>沈望川今天站在我办公室门口站了十分钟。他没敲门。我也没开门。<br>他以前是我最好的朋友。医学院住一个宿舍。<br>他说"你不适合当医生，你适合当神。"<br>他不懂。等M-3被验证的那一天，他会懂。',
+   title:'十月七日 · 项目方向记录',
+   content:'这一天，有人在家里等我回去吃饭。<br>我没能回去。但我做了更大的事。<br>沈望川今天站在我办公室门口站了十分钟。他没敲门。我也没开门。<br>他以前是我最好的朋友。医学院住一个宿舍。<br>他说"你不适合当医生，你适合当神。"<br>他不懂。等M-3被验证的那一天，他会懂。',
    footNum:'2',
    shard:null,
    shardLoc:''},
   {date:'2026年5月15日 · 周五',
-   title:'数据外发 · 与"救世者"对接',
-   content:'数据已打包。C-7和M-3完整实验记录、药物合成路径、认知评估量表、所有Subject原始数据。加密传输。<br>如果有一天我出事了——数据要继续有用。不能白费。<br>救世者说，这里没有你们那种繁琐的伦理审查。只要数据完整，三个月内可以复现。<br>方致远。你是真正的先驱者。历史会记住你。——也许吧。但我不在乎历史。我在乎真理。',
+   title:'数据外发 · 对接了一位朋友',
+   content:'数据已打包。C-7和M-3完整实验记录、药物合成路径、认知评估量表、所有Subject原始数据。加密传输。<br>数据已加密外传，对接了一个朋友——果然我们的目标是一致的，志同道合，为了人类！<br>如果有一天我出事了——数据要继续有用。不能白费。',
    footNum:'9',
    shard:null,
    shardLoc:''},
   {date:'2026年7月14日 · 周二',
    title:'Subject Z 实验三周年 · 最终评估',
-   content:'今天是0714号实验三周年。<br>Subject Z还在正常生活。认知功能完好。记忆没有恢复——但衰退也没继续。这就是证据。一切都值了。<br>救世者那边，第一个受试者明天开始用药。<br>七月十四日。好日子。三年前的今天我开了这个头。三年后有人会接下去。<br>真理不死。',
+   content:'今天是0714号实验三周年。<br>Subject Z还在正常生活。认知功能完好。记忆没有恢复——但衰退也没继续。这就是证据。一切都值了。<br>七月十四日。好日子。三年前的今天我开了这个头。<br>真理不死。',
    footNum:'5',
    shard:null,
    shardLoc:''}
@@ -164,6 +164,16 @@ const RECORDS=[
 /* 最大化：加宽内容 */
 function toggleMirrorMax(){
   document.body.classList.toggle('maximized');
+}
+/* 返回论坛：关闭本镜像窗口及其父（病历）窗口，切回论坛主窗口（那里才有 24 小时倒计时横条） */
+function returnToForum(){
+  var forum=null;
+  try{ var rec=window.opener; if(rec&&!rec.closed) rec.close(); }catch(e){}
+  try{ forum=(window.opener&&window.opener.opener)||null; }catch(e){}
+  if(forum && !forum.closed){ try{ forum.focus(); }catch(e){} }
+  try{ window.close(); }catch(e){}
+  // 若被当作独立标签打开而无法 close，则本页直接回论坛首页
+  if(!window.closed){ try{ window.location.href='index.html'; }catch(e){} }
 }
 
 /* 渲染卡片 */
@@ -189,14 +199,14 @@ function renderGate(){
     // 已解锁：镜像反转通过，档案文件请去桌面"档案管理"应用查看
     c.innerHTML='<div class="password-gate" style="border-left:4px solid var(--green)">'+
       '<div class="pg-icon" style="color:var(--green)">🔓</div>'+
-      '<div class="pg-title" style="color:var(--green)">第四层解锁</div>'+
+      '<div class="pg-title" style="color:var(--green)">解锁成功</div>'+
       '<div class="pg-hint">镜像反转验证通过。<br>沈望川："反着来，反着看——记忆被改写了，真相也是反过来的。"<br>完整的档案文件，请回到桌面，打开「档案管理」应用查看。</div>'+
       '</div>';
     return;
   }
   c.innerHTML='<div class="password-gate">'+
     '<div class="pg-icon" style="color:var(--amber)">[锁]</div>'+
-    '<div class="pg-title">第四层 · 镜像病房密码</div>'+
+    '<div class="pg-title">镜像病房·解除镜文</div>'+
     '<div class="pg-hint">六条记录，<br>角落里的记号。<br>连不起来的时候……<span style="color:var(--red)">换个方向试试。</span></div>'+
     '<input type="password" id="pw-l4" placeholder="请输入" maxlength="6" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,\'\')" autocomplete="off">'+
     '<div style="margin:6px 0"><button onclick="checkL4()">验证</button></div>'+
