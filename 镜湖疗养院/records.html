@@ -134,17 +134,40 @@ body.maximized .main-wrap{max-width:100%;margin:0;border:none}
   background:#b9b9b9;color:#b9b9b9;border-radius:2px;padding:0 5px;
   user-select:none;filter:blur(.5px);
 }
+/* ===== 弹窗内 24 小时倒计时角标（放在标题栏左侧，不遮 _/□/×） ===== */
+.cd-badge{margin-left:12px;display:none;font-size:11px;color:#ffd7d7;background:rgba(150,16,16,.55);border:1px solid rgba(255,255,255,.18);padding:2px 8px;border-radius:3px;font-family:Tahoma,Arial,sans-serif;white-space:nowrap;vertical-align:middle}
 
 /* ===== 病历图片容器 + 蓝笔签字叠加 ===== */
 .med-img-wrap{position:relative;display:inline-block}
 .med-img-wrap img{max-width:100%;border:1px solid var(--shadow);box-shadow:2px 2px 6px rgba(0,0,0,.15);display:block}
 .fang-sign{
-  position:absolute;right:14px;bottom:16px;
+  position:absolute;left:38%;right:auto;bottom:32%;
   font-family:"KaiTi","楷体",serif;color:#1a3a8a;font-size:22px;font-weight:bold;
   letter-spacing:4px;transform:rotate(-6deg);opacity:.65;
   text-shadow:0 0 1px rgba(26,58,138,.4);pointer-events:none;line-height:1;
 }
 .fang-sign::after{content:"";display:block;width:32px;height:2px;background:#1a3a8a;margin-top:3px;transform:rotate(-2deg);opacity:.5;border-radius:1px}
+/* 覆盖扫描件上印死的"住院中"，改为"已出院"（仅钱玉兰 n4）
+   对准 "住院号：061" 同一行的右侧 "状态：___" 处 */
+.status-fix{position:absolute;left:68%;bottom:21%;background:#f3ecd9;color:#c0392b;font-size:14px;letter-spacing:1px;padding:2px 8px;pointer-events:none;font-family:'宋体','SimSun',serif;line-height:1.3;white-space:nowrap}
+/* 病历窗口内 登录警示：红条 + 闪屏 + 弹窗 */
+.cd-topbar{display:none;background:#b3122a;color:#fff;text-align:center;font-size:12px;font-weight:bold;padding:4px 8px;border-bottom:1px solid #7a0000}
+.cd-flash{position:fixed;inset:0;z-index:900;background:radial-gradient(circle at 50% 40%,rgba(255,60,60,.45),rgba(120,0,0,.55));pointer-events:none;opacity:0}
+.cd-flash.on{animation:cdFlash .75s ease}
+@keyframes cdFlash{0%{opacity:0}18%{opacity:1}45%{opacity:.4}100%{opacity:0}}
+.cd-modal{position:fixed;inset:0;z-index:950;background:rgba(0,0,0,.38);display:none;align-items:center;justify-content:center}
+.cd-modal.show{display:flex}
+.cd-modal .cdm-box{width:430px;max-width:92%;background:#ece9d8;border:2px solid #0a246a;box-shadow:4px 4px 14px rgba(0,0,0,.45);font-family:'宋体',Tahoma;font-size:13px;color:#000}
+.cd-modal .cdm-title{background:linear-gradient(180deg,#a3382b,#6d1611);color:#fff;padding:6px 12px;font-weight:bold;font-size:12px;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center}
+.cd-modal .cdm-title .cdm-x{cursor:pointer;font-size:14px}
+.cd-modal .cdm-body{padding:16px 18px;font-size:13px;line-height:1.9;color:#4a2a20}
+.cd-modal .cdm-body strong{color:#a02222}
+.cd-modal .cdm-time{font-size:22px;color:#a02222;font-weight:bold;text-align:center;margin:12px 0;font-family:Tahoma,Arial,sans-serif}
+.cd-modal .cdm-foot{text-align:center;padding:10px;border-top:1px solid #b8a;background:#f0ede3}
+.cd-modal .cdm-foot button{padding:6px 28px;background:#a3382b;color:#fff;border:1px solid #6d1611;cursor:pointer;font-size:13px;font-weight:bold}
+/* 病历窗口内：收到论坛私信的浮动态提示 */
+.pm-toast{position:fixed;top:52px;right:24px;z-index:980;background:#2b589a;color:#fff;padding:8px 14px;font-size:12px;border-radius:3px;box-shadow:0 2px 10px rgba(0,0,0,.3);opacity:0;transform:translateY(-8px);transition:all .3s;pointer-events:none}
+.pm-toast.show{opacity:1;transform:translateY(0)}
 
 /* ===== 档案入口 ===== */
 .archives-entry{text-align:center;margin:24px 0;padding:16px;background:#e8e8f0;border:1px solid var(--face-dark)}
@@ -220,8 +243,8 @@ body.maximized .main-wrap{max-width:100%;margin:0;border:none}
 <!-- 顶栏（窗口标题栏） -->
 <div class="top-bar">
   <div class="tb-left">
-    <div class="tb-logo">镜</div>
     <h1>镜湖疗养院病历查询系统 - v3.2.1</h1>
+    <span class="cd-badge" id="cd-badge" style="display:none"></span>
   </div>
   <div class="tb-right">
     <div class="tb-status"><span class="tb-dot"></span><span id="sys-status">系统运行中</span></div>
@@ -231,6 +254,10 @@ body.maximized .main-wrap{max-width:100%;margin:0;border:none}
     <div class="tb-btn" title="关闭" onclick="window.close()">×</div>
   </div>
 </div>
+<div class="cd-topbar" id="cd-topbar">⚠ 系统即将清除 · <span id="cd-topbar-time">24:00:00</span></div>
+<div class="cd-flash" id="cd-flash"></div>
+<div class="cd-modal" id="cd-modal"></div>
+<div class="pm-toast" id="pm-toast"></div>
 
 <!-- 主体 -->
 <div class="main-wrap">
@@ -327,6 +354,79 @@ function loadState(){try{var s=JSON.parse(localStorage.getItem('gameState'));ret
 function saveState(s){localStorage.setItem('gameState',JSON.stringify(s))}
 function updateState(patch){const s=loadState();Object.assign(s,patch);saveState(s);return s}
 
+/* 弹窗内 24 小时倒计时角标 */
+function _initCdBadge(){
+  var el=document.getElementById('cd-badge'); if(!el) return;
+  function pad(n){return String(n).padStart(2,'0');}
+  function tick(){
+    var s=null; try{s=JSON.parse(localStorage.getItem('gameState'));}catch(e){}
+    if(!s||!s.countdownActive||!s.countdownEndTime){ el.style.display='none'; return; }
+    var r=s.countdownEndTime-Date.now();
+    if(r<=0){ el.textContent='⚠ 系统即将清除'; el.style.display='inline-block'; return; }
+    el.textContent='⚠ 系统即将清除 · '+pad(Math.floor(r/3600000))+':'+pad(Math.floor((r%3600000)/60000))+':'+pad(Math.floor((r%60000)/1000));
+    el.style.display='inline-block';
+  }
+  tick(); setInterval(tick,1000);
+}
+document.addEventListener('DOMContentLoaded',_initCdBadge);
+
+/* 病历窗口内登录警示：红条 + 闪屏 + 警报 + 弹窗 */
+function _cdWow(){
+  var fl=document.getElementById('cd-flash'); if(fl){ fl.classList.remove('on'); void fl.offsetWidth; fl.classList.add('on'); }
+  try{
+    var ctx=(window._cdActx||(window._cdActx=new (window.AudioContext||window.webkitAudioContext)()));
+    var osc=ctx.createOscillator(),g=ctx.createGain();
+    osc.type='square';osc.frequency.value=440;
+    g.gain.setValueAtTime(0.0001,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.18,ctx.currentTime+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.7);
+    osc.connect(g);g.connect(ctx.destination);osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.75);
+  }catch(e){}
+}
+function _cdModalMsg(){
+  var m=document.getElementById('cd-modal'); if(!m) return;
+  var s=null; try{s=JSON.parse(localStorage.getItem('gameState'));}catch(e){}
+  var r=0; if(s&&s.countdownEndTime) r=Math.max(0,s.countdownEndTime-Date.now());
+  function pad(n){return String(n).padStart(2,'0');}
+  var time=pad(Math.floor(r/3600000))+':'+pad(Math.floor((r%3600000)/60000))+':'+pad(Math.floor((r%60000)/1000));
+  m.innerHTML='<div class="cdm-box"><div class="cdm-title"><span>⚠ 系统安全中心</span><span class="cdm-x" onclick="document.getElementById(\'cd-modal\').classList.remove(\'show\')">×</span></div>'+
+    '<div class="cdm-body">你正<strong>越权访问</strong>受限数据区域。<br>本系统已启动<strong> 24 小时自动销毁程序</strong>。<br>倒计时归零，全部记录将被清除，<strong>无法中止</strong>。<div class="cdm-time">'+time+'</div></div>'+
+    '<div class="cdm-foot"><button onclick="document.getElementById(\'cd-modal\').classList.remove(\'show\')">知道了</button></div></div>';
+  m.classList.add('show');
+}
+function _cdTopbarStart(){
+  var bar=document.getElementById('cd-topbar'); if(!bar) return;
+  function pad(n){return String(n).padStart(2,'0');}
+  function tick(){
+    var s=null; try{s=JSON.parse(localStorage.getItem('gameState'));}catch(e){}
+    if(!s||!s.countdownActive||!s.countdownEndTime){ bar.style.display='none'; return; }
+    var r=s.countdownEndTime-Date.now();
+    var el=document.getElementById('cd-topbar-time');
+    if(el) el.textContent=pad(Math.floor(r/3600000))+':'+pad(Math.floor((r%3600000)/60000))+':'+pad(Math.floor((r%60000)/1000));
+    bar.style.display='block';
+  }
+  tick(); setInterval(tick,1000);
+}
+function triggerLoginWarning(){ _cdWow(); _cdModalMsg(); _cdTopbarStart(); }
+
+/* 病历窗口内：跨页检测收到新论坛私信 → 一闪而过的提示 */
+function _initPmToast(){
+  var cur=(function(){ try{var s=JSON.parse(localStorage.getItem('gameState'));return s&&s.forumNewPMs?s.forumNewPMs.length:0;}catch(e){return 0;} })();
+  window._pmSeen=cur;
+}
+window.addEventListener('storage',function(e){
+  if(e.key!=='gameState') return;
+  var s=null; try{s=JSON.parse(e.newValue);}catch(err){return;}
+  if(!s||!s.forumNewPMs) return;
+  var n=s.forumNewPMs.length;
+  if(n>(window._pmSeen||0)){
+    window._pmSeen=n;
+    var t=document.getElementById('pm-toast');
+    if(t){ t.innerHTML='📨 收到一封新的论坛私信'; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); },2600); }
+  }else{ window._pmSeen=n; }
+});
+document.addEventListener('DOMContentLoaded',_initPmToast);
+
 /* ================================================================
    登录验证
    ================================================================ */
@@ -346,6 +446,12 @@ function tryLogin(){
   if(workId&&workPass){
     // 登录成功 → 进入病历列表（医生工作台）
     updateState({playerLoggedIn:true,unlockedLayers:1});
+    // 系统检测到这台"已离职医生"的账号在访问受限数据 → 启动 24h 自动销毁倒计时
+    if(!loadState().countdownActive){
+      updateState({countdownActive:true,countdownEndTime:Date.now()+24*3600*1000});
+    }
+    // 病历窗口内即刻警示：红条 + 闪屏 + 警报 + 弹窗
+    triggerLoginWarning();
     showNotif('登录成功。病历系统已授权。','success');
     setTimeout(function(){
       document.getElementById('page-login').classList.add('hidden');
@@ -369,13 +475,13 @@ const CASES=[
    key:'主诉：情绪低落伴认知波动4月。现病史：抑郁症史，近期记忆评估异常。',focus:true,locked:true,pass:'JH-W014'},
   {id:'s',no:'JH-S001',name:'（保密）',dept:'特护病房',bed:'—',status:'已故',birth:'1953年10月7日',
    key:'主诉：[记录涂黑]。现病史：大部分病程已销毁，仅余编号信息。',focus:true,locked:true,pass:'JH-S001'},
-  {id:'n1',no:'023',name:'孙建国',dept:'内科',bed:'03床',status:'已出院',birth:'1948年5月3日',
+  {id:'n1',no:'JH-S03',name:'孙建国',dept:'内科 · 三楼',bed:'03床',status:'已出院',birth:'1948年5月3日',
    key:'主诉：头晕伴血压升高2年。现病史：高血压3级，规律服药后控制平稳。',focus:false,locked:false},
-  {id:'n2',no:'045',name:'赵桂芳',dept:'骨科',bed:'07床',status:'已出院',birth:'1952年7月18日',
+  {id:'n2',no:'JH-Z07',name:'赵桂芳',dept:'骨科 · 五楼',bed:'07床',status:'已出院',birth:'1952年7月18日',
    key:'主诉：左臂外伤疼痛1天。现病史：跌倒致左桡骨远端骨折，石膏固定。',focus:false,locked:false},
-  {id:'n3',no:'058',name:'刘德顺',dept:'呼吸内科',bed:'11床',status:'已出院',birth:'1945年12月8日',
+  {id:'n3',no:'JH-L11',name:'刘德顺',dept:'呼吸内科 · 六楼',bed:'11床',status:'已出院',birth:'1945年12月8日',
    key:'主诉：咳嗽发热5天。现病史：社区获得性肺炎，抗感染治疗后好转。',focus:false,locked:false},
-  {id:'n4',no:'061',name:'钱玉兰',dept:'神经内科',bed:'02床',status:'住院中',birth:'1942年9月25日',
+  {id:'n4',no:'JH-Q02',name:'钱玉兰',dept:'神经内科 · 四楼',bed:'02床',status:'已出院',birth:'1942年9月25日',
    key:'主诉：近期记忆力减退2月。现病史：老年女性，认知功能评估待查。',focus:false,locked:false}
 ];
 
@@ -386,10 +492,12 @@ function renderCaseList(){
   CASES.forEach(function(c){
     html+='<div class="case-card'+(c.focus?' focus':'')+'" onclick="openCase(\''+c.id+'\')">';
     html+='<div class="cc-top">';
-    html+='<div class="cc-no">'+c.no+'</div>';
+    html+='<div class="cc-no">'+(c.id==='z'?'<span class="maskname">'+c.no+'</span>':c.no)+'</div>';
     html+='</div>';
     html+='<div class="cc-name">'+c.name+'</div>';
-    html+='<div class="cc-dept">'+c.dept+' · '+c.bed+'</div>';
+    // 只显示 楼层 · 床号（不显示科室）；无床号（如特护）显示科室本身
+    var loc=(c.bed&&c.bed!=='—')?(c.dept.split('·').pop().trim()+' · '+c.bed):c.dept;
+    html+='<div class="cc-dept">'+loc+'</div>';
     html+='<div class="cc-key">'+c.key+'</div>';
     html+='<div class="cc-lock">'+((c.locked)?'[归档]':'[可查]')+'</div>';
     html+='</div>';
@@ -406,12 +514,12 @@ function openCase(id){
   const c=CASES.filter(function(x){return x.id===id})[0];
   if(!c) return;
   if(c.locked){
-    const pw=prompt('该病历已归档，请输入授权码：');
-    if(pw===null) return;
-    if(pw.trim().toUpperCase()===c.pass){
+    // 归档病历：随"档案系统"解锁开放，不再需要额外授权码
+    const st=loadState();
+    if(st&&st.archivesUnlocked){
       showCaseView(c);
     }else{
-      showNotif('密码错误。','error');
+      showNotif('该病历已归档封存，需先在档案管理系统中解锁。','warn');
     }
     return;
   }
@@ -421,6 +529,7 @@ function openCase(id){
 function showCaseView(c){
   if(c.id==='z'){
     // 主角：进入完整图层链，恢复左导航
+    window._simpleCaseId=null;
     const nav=document.getElementById('layer-nav');
     if(nav) nav.style.display='';
     document.getElementById('page-caselist').classList.add('hidden');
@@ -428,19 +537,28 @@ function showCaseView(c){
     switchLayer(1);
     return;
   }
-  // 其他病历：显示独立简化视图（含方母JH-S001的反转内容）
+  // 其他病历：非归档(可查)病历保留左导航（与主角一致）；归档病历用简化视图
   const panel=document.getElementById('record-panel');
+  const nav=document.getElementById('layer-nav');
   document.getElementById('page-caselist').classList.add('hidden');
   document.getElementById('page-records').classList.remove('hidden');
-  // 隐藏导航条，只显示该病历详情
-  const nav=document.getElementById('layer-nav');
-  if(nav) nav.style.display='none';
   const sl=document.getElementById('sb-layer');
   if(sl) sl.textContent=c.name;
   // 切换扫描件背景图：方母机密、王磊死亡报告、其余普通
   panel.classList.remove('confidential','death');
   if(c.id==='s') panel.classList.add('confidential');
   else if(c.id==='w') panel.classList.add('death');
+  if(!c.locked){
+    // 非归档普通病历：保左导航（患者信息激活，其余锁定）
+    window._simpleCaseId = c.id;
+    if(nav) nav.style.display='';
+    for(var i=1;i<=4;i++){ var t=document.getElementById('tab-'+i); if(t){ t.classList.remove('active'); t.classList.add('locked'); } }
+    var t1=document.getElementById('tab-1'); if(t1){ t1.classList.remove('locked'); t1.classList.add('active'); }
+  }else{
+    // 归档病历：简化视图，隐藏导航
+    window._simpleCaseId = null;
+    if(nav) nav.style.display='none';
+  }
   panel.innerHTML=renderSimpleCase(c);
 }
 
@@ -462,12 +580,14 @@ function renderSimpleCase(c){
   html+='<div class="med-img-wrap">';
   html+='<img src="assets/scans/'+img+'.jpg" alt="病历扫描件">';
   if(fangSigned) html+='<div class="fang-sign"><span class="maskname">方致远</span></div>';
+  if(c.id==='n4') html+='<div class="status-fix">状态：已出院</div>';
   html+='</div>';
   html+='</div>';
   return html;
 }
 
 function backToCaseList(){
+  window._simpleCaseId=null;
   document.getElementById('page-records').classList.add('hidden');
   document.getElementById('page-caselist').classList.remove('hidden');
   const nav=document.getElementById('layer-nav');
@@ -504,6 +624,11 @@ function toggleRecordsMax(){
    层级切换
    ================================================================ */
 function switchLayer(n){
+  // 简化病历（非主角/非图层链）中，只有"患者信息"tab 有意义，其余点击仅提示
+  if(window._simpleCaseId){
+    if(n>1){ showNotif('该份病历未归档此记录。','warn'); }
+    return;
+  }
   const state=loadState();
   // 真正锁定未解锁的层级：防止点击仍带 .locked 的 tab 提前跳转（例如直接打开档案系统绕过镜像）
   const targetTab=document.getElementById('tab-'+n);
@@ -572,7 +697,7 @@ function renderLayer2(panel){
     panel.innerHTML=`
       <div class="rp-header">
         <h3>用药记录</h3>
-        <div class="rp-meta">患者编号：0714 | 用药周期：2023.07.14 - 2023.09.15</div>
+        <div class="rp-meta">患者编号：<span class="maskname">0714</span> | 用药周期：2023.07.14 - 2023.09.15</div>
       </div>
       <div class="med-log">
         <div class="ml-entry">
@@ -663,7 +788,7 @@ function renderLayer3(panel){
         <div style="color:var(--text);font-size:13px;line-height:1.8">
           项目名称：意识与记忆分离研究（Consciousness-Memory Separation）<br>
           代号含义：C=Consciousness，7=七楼<br>
-          负责人：<span class="maskname">方致远</span>（七楼主任兼疗养院副院长）<br>
+          负责人：<span class="maskname">方致远</span>（疗养院副院长）<br>
           起始日期：2022年3月<br>
           终止日期：2023年8月（因"镜湖事件"中止）<br>
           研究目标：验证人类情景记忆可被独立清除而不影响核心认知功能，以此探索"意识独立保存"的可能性。
@@ -753,11 +878,11 @@ function renderLayer4Gate(panel){
   if(state.archivesUnlocked||state.mirrorUnlocked){
     panel.innerHTML=`
       <div class="rp-header">
-        <h3 style="color:var(--red)">管理员 · 临床工作记录（节选）</h3>
+        <h3 style="color:var(--red)"><span class="maskname">方致远</span> · 临床工作记录（节选）</h3>
         <div class="rp-meta">[机密] 机密等级：最高 | 来源：七楼病区存档 · 行政归档</div>
       </div>
       <div class="hidden-layer">
-        <div class="hl-title">管理员 · 病程与研究工作记录</div>
+        <div class="hl-title"><span class="maskname">方致远</span> · 病程与研究工作记录</div>
         <div class="hl-entry">
           <div class="hl-date">2022年3月15日</div>
           <div class="hl-content">患者（JH-S001）送诊，主诉进行性认知减退。初判早发型认知功能衰退。<br>患者已无法识别亲属面容，仍保留基本语言与情绪反应。<br>病程推演提示：意识与记忆或可分离。该假说值得作为研究方向验证。</div>
@@ -776,7 +901,7 @@ function renderLayer4Gate(panel){
         </div>
       </div>
       <div style="text-align:center;margin:20px 0">
-        <div style="color:var(--text-dim);font-size:12px;margin-bottom:12px">以上为归档工作记录。管理员另有私人批注，存于四楼活动室未归档记录中。<br>完整的档案文件，可在桌面「档案管理」应用里查看。</div>
+        <div style="color:var(--text-dim);font-size:12px;margin-bottom:12px">以上为归档工作记录。<span class="maskname">方致远</span>另有私人批注，存于四楼活动室未归档记录中。<br>完整的档案文件，可在桌面「档案管理」应用里查看。</div>
         <button onclick="openMirror()" style="padding:10px 24px;background:var(--amber);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px">查看四楼活动室批注（前往镜像病房）</button>
       </div>
     `;

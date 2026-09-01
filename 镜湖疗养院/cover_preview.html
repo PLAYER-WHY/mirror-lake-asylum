@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《镜湖疗养院》封面 / 宣传图 · HTML 预览</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#05080f;color:#cfe0f0;font-family:"Microsoft YaHei","SimSun",sans-serif;padding:28px;display:flex;flex-direction:column;align-items:center;gap:34px}
+  h1{font-size:18px;letter-spacing:4px;color:#9fb8d6;font-weight:normal}
+  .hint{font-size:12px;color:#5a7a99;margin-top:-18px}
+  .row{display:flex;gap:36px;flex-wrap:wrap;justify-content:center}
+
+  /* ===== 画面容器 ===== */
+  .art{position:relative;overflow:hidden;border-radius:4px;box-shadow:0 10px 40px rgba(0,0,0,.7);background:#0a1a2c}
+  .art .cap{position:absolute;left:0;right:0;bottom:-34px;text-align:center;font-size:12px;color:#7a96b2;letter-spacing:1px}
+  .cover{width:520px;height:693px}
+  .wide{width:820px;height:461px}
+
+  /* ===== 天空（极光） ===== */
+  .sky{position:absolute;inset:0 0 34% 0;background:linear-gradient(180deg,#03101c 0%,#0a2440 45%,#123a5a 72%,#1c4a72 100%)}
+  .aurora{position:absolute;inset:0;filter:blur(14px);opacity:.85;mix-blend-mode:screen}
+  .aurora::before,.aurora::after{content:'';position:absolute;top:-10%;height:70%;width:120%;left:-10%}
+  .aurora::before{background:linear-gradient(100deg,transparent 18%,rgba(70,220,120,.35) 32%,rgba(120,200,255,.22) 46%,rgba(180,110,200,.28) 60%,transparent 74%);transform:rotate(-8deg)}
+  .aurora::after{background:linear-gradient(96deg,transparent 30%,rgba(230,70,110,.22) 44%,rgba(90,180,150,.25) 58%,transparent 72%);transform:rotate(-14deg)}
+  .stars{position:absolute;inset:0;background-image:radial-gradient(1px 1px at 12% 18%,#aad4ff 50%,transparent 51%),radial-gradient(1px 1px at 34% 12%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 58% 22%,#cfe8ff 50%,transparent 51%),radial-gradient(1px 1px at 78% 10%,#ffd9a0 50%,transparent 51%),radial-gradient(1px 1px at 90% 26%,#aad4ff 50%,transparent 51%);opacity:.7}
+
+  /* ===== 月亮 ===== */
+  .moon{position:absolute;top:11%;left:50%;transform:translateX(-50%);width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 38% 34%,#fdf6dd,#d9c48e);box-shadow:0 0 40px 14px rgba(232,206,150,.42)}
+
+  /* ===== 远山/树线剪影 ===== */
+  .trees{position:absolute;bottom:34%;left:0;right:0;height:11%;background:#06121f}
+  .trees::before{content:'';position:absolute;inset:0;background:#040e18;clip-path:polygon(0 100%,0 45%,6% 30%,9% 55%,15% 20%,20% 52%,26% 26%,30% 58%,36% 18%,42% 50%,48% 28%,54% 60%,60% 22%,66% 52%,72% 26%,78% 56%,84% 20%,90% 50%,94% 30%,100% 48%,100% 100%)}
+
+  /* ===== 疗养院剪影（长条 + 一扇亮窗） ===== */
+  .bldg{position:absolute;bottom:34%;left:14%;width:42%;height:22%;background:linear-gradient(180deg,#0a1626,#050d18);border-radius:2px 2px 0 0}
+  .bldg::before{content:'';position:absolute;left:8%;top:-8%;width:84%;height:8%;background:#0a1626;border-radius:2px 2px 0 0}            /* 屋檐 */
+  .wingrid{position:absolute;inset:12% 10% 8% 10%;display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(2,1fr);gap:8px}
+  .win{background:#0c1a2b}
+  .win.on{background:#e8cf90;box-shadow:0 0 14px 3px rgba(232,207,144,.55)}
+
+  /* ===== 湖面 ===== */
+  .lake{position:absolute;left:0;right:0;bottom:0;height:34%;background:linear-gradient(180deg,#14385c 0%,#0a2036 55%,#061427 100%)}
+  .lake::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.045) 0 2px,transparent 2px 9px)}
+  .moonpath{position:absolute;top:0;left:50%;transform:translateX(-50%);width:74px;height:100%;background:linear-gradient(180deg,rgba(238,205,130,.5),rgba(238,205,130,.03));filter:blur(3px)}
+  .spark{position:absolute;height:3px;background:rgba(238,205,130,.5);filter:blur(1px)}
+
+  /* ===== 轮椅 + 推者 剪影 ===== */
+  .figures{position:absolute;bottom:34%;left:50%;transform:translateX(-46%);width:150px;height:60px}
+  .seat{position:absolute;bottom:22px;left:40px;width:26px;height:7px;background:#04090f;border-radius:3px}
+  .back{position:absolute;left:37px;bottom:24px;width:5px;height:22px;background:#04090f;border-radius:2px}
+  .wheel{position:absolute;bottom:6px;width:20px;height:20px;border:3px solid #04090f;border-radius:50%}
+  .wheel.a{left:38px}.wheel.b{left:56px}
+  .sit{position:absolute;bottom:29px;left:44px;width:12px;height:16px;background:#04090f;border-radius:3px 3px 0 0}
+  .sit::before{content:'';position:absolute;top:-8px;left:0;width:12px;height:11px;border-radius:50%;background:#04090f}
+  .stand{position:absolute;bottom:14px;left:74px;width:11px;height:34px;background:#04090f;border-radius:3px 3px 0 0}
+  .stand::before{content:'';position:absolute;top:-9px;left:0;width:11px;height:10px;border-radius:50%;background:#04090f}
+  .stand::after{content:'';position:absolute;top:11px;left:-8px;width:11px;height:5px;background:#04090f;border-radius:2px;transform:rotate(30deg)}
+
+  /* ===== 水雾 ===== */
+  .fog{position:absolute;left:0;right:0;bottom:20%;height:30%;background:radial-gradient(60% 60% at 50% 60%,rgba(180,210,235,.14),transparent 72%);filter:blur(6px)}
+
+  /* ===== 题目 / 彩蛋 ===== */
+  .morse{position:absolute;top:8%;left:6%;font-size:15px;letter-spacing:4px;color:#86b7d6;opacity:.8;font-family:'Courier New',monospace}
+  .reversed{position:absolute;top:38%;left:20%;font-size:15px;letter-spacing:3px;color:#d6c58a;opacity:.5;transform:scaleY(-1)}
+  .note{position:absolute;top:56%;left:8%;font-size:13px;color:#9fc0d8;opacity:.6;transform:rotate(-4deg);font-family:'楷体',serif}
+  .title-wrap{position:absolute;left:0;right:0;top:26%;text-align:center;z-index:3}
+  .cn{font-size:64px;font-weight:bold;letter-spacing:16px;color:#eef6ff;text-shadow:0 2px 20px rgba(120,180,230,.5),0 0 2px #0a2036}
+  .en{font-size:15px;letter-spacing:8px;color:#8fb0cc;margin-top:8px}
+  .tag{font-size:16px;letter-spacing:4px;color:#d9e6f2;margin-top:16px;text-shadow:0 1px 6px rgba(0,0,0,.7)}
+  .sub{font-size:12px;color:#7a96b2;margin-top:8px;letter-spacing:2px}
+</style>
+</head>
+<body>
+
+<h1>《镜湖疗养院》 封面 / 宣传图 · HTML 预览</h1>
+<p class="hint">纯 div + 渐变 + 剪影模拟构图，仅作布局/氛围参考；正式版建议按这个构图再生成高清画面。</p>
+
+<div class="row">
+
+  <!-- ============ 封面（竖版 3:4） ============ -->
+  <div>
+    <div class="art cover">
+      <div class="sky"><div class="aurora"></div><div class="stars"></div></div>
+      <div class="trees"></div>
+      <div class="bldg">
+        <div class="wingrid">
+          <div class="win"></div><div class="win"></div><div class="win"></div><div class="win on"></div><div class="win"></div><div class="win"></div><div class="win"></div>
+          <div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div>
+        </div>
+      </div>
+      <div class="moon"></div>
+      <div class="lake"><div class="moonpath"></div>
+        <div class="spark" style="left:47%;top:22%;width:30px;transform:rotate(-3deg)"></div>
+        <div class="spark" style="left:53%;top:46%;width:26px;transform:rotate(4deg)"></div>
+        <div class="spark" style="left:49%;top:72%;width:36px;transform:rotate(-2deg)"></div>
+      </div>
+      <div class="figures"></div>
+      <div class="fog"></div>
+
+      <div class="morse">··· &nbsp;···· &nbsp;· &nbsp;─· &nbsp;·── &nbsp;·─ &nbsp;─· &nbsp;──· &nbsp;·─· ·&nbsp;·· ─ ·─ ─·</div>
+      <div class="reversed">不要相信眼前的秩序</div>
+      <div class="note">你忘了。可她等了你三年。</div>
+
+      <div class="title-wrap">
+        <div class="cn">镜湖疗养院</div>
+        <div class="en">MIRROR LAKE SANATORIUM</div>
+        <div class="tag">记忆可以被抹去，但意识不会。</div>
+        <div class="sub">—— 心理悬疑 · 互动解谜 · ARG ——</div>
+      </div>
+    </div>
+    <div class="cap">封面（竖版 3:4）</div>
+  </div>
+
+  <!-- ============ 宣传图（横版 16:9） ============ -->
+  <div>
+    <div class="art wide">
+      <div class="sky"><div class="aurora"></div><div class="stars"></div></div>
+      <div class="trees"></div>
+      <div class="bldg">
+        <div class="wingrid">
+          <div class="win"></div><div class="win"></div><div class="win"></div><div class="win on"></div><div class="win"></div><div class="win"></div><div class="win"></div>
+          <div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div><div class="win"></div>
+        </div>
+      </div>
+      <div class="moon"></div>
+      <div class="lake"><div class="moonpath"></div>
+        <div class="spark" style="left:46%;top:24%;width:34px;transform:rotate(-3deg)"></div>
+        <div class="spark" style="left:54%;top:52%;width:28px;transform:rotate(4deg)"></div>
+        <div class="spark" style="left:48%;top:78%;width:40px;transform:rotate(-2deg)"></div>
+      </div>
+      <div class="figures"></div>
+      <div class="fog"></div>
+
+      <div class="morse">··· &nbsp;···· &nbsp;· ─· ·── ·─ ─· ──· ·─· ·&nbsp;··· ··─ ·─ ─·</div>
+      <div class="reversed">不要相信眼前的秩序</div>
+
+      <div class="title-wrap" style="top:14%">
+        <div class="cn" style="font-size:52px;letter-spacing:12px">镜湖疗养院</div>
+        <div class="en">MIRROR LAKE SANATORIUM</div>
+      </div>
+      <div class="tag" style="position:absolute;bottom:14%;left:0;right:0;top:auto;text-align:center">镜湖的月光，碎成一条回头看得见的路。</div>
+    </div>
+    <div class="cap">宣传图（横版 16:9）</div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -548,6 +548,7 @@ body.maximized .exp-shell{inset:0}
 .exp-titlebar .etb-title{flex:1;font-weight:bold;text-shadow:1px 1px 0 rgba(0,0,0,.6)}
 .exp-titlebar .etb-btn{width:20px;height:20px;background:linear-gradient(180deg,#e8e4d0,#c8c4a8);border:1px solid #fff;box-shadow:1px 1px 0 #555 inset;color:#000;font-size:11px;font-weight:bold;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .exp-titlebar .etb-btn.close{background:linear-gradient(180deg,#e07070,#c03030);color:#fff}
+.exp-titlebar .cd-badge{margin-right:6px;font-size:11px;color:#ffd7d7;background:rgba(150,16,16,.5);border:1px solid rgba(255,255,255,.18);padding:2px 8px;border-radius:3px;font-family:Tahoma,Arial,sans-serif;white-space:nowrap;text-align:left;flex:none}
 .exp-menubar{height:20px;background:var(--face);border-bottom:1px solid var(--shadow);display:flex;align-items:center;padding:0 4px;gap:1px;font-size:11px;color:#000;flex-shrink:0}
 .exp-menubar span{padding:2px 8px;cursor:default}
 .exp-menubar span:hover{background:#316ac5;color:#fff}
@@ -588,6 +589,7 @@ body.maximized .exp-shell{inset:0}
   <div class="exp-shell">
     <div class="exp-titlebar">
       <span class="etb-ic">📁</span>
+      <span class="cd-badge" id="cd-badge" style="display:none"></span>
       <span class="etb-title">档案管理</span>
       <span class="etb-btn" title="最小化" onclick="window.close()">_</span>
       <span class="etb-btn" title="最大化" onclick="toggleArchiveMax()">□</span>
@@ -627,6 +629,22 @@ const DEFAULT_STATE={
 function loadState(){try{var s=JSON.parse(localStorage.getItem('gameState'));return s?Object.assign({},DEFAULT_STATE,s):Object.assign({},DEFAULT_STATE)}catch(e){return Object.assign({},DEFAULT_STATE)}}
 function saveState(s){localStorage.setItem('gameState',JSON.stringify(s))}
 function updateState(patch){var s=loadState();Object.assign(s,patch);saveState(s);return s}
+
+/* 弹窗内 24 小时倒计时角标 */
+function _initCdBadge(){
+  var el=document.getElementById('cd-badge'); if(!el) return;
+  function pad(n){return String(n).padStart(2,'0');}
+  function tick(){
+    var s=null; try{s=JSON.parse(localStorage.getItem('gameState'));}catch(e){}
+    if(!s||!s.countdownActive||!s.countdownEndTime){ el.style.display='none'; return; }
+    var r=s.countdownEndTime-Date.now();
+    if(r<=0){ el.textContent='⚠ 系统即将清除'; el.style.display='inline-block'; return; }
+    el.textContent='⚠ 系统即将清除 · '+pad(Math.floor(r/3600000))+':'+pad(Math.floor((r%3600000)/60000))+':'+pad(Math.floor((r%60000)/1000));
+    el.style.display='inline-block';
+  }
+  tick(); setInterval(tick,1000);
+}
+document.addEventListener('DOMContentLoaded',_initCdBadge);
 
 /* 档案管理 · 资源管理器导航 */
 var FOLDERS=[

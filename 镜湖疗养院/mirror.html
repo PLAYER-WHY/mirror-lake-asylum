@@ -18,6 +18,7 @@ body{font-family:"宋体",SimSun,"Microsoft YaHei",serif;background:var(--bg);co
 .win-title{background:linear-gradient(to right,var(--blue),#1084d0);color:#fff;padding:4px 10px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:bold}
 .win-title .wt-right{display:flex;gap:2px}
 .win-title .wt-btn{width:16px;height:14px;background:var(--face);border:1px solid var(--light);border-right-color:var(--shadow);border-bottom-color:var(--shadow);color:#000;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:default}
+.win-title .cd-badge{flex:none;font-size:11px;color:#ffd7d7;background:rgba(150,16,16,.5);border:1px solid rgba(255,255,255,.18);padding:2px 8px;border-radius:3px;font-family:Tahoma,Arial,sans-serif;white-space:nowrap}
 .win-body{max-width:860px;margin:0 auto;padding:16px}
 body.maximized .win-body{max-width:100%}
 
@@ -66,7 +67,7 @@ body.maximized .win-body{max-width:100%}
 <body>
 
 <div class="win-title">
-  <div>[档案] C-7 研究档案 · 镜像视图（四楼活动室 · 方致远私人批注）</div>
+  <div style="flex:1;display:flex;align-items:center;gap:10px;overflow:hidden"><span class="cd-badge" id="cd-badge" style="display:none"></span><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">[档案] C-7 研究档案 · 镜像视图（四楼活动室 · 副院长私人批注）</span></div>
   <div class="wt-right">
     <div class="wt-btn" title="最小化" onclick="window.close()">_</div>
     <div class="wt-btn" title="最大化" onclick="toggleMirrorMax()">□</div>
@@ -102,6 +103,22 @@ const DEFAULT_STATE={unlockedLayers:0,endingChoice:null,forumNewPosts:[],forumNe
 function loadState(){try{var s=JSON.parse(localStorage.getItem('gameState'));return s?Object.assign({},DEFAULT_STATE,s):Object.assign({},DEFAULT_STATE)}catch(e){return Object.assign({},DEFAULT_STATE)}}
 function saveState(s){localStorage.setItem('gameState',JSON.stringify(s))}
 function updateState(patch){var s=loadState();Object.assign(s,patch);saveState(s);return s}
+
+/* 弹窗内 24 小时倒计时角标 */
+function _initCdBadge(){
+  var el=document.getElementById('cd-badge'); if(!el) return;
+  function pad(n){return String(n).padStart(2,'0');}
+  function tick(){
+    var s=null; try{s=JSON.parse(localStorage.getItem('gameState'));}catch(e){}
+    if(!s||!s.countdownActive||!s.countdownEndTime){ el.style.display='none'; return; }
+    var r=s.countdownEndTime-Date.now();
+    if(r<=0){ el.textContent='⚠ 系统即将清除'; el.style.display='inline-block'; return; }
+    el.textContent='⚠ 系统即将清除 · '+pad(Math.floor(r/3600000))+':'+pad(Math.floor((r%3600000)/60000))+':'+pad(Math.floor((r%60000)/1000));
+    el.style.display='inline-block';
+  }
+  tick(); setInterval(tick,1000);
+}
+document.addEventListener('DOMContentLoaded',_initCdBadge);
 
 /* 通知 */
 function showNotif(msg,color){

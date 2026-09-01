@@ -1035,7 +1035,7 @@ function onCrossPageChange(newState){
   // 病历中看到 C-7 / 方致远研究 → 桌面"档案管理"应用解锁
   if(newState.c7Unlocked && !oldState.c7Unlocked){
     reflectArchiveUnlock(newState);
-    showNotification('unlock','[解锁]','桌面「档案管理」已可以查看——方致远的研究文件，在档案里。回桌面点开它。');
+    showNotification('unlock','[解锁]','桌面「档案管理」已可以查看——那位副院长的研究文件，在档案里。回桌面点开它。');
   }
   // 检查是否应该触发结局
   checkEndingTrigger(newState);
@@ -1103,8 +1103,8 @@ function showNotification(type,icon,message,target){
    用户数据
    ================================================================ */
 const USERS={
-  '迷失的人':{name:'迷失的人',avatar:'迷',color:'#7a90b0',bio:'',regDate:'2023-08-25',lastActive:'刚刚',posts:1,replies:3,logs:0,online:true,isPlayer:true},
-  '湖底的鱼':{name:'湖底的鱼',avatar:'鱼',color:'#5080a0',bio:'',regDate:'2024-03-14',lastActive:'1小时前',posts:12,replies:47,logs:4,online:true,
+  '迷失的人':{name:'迷失的人',avatar:'迷',color:'#7a90b0',bio:'',regDate:'2023-08-25',lastActive:'刚刚',posts:1,replies:1,logs:0,online:true,isPlayer:true},
+  '湖底的鱼':{name:'湖底的鱼',avatar:'鱼',color:'#5080a0',bio:'',regDate:'2024-03-14',lastActive:'1小时前',posts:5,replies:13,logs:4,online:true,
     nightPct:87,dayPct:8,eveningPct:5,
     logs:[
       {date:'2024-06-12',content:'到这里三个月了。房子很小但够了。窗外看不到湖，但我知道湖在那边。手比上周又差了一点，拧瓶盖要试三次。'},
@@ -1114,12 +1114,12 @@ const USERS={
     ],
     messages:[{from:'不放弃的人',date:'2024-05-20',content:'你认识我妹妹吗？她叫林夏，在镜湖住过七楼。如果你有她的消息请联系我。'}]
   },
-  '知情人士':{name:'知情人士',avatar:'知',color:'#4a7aa6',bio:'前镜湖医护 · 现居外地 · 偶尔回来看看',regDate:'2023-11-15',lastActive:'6天前',posts:5,replies:18,
+  '知情人士':{name:'知情人士',avatar:'知',color:'#4a7aa6',bio:'前镜湖医护 · 现居外地 · 偶尔回来看看',regDate:'2023-11-15',lastActive:'6天前',posts:1,replies:15,
     nightPct:40,dayPct:40,eveningPct:20,
     logs:[
-      {date:'2022-05-02',content:'今天帮方主任搬了新办公室。他坚持要在正对着办公桌的墙上装一面落地镜，自己掏钱请工人来的。我问他又不是女同志臭美什么，他说"每次做重大决定前都要照一照，看看自己是不是还认识这个人。"我当玩笑听了。现在翻到这条日志，想起来那面镜子镜框内侧，他让刻字师傅写了一行小字。反着写的。我当时问过，他笑了笑没答。'},
-      {date:'2023-03-08',content:'妇女节。四楼护士每人一支护手霜，方主任掏的钱——蓝色包装，跟他的笔一个牌子。他说"医护天天洗手，手要爱护好。"吃饭的时候他还跟我说，黑色笔太严肃，签文件像开罚单，还是蓝色看着有人情味。我笑他什么时候讲究这些了。'},
-      {date:'2023-08-06',content:'昨晚没睡。王磊走的第二天。七楼走廊尽头，我看见方主任一个人站在他办公室那面镜子前面，站了快一小时。他没说话，镜子里的人也没说话。我没敢过去。'},
+      {date:'2022-05-02',content:'今天帮方院长搬了新办公室。他坚持要在正对着办公桌的墙上装一面落地镜，自己掏钱请工人来的。我问他又不是女同志臭美什么，他说"每次做重大决定前都要照一照，看看自己是不是还认识这个人。"我当玩笑听了。现在翻到这条日志，想起来那面镜子镜框内侧，他让刻字师傅写了一行小字。反着写的。我当时问过，他笑了笑没答。'},
+      {date:'2023-03-08',content:'妇女节。四楼护士每人一支护手霜，方院长掏的钱——蓝色包装，跟他的笔一个牌子。他说"医护天天洗手，手要爱护好。"吃饭的时候他还跟我说，黑色笔太严肃，签文件像开罚单，还是蓝色看着有人情味。我笑他什么时候讲究这些了。'},
+      {date:'2023-08-06',content:'昨晚没睡。王磊走的第二天。七楼走廊尽头，我看见方院长一个人站在他办公室那面镜子前面，站了快一小时。他没说话，镜子里的人也没说话。我没敢过去。'},
       {date:'2024-02-20',content:'辞职前最后一次回四楼，活动室的窗边还立着那面镜子。镜框内侧的字我再看了一遍——反着写的，"不要相信眼前的秩序"。他刻的。我在食堂碰到老陈头，他还跟我念叨那面镜子，说他记得镜框上写了什么，但是年纪大了想不全了。我也没告诉他。说不出口。'},
       {date:'2024-07-02',content:'离开镜湖快一年了。他们以为我消失了。我没有。'},
       {date:'2025-05-18',content:'今天翻到以前的工作笔记。0714号病人的用药记录我留了备份。这事，没人知道。'},
@@ -1131,7 +1131,7 @@ const USERS={
       {from:'知情人士',date:'2025-01-11',content:'我只是关心真相的人。'}
     ]
   },
-  '管理员':{name:'管理员',avatar:'管',color:'#e8a030',bio:'本论坛管理员',regDate:'2023-09-15',lastActive:'始终在线',posts:2,replies:0,logs:0,online:true,
+  '管理员':{name:'管理员',avatar:'管',color:'#e8a030',bio:'本论坛管理员',regDate:'2023-09-15',lastActive:'始终在线',posts:2,replies:1,logs:0,online:true,
     nightPct:40,dayPct:40,eveningPct:20,
     logs:[],messages:[],
     opRecords:[
@@ -1139,26 +1139,26 @@ const USERS={
       {date:'2024-05-15',action:'封禁用户',detail:'用户名：真相seekers'},
       {date:'2024-08-01',action:'删除帖子×7',detail:'涉及"方致远"真名'},
       {date:'2025-03-10',action:'修改系统登录日志',detail:'删除某次异常登录记录'},
-      {date:'2026-08-24',action:'检测到0714号账号登录',detail:'[警告]'}
+      {date:'2026-08-24',action:'检测到JH-L014号账号登录',detail:'[警告]'}
     ]
   },
-  '正义的光':{name:'正义的光',avatar:'正',color:'#c0392b',bio:'',regDate:'2025-06-01',lastActive:'2周前',posts:4,replies:0,logs:0,online:false,
+  '正义的光':{name:'正义的光',avatar:'正',color:'#c0392b',bio:'',regDate:'2025-06-01',lastActive:'2周前',posts:5,replies:2,logs:0,online:false,
     nightPct:30,dayPct:50,eveningPct:20,logs:[],messages:[],
     isFang:true
   },
   '救世者':{name:'救世者',avatar:'S',color:'#2c3e50',bio:'',regDate:'2026-03-20',lastActive:'3天前',posts:0,replies:0,logs:0,online:false,
     nightPct:10,dayPct:20,eveningPct:70,logs:[],messages:[]
   },
-  '不放弃的人':{name:'不放弃的人',avatar:'寻',color:'#c080a0',bio:'找妹妹',regDate:'2024-02-15',lastActive:'1个月前',posts:1,replies:5,logs:0,online:false,
+  '不放弃的人':{name:'不放弃的人',avatar:'寻',color:'#c080a0',bio:'找妹妹',regDate:'2024-02-15',lastActive:'1个月前',posts:1,replies:9,logs:0,online:false,
     nightPct:20,dayPct:40,eveningPct:40,logs:[],messages:[]
   },
-  '老陈头':{name:'老陈头',avatar:'陈',color:'#80a070',bio:'四楼老病友，当年住了一年。记性不好，但聊起医生护士来如数家珍。',regDate:'2024-01-20',lastActive:'5天前',posts:2,replies:8,
+  '老陈头':{name:'老陈头',avatar:'陈',color:'#80a070',bio:'四楼老病友，当年住了一年。记性不好，但聊起医生护士来如数家珍。',regDate:'2024-01-20',lastActive:'5天前',posts:3,replies:10,
     nightPct:10,dayPct:70,eveningPct:20,
     logs:[
-      {date:'2024-01-25',content:'入院第三天。四楼管我的是沈医生，白大褂扣子永远扣到最上面一颗，说话温温柔柔的，不像方主任。方主任每次来查房，后面跟一串实习医生，像钦差大臣似的，走路带风。'},
-      {date:'2024-02-14',content:'今天情人节，沈医生桌上多了一盆小多肉，不知道哪个病人家属送的。方主任路过瞟了一眼，打趣说"沈望川，你这花要是能活，我下周食堂排骨全让给你。"沈医生笑笑没说话——我赌沈医生赢，多肉哪那么容易死。'},
-      {date:'2024-03-02',content:'早上去护士站蹭热水，撞见陈主任（护理部那个）在骂护士小张，说四楼体温计少了一根。方主任从旁边过，从白大褂口袋掏出一根递过去，说"昨天查房顺手借的，忘了还。"陈主任当场就没脾气了——全院好像都拿方主任没办法。'},
-      {date:'2024-04-03',content:'半夜护士站炸锅了，听说是七楼出事。第二天七楼的探视全取消。方主任红着眼睛来四楼查房，还是那副样子，但金丝眼镜腿上全是指痕——他攥了一整夜吧。沈医生没跟着来，不知道去哪了。'},
+      {date:'2024-01-25',content:'入院第三天。四楼管我的是沈医生，白大褂扣子永远扣到最上面一颗，说话温温柔柔的，不像方院长。方院长每次来查房，后面跟一串实习医生，像钦差大臣似的，走路带风。'},
+      {date:'2024-02-14',content:'今天情人节，沈医生桌上多了一盆小多肉，不知道哪个病人家属送的。方院长路过瞟了一眼，打趣说"沈望川，你这花要是能活，我下周食堂排骨全让给你。"沈医生笑笑没说话——我赌沈医生赢，多肉哪那么容易死。'},
+      {date:'2024-03-02',content:'早上去护士站蹭热水，撞见陈主任（护理部那个）在骂护士小张，说四楼体温计少了一根。方院长从旁边过，从白大褂口袋掏出一根递过去，说"昨天查房顺手借的，忘了还。"陈主任当场就没脾气了——全院好像都拿方院长没办法。'},
+      {date:'2024-04-03',content:'半夜护士站炸锅了，听说是七楼出事。第二天七楼的探视全取消。方院长红着眼睛来四楼查房，还是那副样子，但金丝眼镜腿上全是指痕——他攥了一整夜吧。沈医生没跟着来，不知道去哪了。'},
       {date:'2024-05-10',content:'出院了。收拾东西的时候沈医生来送我，手里攥了盒排骨——周三的。他说"老陈头，记得按时吃药，别再自己偷偷减了。"我问他七楼怎么样了，他沉默半天说"别管。走你的。"'}
     ],
     messages:[
@@ -1166,47 +1166,47 @@ const USERS={
       {from:'医生',date:'2024-04-20',content:'陈大爷，楼下药房说您少拿了一盒药。方便的话来四楼护士站补一下，我帮您留着。'}
     ]
   },
-  '旧家属':{name:'旧家属',avatar:'旧',color:'#a08060',bio:'当年常去七楼探视，至今仍有未解答的疑问。',regDate:'2024-03-05',lastActive:'1个月前',posts:1,replies:5,
+  '旧家属':{name:'旧家属',avatar:'旧',color:'#a08060',bio:'当年常去七楼探视，至今仍有未解答的疑问。',regDate:'2024-03-05',lastActive:'1个月前',posts:4,replies:9,
     nightPct:15,dayPct:55,eveningPct:30,
     logs:[
-      {date:'2023-07-18',content:'第一次探视七楼。登记的时候看到方主任和一个穿深蓝西装的男人在走廊尽头说话，声音很低，但我清清楚楚听见方主任说了一句"就他了，8月5号之后。"那人点点头就走了。我现在想，那个日期是不是……'},
+      {date:'2023-07-18',content:'第一次探视七楼。登记的时候看到方院长和一个穿深蓝西装的男人在走廊尽头说话，声音很低，但我清清楚楚听见方院长说了一句"就他了，8月5号之后。"那人点点头就走了。我现在想，那个日期是不是……'},
       {date:'2023-07-25',content:'第二次探视。沈医生在玻璃门外等我，跟我说"里面的事别问，多陪陪他就好。"我道谢的时候发现他白大褂口袋里鼓鼓囊囊的，露出来一小截蓝色钢笔——真的是特别蓝的那种。'},
-      {date:'2023-07-30',content:'今天去得早，护士站还在交班。听见护士小张跟另一个护士八卦，说方主任办公室那面大镜子是他自己掏钱装的，"据说他每天早上对着镜子说三分钟的话，不知道在跟谁说。"陈主任从旁边过，瞪了她一眼，小张立马闭嘴了。'},
-      {date:'2023-08-08',content:'探视被取消。护士说"方主任通知的，这周开始七楼特殊护理期。"我不服，在走廊等了一小时，看到七楼推出来一个盖白布的担架。我不敢问那是谁。'},
+      {date:'2023-07-30',content:'今天去得早，护士站还在交班。听见护士小张跟另一个护士八卦，说方院长办公室那面大镜子是他自己掏钱装的，"据说他每天早上对着镜子说三分钟的话，不知道在跟谁说。"陈主任从旁边过，瞪了她一眼，小张立马闭嘴了。'},
+      {date:'2023-08-08',content:'探视被取消。护士说"方院长通知的，这周开始七楼特殊护理期。"我不服，在走廊等了一小时，看到七楼推出来一个盖白布的担架。我不敢问那是谁。'},
       {date:'2024-03-02',content:'疗养院关了大半年了，我昨天路过，围墙那边开了一簇黄色的花。想起每次探视完，门口保安老李都会跟我说一句"别太操心，医生会好好治的。"也不知道老李现在在哪。'}
     ],
     messages:[]
   },
-  '四楼老病友':{name:'四楼老病友',avatar:'四',color:'#7a9a5a',bio:'住过四楼一年，林夏画画的时候我也在活动室。',regDate:'2024-02-28',lastActive:'2个月前',posts:1,replies:3,
+  '四楼老病友':{name:'四楼老病友',avatar:'四',color:'#7a9a5a',bio:'住过四楼一年，林夏画画的时候我也在活动室。',regDate:'2024-02-28',lastActive:'2个月前',posts:1,replies:10,
     nightPct:10,dayPct:60,eveningPct:30,
     logs:[
-      {date:'2023-05-12',content:'护士节。方主任给每个护士送了一支护手霜，蓝色包装的，说是"天天洗手辛苦了。"沈医生则是买了一整箱奶茶，整个四楼一人一杯。我选了珍珠奶茶，沈医生还问我甜不甜。'},
+      {date:'2023-05-12',content:'护士节。方院长给每个护士送了一支护手霜，蓝色包装的，说是"天天洗手辛苦了。"沈医生则是买了一整箱奶茶，整个四楼一人一杯。我选了珍珠奶茶，沈医生还问我甜不甜。'},
       {date:'2023-06-01',content:'儿童节。四楼活动室搞了个折纸活动，康复科的王立群主任带了他儿子来——小男孩大概七八岁，满屋子追着气球跑，把林夏刚摊开的画纸踩了个脚印。王主任急得要骂，林夏笑着摆了摆手，说"没事，脚印画成一条船就行。"'},
       {date:'2023-06-08',content:'林夏第一次到四楼来画画。她推轮椅进来的那一刻，我以为哪个明星来了——眼睛太亮了。周明远在旁边看书，抬头瞟了一眼，然后就没再把书翻过去。'},
-      {date:'2023-07-01',content:'饭点在食堂撞见方主任和沈医生对坐吃饭。方致远还是端着的，菜是两素一汤，一粒米不掉。沈医生扒饭扒得飞快，嘴里还塞着就说"七楼那个病例，我还是觉得——"方致远筷子一顿，抬头看了他一眼，沈医生硬生生把话咽回去了。'},
+      {date:'2023-07-01',content:'饭点在食堂撞见方院长和沈医生对坐吃饭。方院长还是端着的，菜是两素一汤，一粒米不掉。沈医生扒饭扒得飞快，嘴里还塞着就说"七楼那个病例，我还是觉得——"方院长筷子一顿，抬头看了他一眼，沈医生硬生生把话咽回去了。'},
       {date:'2023-07-11',content:'那天在活动室门口练球，撞见两个人压着嗓子吵架，隔了层墙，听不真切，只隐约飘进来几句——什么"不能拿他当小白鼠"，什么"这是他唯一的机会"。我没敢多看，后来听见有人摔门走了。是谁，我没看清，也没敢问。'}
     ],
     messages:[]
   },
-  '有疑问的人':{name:'有疑问的人',avatar:'疑',color:'#909090',bio:'',regDate:'2024-04-10',lastActive:'3个月前',posts:1,replies:2,logs:0,online:false,
+  '有疑问的人':{name:'有疑问的人',avatar:'疑',color:'#909090',bio:'',regDate:'2024-04-10',lastActive:'3个月前',posts:3,replies:10,logs:0,online:false,
     nightPct:20,dayPct:50,eveningPct:30,logs:[],messages:[]
   },
-  '乒乓爱好者':{name:'乒乓爱好者',avatar:'乒',color:'#d07050',bio:'',regDate:'2024-05-01',lastActive:'4个月前',posts:1,replies:4,logs:0,online:false,
+  '乒乓爱好者':{name:'乒乓爱好者',avatar:'乒',color:'#d07050',bio:'',regDate:'2024-05-01',lastActive:'4个月前',posts:1,replies:3,logs:0,online:false,
     nightPct:10,dayPct:70,eveningPct:20,logs:[],messages:[]
   },
-  '画画的姑娘':{name:'画画的姑娘',avatar:'画',color:'#a060a0',bio:'',regDate:'2024-03-20',lastActive:'已注销',posts:0,replies:2,logs:0,online:false,
+  '正能量小路':{name:'正能量小路',avatar:'路',color:'#a060a0',bio:'',regDate:'2024-03-20',lastActive:'已注销',posts:0,replies:1,logs:0,online:false,
     nightPct:30,dayPct:40,eveningPct:30,logs:[],messages:[]
   },
-  '夜跑的人':{name:'夜跑的人',avatar:'夜',color:'#506080',bio:'',regDate:'2026-08-10',lastActive:'1周前',posts:1,replies:0,logs:0,online:false,
+  '夜跑的人':{name:'夜跑的人',avatar:'夜',color:'#506080',bio:'',regDate:'2026-08-10',lastActive:'1周前',posts:2,replies:1,logs:0,online:false,
     nightPct:80,dayPct:10,eveningPct:10,logs:[],messages:[]
   },
-  '附近居民':{name:'附近居民',avatar:'民',color:'#708090',bio:'',regDate:'2024-06-01',lastActive:'3天前',posts:1,replies:2,logs:0,online:true,
+  '附近居民':{name:'附近居民',avatar:'民',color:'#708090',bio:'',regDate:'2024-06-01',lastActive:'3天前',posts:3,replies:4,logs:0,online:true,
     nightPct:20,dayPct:50,eveningPct:30,logs:[],messages:[]
   },
-  '湖边散步的人':{name:'湖边散步的人',avatar:'散',color:'#60a080',bio:'',regDate:'2024-07-01',lastActive:'1周前',posts:0,replies:3,logs:0,online:false,
+  '湖边散步的人':{name:'湖边散步的人',avatar:'散',color:'#60a080',bio:'',regDate:'2024-07-01',lastActive:'1周前',posts:0,replies:5,logs:0,online:false,
     nightPct:15,dayPct:60,eveningPct:25,logs:[],messages:[]
   },
-  '画画的人':{name:'画画的人',avatar:'绘',color:'#a080c0',bio:'',regDate:'2026-06-01',lastActive:'2个月前',posts:1,replies:2,logs:0,online:false,
+  '画画的人':{name:'画画的人',avatar:'绘',color:'#a080c0',bio:'',regDate:'2026-06-01',lastActive:'2个月前',posts:1,replies:3,logs:0,online:false,
     nightPct:20,dayPct:50,eveningPct:30,logs:[],messages:[]
   },
   '三号楼老住户':{name:'三号楼老住户',avatar:'楼',color:'#8a7a6a',bio:'',regDate:'2024-09-01',lastActive:'6个月前',posts:0,replies:2,logs:0,online:false,
@@ -1275,10 +1275,10 @@ const POSTS={
     ]
   },
   'gossip-doctors':{section:'memories',title:'【闲聊】你们还记得哪个医生最好说话？',author:'老陈头',time:'2周前',daytime:true,reads:189,replies:4,
-    content:'<p>翻旧帖翻到有人问七楼的医生，突然想聊聊当年那些医生。</p><p>我最熟的是沈医生，四楼管我的，人温温柔柔的，说话都怕吓着你。方主任碰见得少，他管七楼。</p><p>不过我这老眼昏花，记性又差，哪能真评价人家。你们谁熟一点？</p>',
+    content:'<p>翻旧帖翻到有人问七楼的医生，突然想聊聊当年那些医生。</p><p>我最熟的是沈医生，四楼管我的，人温温柔柔的，说话都怕吓着你。方院长碰见得少，他管七楼。</p><p>不过我这老眼昏花，记性又差，哪能真评价人家。你们谁熟一点？</p>',
     replies:[
-      {author:'旧家属',time:'2周前',daytime:true,content:'方主任啊……我接触过他几次。他对老人是真的有耐心，我家属当年住七楼，有回我撞见他蹲在床边一个多小时，就为了哄一个老太太吃粥。那会儿我还想，这主任挺和气的。'},
-      {author:'乒乓爱好者',time:'2周前',daytime:true,content:'楼上说的跟我想的不是一回事。我在四楼住的时候，远远看过方主任几次，永远板着张脸，说话慢条斯理又没什么废话，看着特别严肃，我都不敢跟他搭话。'},
+      {author:'旧家属',time:'2周前',daytime:true,content:'方院长啊……我接触过他几次。他对老人是真的有耐心，我家属当年住七楼，有回我撞见他蹲在床边一个多小时，就为了哄一个老太太吃粥。那会儿我还想，这位医生挺和气的。'},
+      {author:'乒乓爱好者',time:'2周前',daytime:true,content:'楼上说的跟我想的不是一回事。我在四楼住的时候，远远看过方院长几次，永远板着张脸，说话慢条斯理又没什么废话，看着特别严肃，我都不敢跟他搭话。'},
       {author:'有疑问的人',time:'1周前',daytime:true,content:'专业是真的专业。我托人问过，说他是七楼病区的顶梁柱，疑难杂症都往他那送。就是……给人一种"他很懂，但不太亲"的感觉。'},
       {author:'老陈头',time:'1周前',daytime:true,content:'哈哈，你们说的都对。一个人嘛，对病人一套，对同事一套。我要是有家属住院，我倒宁愿碰上个他这样的——本事硬，比会说好听话强。',isOP:true}
     ]
@@ -1286,16 +1286,16 @@ const POSTS={
   'gossip-nurse':{section:'memories',title:'【日常】护士站那点事，有人也深有同感吗',author:'有疑问的人',time:'1周前',daytime:true,reads:97,replies:3,
     content:'<p>在医院待久了，渐渐病没多大事，护士站那点琐碎倒先看透了。</p><p>值夜班的护士最累，一个本子记满体温、用药、几点几分谁干嘛。我老琢磨她们那些记录本。</p><p>有次我去交费路过，听见两个护士小声说"又来了""那床的家属真是……"话没说完就被敲门声打断了。医院的墙，藏不住话。</p>',
     replies:[
-      {author:'四楼老病友',time:'1周前',daytime:true,content:'护士站的记录本，我住院那会儿没事就瞟两眼。记得有本子上夹了张旧照片，是方主任年轻时候和一个老太太合拍的，边角都磨白了。我当时多嘴问了句，值班护士赶紧把本子合上，说"别看了"。'},
+      {author:'四楼老病友',time:'1周前',daytime:true,content:'护士站的记录本，我住院那会儿没事就瞟两眼。记得有本子上夹了张旧照片，是方院长年轻时候和一个老太太合拍的，边角都磨白了。我当时多嘴问了句，值班护士赶紧把本子合上，说"别看了"。'},
       {author:'陈秀芳',time:'1周前',daytime:true,content:'那本是值班日志，个人东西不许乱翻——谁的照片都不该到处传。你们也别再到处打听了。休息好最重要。',type:'notice'},
-      {author:'有疑问的人',time:'1周前',daytime:true,content:'回复1楼：哦……老太太？方主任的什么人？我纯好奇。',isOP:true}
+      {author:'有疑问的人',time:'1周前',daytime:true,content:'回复1楼：哦……老太太？方院长的什么人？我纯好奇。',isOP:true}
     ]
   },
   'insider':{section:'discussion',title:'【讨论】有没有人听说过三年前的"镜湖事件"？',author:'知情人士',time:'1周前',daytime:true,reads:678,replies:7,
     content:'<p>如题。</p><p>镜湖疗养院三年前突然关闭，官方说是"经营不善"。</p><p>但我知道不是。</p><p>三年前，七楼出过事。一个病人死了。官方说是自杀，但那个病人入院前状态很好，不可能自杀。</p><p>之后疗养院就关了。七楼先封，然后整个院都关了。</p><p>有没有人也听说过这件事？或者知道更多细节？</p>',
     edited:true,
     editHistory:{
-      original:'如题。镜湖疗养院三年前突然关闭，官方说是"经营不善"。但我知道不是。三年前，七楼出过事。一个病人死了。官方说是自杀，但那个病人入院前状态很好，不可能自杀。方致远是七楼的主任，也是疗养院的副院长。他在做一个关于记忆和神经递质的研究项目，代号C-7。七楼的病人都是他的"研究对象"。你们自己品品。',
+      original:'如题。镜湖疗养院三年前突然关闭，官方说是"经营不善"。但我知道不是。三年前，七楼出过事。一个病人死了。官方说是自杀，但那个病人入院前状态很好，不可能自杀。听说有个医生在做一个关于记忆和神经递质的研究项目，代号C-7。七楼的病人都是他的"研究对象"。你们自己品品。',
       current:'如题。镜湖疗养院三年前突然关闭，官方说是"经营不善"。但我知道不是。三年前，七楼出过事。一个病人死了。官方说是自杀，但那个病人入院前状态很好，不可能自杀。之后疗养院就关了。七楼先封，然后整个院都关了。有没有人也听说过这件事？或者知道更多细节？',
       reason:'管理员要求删除涉及具体人员和研究项目的信息'
     },
@@ -1303,7 +1303,7 @@ const POSTS={
       {author:'管理员',time:'1周前',daytime:true,content:'请勿传播不实信息。本论坛所有发言将被记录。',isAdmin:true},
       {author:'三号楼老住户',time:'1周前',daytime:true,content:'我住三号楼对面的老小区，当年确实看到过救护车来了好几次。但具体什么事不清楚。后来七楼有个姑娘不见了，说是家属接走了，但谁也没见着家属来接。'},
       {author:'知情人士',time:'6天前',daytime:true,content:'回复2楼：那个姑娘不是家属接走的。出院手续是伪造的。'},
-      {author:'知情人士',time:'6天前',daytime:true,content:'再说个小细节——方致远签字从来只用蓝色钢笔，深蓝的那种。闲聊的时候他还开玩笑说"黑色太严肃，显得人都老十岁"。对了，有一回我翻到他一页旧记录，边角用蓝笔标了个<span class="blue-note">09</span>，也不知道是记的什么。'},
+      {author:'知情人士',time:'6天前',daytime:true,content:'再说个小细节——那位副院长签字从来只用蓝色钢笔，深蓝的那种。闲聊的时候他还开玩笑说"黑色太严肃，显得人都老十岁"。对了，有一回我翻到他一页旧记录，边角用蓝笔标了个<span class="blue-note">09</span>，也不知道是记的什么。'},
       {author:'不放弃的人',time:'5天前',daytime:true,content:'我妹妹就是在七楼住过的！她叫林夏，14号床。疗养院关门之前在那里住院。关了之后就联系不上了。如果是伪造出院手续……我妹妹到底去哪了？'},
       {author:'知情人士',time:'5天前',daytime:true,content:'回复4楼：你的直觉是对的。签字不是你们家属签的吧？'},
       {author:'不放弃的人',time:'5天前',daytime:true,content:'回复5楼：不是！我们谁都没签过字！当初我们以为是她自己出院走的，现在越想越不对劲……'},
@@ -1311,7 +1311,7 @@ const POSTS={
     ]
   },
   'missing':{section:'discussion',title:'【寻人】找一个叫林夏的女孩，有人认识吗？',author:'不放弃的人',time:'2年前',daytime:true,reads:1563,replies:8,
-    content:'<p>我妹妹叫林夏，今年应该是28岁了。</p><p>她在镜湖疗养院住过院，七楼14号床。疗养院关门之前在那里住院，关了之后就联系不上了。</p><p>当时医院说她是"家属接走出院"的，但我们家谁也没去接过她。签字也不是我们签的。</p><p>她以前喜欢画画，喜欢去镜湖写生。退役前在市乒乓球队打过球。</p><p>她有点渐冻症，手会抖，但说话和思维都完全正常。</p><p>如果有人认识她，或者知道她的去向，请联系我。求求大家了。</p><p>——一个找了两年妹妹的人</p>',
+    content:'<p>我妹妹叫林夏，今年应该是快30岁了。</p><p>她在镜湖疗养院住过院，七楼14号床。疗养院关门之前在那里住院，关了之后就联系不上了。</p><p>当时医院说她是"家属接走出院"的，但我们家谁也没去接过她。签字也不是我们签的。</p><p>她以前喜欢画画，喜欢去镜湖写生。退役前在市乒乓球队打过球。</p><p>她有点渐冻症，手会抖，但说话和思维都完全正常。</p><p>如果有人认识她，或者知道她的去向，请联系我。求求大家了。</p><p>——一个找了两年妹妹的人</p>',
     replies:[
       {author:'四楼老病友',time:'2年前',daytime:true,content:'林夏我认识！当年我在四楼住的时候，她每周二和周五下午会到四楼活动室来画画。她人很好，话不多，但笑起来特别好看。后来突然就不来了，我也没问过。'},
       {author:'不放弃的人',time:'2年前',daytime:true,content:'回复1楼：她在四楼活动室画画？那有没有人陪她说话？有没有人帮她拿画具？她手不方便……',isOP:true},
@@ -1329,7 +1329,7 @@ const POSTS={
     replies:[
       {author:'有疑问的人',time:'1个月前',daytime:true,content:'我哥当时在七楼，确实每天量很多次。但每次量完护士都会在一个本子上记什么，不只是体温，还问"今天记得昨天的事吗""认得我吗"之类的。当时觉得奇怪。'},
       {author:'老陈头',time:'1个月前',daytime:true,content:'回复1楼：认得我吗？这不是查认知吗？我四楼也问过，但一周一次。七楼每天问？',isOP:true},
-      {author:'知情人士',time:'3周前',daytime:true,content:'不是在量体温。是在做认知评估。方致远需要每天跟踪实验对象的认知变化。温度只是名义。'},
+      {author:'知情人士',time:'3周前',daytime:true,content:'不是在量体温。是在做认知评估。那位副院长需要每天跟踪实验对象的认知变化。温度只是名义。'},
       {author:'老陈头',time:'3周前',daytime:true,content:'回复3楼：实验对象？我们是被实验？',isOP:true}
     ]
   },
@@ -1355,7 +1355,7 @@ const POSTS={
       {author:'不放弃的人',time:'2个月前',daytime:true,content:'那个帮她的姓周的病友……是不是叫周明远？建筑设计师？如果他在的话，请联系我。'},
       {author:'四楼老病友',time:'2个月前',daytime:true,content:'回复1楼：好像是叫这个名字！但我不确定。他后来也出院了。',isOP:true},
       {author:'老陈头',time:'1个月前',daytime:true,content:'说到他俩能凑一块儿，其实怪巧的——全院就他俩睡的都是14号床，一个七楼一个四楼。大概是号码一样的见着面，就熟了。"你也14号？"就这么搭上的。'},
-      {author:'画画的姑娘',time:'1个月前',daytime:false,content:'她最后一幅画，画的是湖底。'},
+      {author:'正能量小路',time:'1个月前',daytime:false,content:'她最后一幅画，画的是湖底。'},
       {author:'四楼老病友',time:'1个月前',daytime:true,content:'回复4楼：你知道她去哪了吗？',isOP:true},
       {author:'湖底的鱼',time:'1个月前',daytime:false,content:'她在湖底。她一直都在。'}
     ]
@@ -1374,8 +1374,8 @@ const POSTS={
     replies:[
       {author:'三号楼老住户',time:'3个月前',daytime:true,content:'我半夜上厕所的时候确实看到过七楼的窗户透出蓝光。当时以为是什么医疗设备的光。'},
       {author:'有疑问的人',time:'3个月前',daytime:true,content:'回复1楼：真的有蓝光？那说明凌晨七楼确实在做什么。',isOP:true},
-      {author:'知情人士',time:'2个月前',daytime:true,content:'蓝灯是应急灯。但凌晨开应急灯说明当时有特殊操作。方致远的研究大多在凌晨进行。'},
-      {author:'知情人士',time:'1个月前',daytime:true,content:'对了，说件不太相关的事——四楼活动室窗边一直立着一面大镜子，是方主任让人搬来的。镜框内侧刻着一行小字，我留意过，是<b>反着写</b>的，正着看不成句，得倒过来读。好像是"不要相信……"后面几个字，我记不全了。'},
+      {author:'知情人士',time:'2个月前',daytime:true,content:'蓝灯是应急灯。但凌晨开应急灯说明当时有特殊操作。那位副院长的研究大多在凌晨进行。'},
+      {author:'知情人士',time:'1个月前',daytime:true,content:'对了，说件不太相关的事——四楼活动室窗边一直立着一面大镜子，是方院长让人搬来的。镜框内侧刻着一行小字，我留意过，是<b>反着写</b>的，正着看不成句，得倒过来读。好像是"不要相信……"后面几个字，我记不全了。'},
       {author:'湖底的鱼',time:'2个月前',daytime:false,content:'蓝色。很安静。走廊很长。她说不害怕。'}
     ]
   },
@@ -1384,18 +1384,18 @@ const POSTS={
     content:'<p>我家属当年在七楼住过。想整理一份当年的探视须知，给其他家属参考。</p><p>我记得的大概是这样：</p><p>1. 探视日：周二和周四（后来改过）<br>2. 探视时间：下午2点到4点<br>3. 需要提前一天预约<br>4. 每次最多两人<br>5. 需要登记身份证</p><p>但后来变成不让上楼了，只能在楼下视频探视。不知道是什么时候开始改的。</p><p>有家属知道更多细节吗？</p>',
     replies:[
       {author:'有疑问的人',time:'1个月前',daytime:true,content:'我记得大概是2023年8月左右开始不让上楼的。说是"特殊护理期"。'},
-      {author:'旧家属',time:'1个月前',daytime:true,content:'回复1楼：对，是8月。我记得当时护士说"方主任吩咐的"。',isOP:true},
-      {author:'知情人士',time:'3周前',daytime:true,content:'8月不让上楼是因为方致远的研究进入了关键阶段。他需要家属不在场。'},
+      {author:'旧家属',time:'1个月前',daytime:true,content:'回复1楼：对，是8月。我记得当时护士说"方院长吩咐的"。',isOP:true},
+      {author:'知情人士',time:'3周前',daytime:true,content:'8月不让上楼是因为那位副院长的研究进入了关键阶段。他需要家属不在场。'},
       {author:'不放弃的人',time:'3周前',daytime:true,content:'原来是这样……我妹妹就是8月之后失联的。'}
     ]
   },
   'drug':{section:'family',title:'【疑问】家属觉得药开太多了，有人一样吗？',author:'有疑问的人',time:'3个月前',daytime:true,reads:234,replies:4,
-    content:'<p>我家属在七楼住的时候，我看他的用药单，一天十几种药。</p><p>他本来只是抑郁，不至于吃这么多吧？</p><p>而且有些药的编号我根本看不懂，不是常规药名，是字母加数字的编号。</p><p>我找主治医生问过，方主任说"这是新疗法，你不用操心"。</p><p>后来我家属确实……状态变好了。不抑郁了。但记性也差了。</p><p>我不知道是好事还是坏事。</p>',
+    content:'<p>我家属在七楼住的时候，我看他的用药单，一天十几种药。</p><p>他本来只是抑郁，不至于吃这么多吧？</p><p>而且有些药的编号我根本看不懂，不是常规药名，是字母加数字的编号。</p><p>我找主治医生问过，方院长说"这是新疗法，你不用操心"。</p><p>后来我家属确实……状态变好了。不抑郁了。但记性也差了。</p><p>我不知道是好事还是坏事。</p>',
     replies:[
       {author:'老陈头',time:'3个月前',daytime:true,content:'我也一样！方医生给我换药，吃了反而更困。而且那个药盒上的编号我也看不懂。'},
-      {author:'李国强',time:'3个月前',daytime:true,content:'我是当时精神科的。客观说一句：七楼的用药方案不完全走常规，我作为非主管医生多次提出要会诊，都被方主任以"特殊病区"为由挡了回来。我不是要下结论，只是想说——这确实不正常。',type:'notice'},
+      {author:'李国强',time:'3个月前',daytime:true,content:'我是当时精神科的。客观说一句：七楼的用药方案不完全走常规，我作为非主管医生多次提出要会诊，都被方院长以"特殊病区"为由挡了回来。我不是要下结论，只是想说——这确实不正常。',type:'notice'},
       {author:'有疑问的人',time:'3个月前',daytime:true,content:'回复1楼：你也是？那说明不只我家属一个。编号是什么样的？',isOP:true},
-      {author:'知情人士',time:'2个月前',daytime:true,content:'不知道就对了。知道了还能让你们家属签字吗？……方致远是七楼的主任，也是疗养院的副院长。他在做一个研究项目。你们自己品品。'},
+      {author:'知情人士',time:'2个月前',daytime:true,content:'不知道就对了。知道了还能让你们家属签字吗？……他是疗养院的副院长，又主管着七楼病区。他在做一个研究项目。你们自己品品。'},
       {author:'有疑问的人',time:'2个月前',daytime:true,content:'回复3楼：研究项目？什么研究项目？拿我们家属做实验吗？！',isOP:true}
     ]
   },
@@ -1409,7 +1409,7 @@ const POSTS={
     ]
   },
   'rules':{section:'family',title:'【须知】旧帖整理：镜湖七楼探视规定变更记录',author:'旧家属',time:'2个月前',daytime:true,reads:178,replies:3,
-    content:'<p>根据大家回忆和我的记录，整理出七楼探视规定的变更时间线：</p><p>2023年5月：每周三下午2-4点<br>2023年6月：改为周三+周五<br>2023年7月：改为周二+周四<br>2023年8月：取消上楼探视，改为视频探视<br>2023年9月：疗养院关闭</p><p>大家看看有没有记错的。</p><p>另外有个细节——每次探视规定变更，通知上都盖着"方致远"的章。</p>',
+    content:'<p>根据大家回忆和我的记录，整理出七楼探视规定的变更时间线：</p><p>2023年5月：每周三下午2-4点<br>2023年6月：改为周三+周五<br>2023年7月：改为周二+周四<br>2023年8月：取消上楼探视，改为视频探视<br>2023年9月：疗养院关闭</p><p>大家看看有没有记错的。</p><p>另外有个细节——每次探视规定变更，通知上都盖着"副院长"的章。</p>',
     replies:[
       {author:'有疑问的人',time:'2个月前',daytime:true,content:'我记得没错的话，8月那次变更通知上还多了一行字："探视期间请勿携带通讯设备"。当时觉得好严格。'},
       {author:'旧家属',time:'2个月前',daytime:true,content:'回复1楼：对！我看到了！不许带手机。但其他楼层都可以带。就七楼不行。',isOP:true},
@@ -1524,7 +1524,7 @@ const POSTS={
     replies:[]
   },
   'admin-shutdown':{section:'discussion',progressive:true,unlockLayer:3,title:'【系统公告】异常访问检测通知',author:'管理员',time:'刚刚',daytime:true,reads:0,replies:0,
-    content:'<p>系统检测到异常访问行为。</p><p>患者编号0714的账号于近期多次访问受限数据区域。</p><p>根据系统安全管理规定，本系统将于24小时后自动关闭并清空所有缓存数据。</p><p>届时所有患者记录、用药日志、研究档案将不可恢复。</p><p>请相关用户及时处理个人事务。</p><p>——管理员</p>',
+    content:'<p>系统检测到异常访问行为。</p><p>账号 JH-L014 于近期多次访问受限数据区域。</p><p>根据系统安全管理规定，本系统将于24小时后自动关闭并清空所有缓存数据。</p><p>届时所有患者记录、用药日志、研究档案将不可恢复。</p><p>请相关用户及时处理个人事务。</p><p>——管理员</p>',
     replies:[]
   },
   'linxia-final':{section:'discussion',progressive:true,unlockLayer:4,title:'',author:'湖底的鱼',time:'刚刚',daytime:false,reads:0,replies:0,
@@ -1553,7 +1553,7 @@ const POSTS={
    私信数据
    ================================================================ */
 const PMS={
-  'pm-shen-1':{from:'知情人士',time:'登录成功后',unlockTrigger:'login',body:'0714。你是那个病人。小心，管理员在看你。'},
+  'pm-shen-1':{from:'知情人士',time:'登录成功后',unlockTrigger:'login',body:'你回来了。……你不记得了，对吧。别管我是谁。小心，管理员在看你。'},
   'pm-linxia-1':{from:'湖底的鱼',time:'读到患者信息后',unlockTrigger:'layer1',body:'你不记得我了。但我记得你。你帮我修过画架。'},
   'pm-shen-2':{from:'知情人士',time:'读到用药记录后',unlockTrigger:'layer2',body:'论坛里有些人不像是普通病友。发帖内容太专业了，不像业余爱好者。'},
   'pm-shen-3':{from:'知情人士',time:'读到实验记录后',unlockTrigger:'layer3',body:'我手里有备份。你查到的那份记录不是全部。仔细看看论坛里有些人的个人主页。'},
@@ -1567,15 +1567,15 @@ const PMS={
 const REPLY_KEYWORDS={
   'food':[
     {triggers:['药','换药','编号','M-3','M3','药名','M开'],response:'名字我忘了。但换药的事，论坛里好像有人提过——去翻翻那些老帖，尤其是"食堂"和"换药"相关的。',type:'clue'},
-    {triggers:['方医生','方致远','方主任'],response:'方医生啊，金丝眼镜，说话慢条斯理的。看着斯文，但换药的时候手不抖。我总觉得他不像是在治病……',type:'clue'},
+    {triggers:['方医生','方致远','方院长'],response:'方医生啊，金丝眼镜，说话慢条斯理的。看着斯文，但换药的时候手不抖。我总觉得他不像是在治病……',type:'clue'},
     {triggers:['0714','周明远','隔壁'],response:'0714？四楼的？有点印象……好像住我隔壁？但我那阵子脑子也不太清楚。怎么了？',type:'clue'},
     {triggers:['沈医生','沈望川'],response:'沈医生好啊，最开始就是他管我。后来不知道怎么就换人了。听说是被辞退了？为什么我也不清楚。',type:'clue'},
     {triggers:['林夏','画画','七楼'],response:'七楼下来的姑娘？有印象，画画的好像。但后来不来了，不知道怎么了。',type:'clue'},
     {triggers:['排骨','糖醋','食堂'],response:'哈哈你也问排骨！我说了很好吃的！可惜吃不到了。',type:'chat'}
   ],
   'insider':[
-    {triggers:['正义的光','方致远','方医生','方主任'],response:'"正义的光"？那账号写的帖子挺有水平，不像普通人。是不是医生？我也说不好——只是有些细节，懂行的才写得出来。具体是谁，你自己去翻翻他的帖子。',type:'clue'},
-    {triggers:['C-7','研究','项目','实验','代号'],response:'那个项目，方致远自己叫它「意识与记忆分离」，英文名是 Consciousness-Memory Separation，项目就设在七楼。代号怎么来的，你自己拼拼看。',type:'clue'},
+    {triggers:['正义的光','方致远','方医生','方院长'],response:'"正义的光"？那账号写的帖子挺有水平，不像普通人。是不是医生？我也说不好——只是有些细节，懂行的才写得出来。具体是谁，你自己去翻翻他的帖子。',type:'clue'},
+    {triggers:['C-7','研究','项目','实验','代号'],response:'那个项目，他自己叫它「意识与记忆分离」，英文名是 Consciousness-Memory Separation，项目就设在七楼。代号怎么来的，你自己拼拼看。',type:'clue'},
     {triggers:['0714','周明远','0714号'],response:'0714不是床号。是日期。那天的情形……（他摇摇头）我到现在都记得。你要是翻到那几页，就知道了。',type:'clue'},
     {triggers:['沈医生','沈望川'],response:'沈望川……疗养院关门之前就不在了。具体怎么回事我也不清楚。',type:'clue'},
     {triggers:['王磊','死','自杀'],response:'王磊不是自杀。是药物过量。入院前他状态很好，不可能突然自杀。但尸检报告说是自杀。你觉得呢？',type:'clue'},
@@ -1599,19 +1599,19 @@ const REPLY_KEYWORDS={
   ],
   'dream':[
     {triggers:['蓝灯','蓝色','应急灯'],response:'对！蓝灯。我家属说梦里走廊的灯是蓝色的。后来有人说七楼凌晨确实开蓝灯。',type:'clue'},
-    {triggers:['方致远','方医生','研究'],response:'方致远……我找他问过药的事。他说"新疗法，你不用操心"。语气很客气，但不容置疑。',type:'clue'}
+    {triggers:['方致远','方医生','研究'],response:'那位副院长……我找他问过药的事。他说"新疗法，你不用操心"。语气很客气，但不容置疑。',type:'clue'}
   ],
   'drug':[
     {triggers:['编号','字母','数字','药盒'],response:'编号的事我记不清了，但换药的相关线索在论坛里分散着——老陈头、三号楼老住户、护士小张的回复里可能有。',type:'clue'},
-    {triggers:['方致远','方主任','方医生'],response:'方致远是七楼的主任，也是疗养院的副院长。他说"新疗法你不用操心"。但我觉得不简单。',type:'clue'},
+    {triggers:['方致远','方院长','方医生'],response:'他是疗养院的副院长，又主管着七楼病区。他说"新疗法你不用操心"。但我觉得不简单。',type:'clue'},
     {triggers:['知情人士','研究','项目'],response:'知情人士说得对。他在做一个研究项目。我们家属都是"研究对象"。但没有人告诉过我们。',type:'clue'}
   ],
   'visiting':[
-    {triggers:['探视规定'],response:'你说的那些变更，通知上都盖着方致远的章——他是七楼主任，按理说探视规定不该由他来管。你说奇怪不奇怪？',type:'clue'},
+    {triggers:['探视规定'],response:'你说的那些变更，通知上都盖着那位副院长的章——他是管那一层的，按理说探视规定不该由他来定。你说奇怪不奇怪？',type:'clue'},
     {triggers:['变更'],response:'变更还有一条你可能没注意：8月开始七楼不许带手机进去，说是"保护患者隐私"。但其他楼层都可以，就七楼不行。你说这正常吗？',type:'clue'}
   ],
   'gossip-nurse':[
-    {triggers:['JH-S001','S001','老太太','方主任母亲','方主任的妈妈'],response:'……你怎么知道这个编号的？那间病房早就不在了。老太太当年住的是特护病房，编号JH-S001。她人很好，就是有些糊涂，记性一天不如一天，有回连自己的儿子都认不出了。方主任每次都来看她，坐在床边，一口一口喂粥。我们都当那是他家里的长辈……后来她走了，再后来，就没人敢提这个号了。',type:'clue'}
+    {triggers:['JH-S001','S001','老太太','方院长母亲','方院长的妈妈'],response:'……你怎么知道这个编号的？那间病房早就不在了。老太太当年住的是特护病房，编号JH-S001。她人很好，就是有些糊涂，记性一天不如一天，有回连自己的儿子都认不出了。方院长每次都来看她，坐在床边，一口一口喂粥。我们都当那是他家里的长辈……后来她走了，再后来，就没人敢提这个号了。',type:'clue'}
   ]
 };
 
@@ -1623,7 +1623,7 @@ const MEMORY_FLASHES={
   'flash-2':{trigger:'mention-m3',keywords:['M-3','M3','药盒'],content:['药盒。白色。上面有蓝色的字，像是一串字母和数字，我看不清。有人在换我的药。我不想要这盒。']},
   'flash-3':{trigger:'see-painting',keywords:['湖底','深蓝','画湖','画架','铅笔','那幅画'],content:['这幅画……是镜湖。她没见过这个角度。是我描述给她听的。她画出来了。她总是能画出我看不到的东西。']},
   'flash-4':{trigger:'enter-layer3',keywords:['蓝灯','走廊','蓝色','七楼'],content:['走廊很长。灯是蓝色的。我为什么在这里？我不是四楼的吗？']},
-  'flash-5':{trigger:'see-fang-log',keywords:['方致远','方主任','方医生','换药','金丝眼镜'],content:['方医生。金丝眼镜。他笑着换了我的药。他说"这是调整方案"。']},
+  'flash-5':{trigger:'see-fang-log',keywords:['方致远','方院长','方医生','换药','金丝眼镜'],content:['方医生。金丝眼镜。他笑着换了我的药。他说"这是调整方案"。']},
   'flash-6':{trigger:'see-linxia-note',keywords:['不在了','离开','别走','再见','她走了'],content:['如果有一天我不在了——她说的这句话。夕阳打在她脸上。我应该回答得更好一点的。']},
   'flash-7':{trigger:'see-truth',keywords:[],content:['她问我会不会记得她。我说不会忘。但我忘了。我忘了一切。她等了三年。在凌晨三点的论坛上，一个字一个字地等。']}
 };
@@ -1806,7 +1806,7 @@ function openArchiveApp(){
   if(state.c7Unlocked){
     window.open('archives.html','_blank','width=940,height=700');
   }else{
-    showNotification('info','[提示]','「档案管理」还没解锁。先去病历系统，把方致远的研究项目找出来。');
+    showNotification('info','[提示]','「档案管理」还没解锁。先去病历系统，把那位副院长的研究项目找出来。');
   }
 }
 function reflectArchiveUnlock(state){
@@ -2057,12 +2057,12 @@ function submitReply(postId){
   if(!inputEl) return;
   const input=inputEl.value.trim();
   if(!input){alert('请输入回复内容');return}
-  // 【全局触发】JHS001 关键线索：在任何帖子回复输入 JH-S001/S001/方主任母亲 均触发护士的话
-  const gsTriggers=['jh-s001','s001','方主任母亲','方主任的妈妈','老太太'];
+  // 【全局触发】JHS001 关键线索：在任何帖子回复输入 JH-S001/S001/方院长母亲 均触发护士的话
+  const gsTriggers=['jh-s001','s001','方院长母亲','方院长的妈妈','老太太'];
   const hitGS=gsTriggers.some(function(t){return input.toLowerCase().indexOf(t)>=0});
   let matched=null;
   if(hitGS){
-    matched={response:'……你怎么知道这个编号的？那间病房早就不在了。老太太当年住的是特护病房，编号JH-S001。她人很好，就是有些糊涂，记性一天不如一天，有回连自己的儿子都认不出了。方主任每次都来看她，坐在床边，一口一口喂粥。我们都当那是他家里的长辈……后来她走了，再后来，就没人敢提这个号了。',type:'clue',author:'陈秀芳',global:true};
+    matched={response:'……你怎么知道这个编号的？那间病房早就不在了。老太太当年住的是特护病房，编号JH-S001。她人很好，就是有些糊涂，记性一天不如一天，有回连自己的儿子都认不出了。方院长每次都来看她，坐在床边，一口一口喂粥。我们都当那是他家里的长辈……后来她走了，再后来，就没人敢提这个号了。',type:'clue',author:'陈秀芳',global:true};
   }
   // 先匹配当前帖子的关键词
   if(!matched){
@@ -2891,9 +2891,9 @@ function doSearch(){
 /* 被删帖（搜索仅显示标题+已删除，正文灰色打码） */
 function maskText(s){ return String(s).replace(/[^\s]/g,'▮'); }
 const DELETED_POSTS=[
-  {title:'【揭露】方致远在七楼做的非法实验，代号C-7',author:'匿名',snippet:'方致远在七楼使用未经审批的实验药物，编号C-7和M-3。患者王磊因此死亡，官方伪造为自杀……'},
+  {title:'【揭露】某位医生在七楼做的非法实验，代号C-7',author:'匿名',snippet:'七楼那位医生使用未经审批的实验药物，编号C-7和M-3。患者王磊因此死亡，官方伪造为自杀……'},
   {title:'【举报】七楼14号床患者林夏非正常出院',author:'匿名',snippet:'林夏的出院手续签字并非家属本人。出院记录存在异常……'},
-  {title:'【证据】方致远研究日志截图',author:'匿名',snippet:'Subject Z（0714号）治疗成功，衰退已停止。副作用：情景记忆清除。Subject L（14号）药物效果不明……'}
+  {title:'【证据】某位医生的研究日志截图',author:'匿名',snippet:'Subject Z（0714号）治疗成功，衰退已停止。副作用：情景记忆清除。Subject L（14号）药物效果不明……'}
 ];
 
 /* ================================================================
@@ -2977,7 +2977,7 @@ function startCountdown(endTime){
   window._cdFired={};
   bar.classList.add('show');
   document.body.classList.add('countdown-active');
-  bar.innerHTML='[系统警告] 检测到 0714 号账号正在深入受限数据。';
+  bar.innerHTML='[系统警告] 检测到账号正在深入受限数据。';
   // 启动即制造压迫感：闪屏 + 警报音 + 阻断式警示弹窗
   cdFlash(); cdBeep();
   showCdModal({
@@ -2993,6 +2993,20 @@ function startCountdown(endTime){
       startCountdownTick();
     }
   },4200);
+}
+/* 静默启动：只显示倒计时条并开始走，不弹窗/不警报/不闪屏（用于游戏开始时） */
+function startCountdownSilent(endTime){
+  if(window._countdownRunning) return;
+  window._countdownRunning=true;
+  window._cdEndTime = endTime||(Date.now()+24*3600*1000);
+  const bar=document.getElementById('countdown-bar');
+  window._cdMilestones={_6h:6*3600e3,_1h:3600e3,_10m:600e3,_1m:60e3};
+  window._cdFired={};
+  bar.classList.add('show');
+  document.body.classList.add('countdown-active');
+  bar.innerHTML='[系统警告] 检测到异常访问。系统将于 <span class="cd-time" id="cd-time">24:00:00</span> 后自动关闭并清空全部记录。';
+  showCdSoundToggle(true);
+  startCountdownTick();
 }
 /* 剧情驱动：解锁关键档案时，倒计时大幅前跳，营造"被追踪/时间在烧"的压迫感 */
 function advanceCountdown(label,hours){
