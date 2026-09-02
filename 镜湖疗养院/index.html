@@ -1956,12 +1956,14 @@ function wsToggleIE(){
   if(!ie)return;
   if(ie.classList.contains('maximized')){
     ie.classList.remove('maximized');
-    ie.style.left='5%';ie.style.top='8%';
-    ie.style.width='90%';ie.style.height='80%';
+    // 还原：清掉内联样式，让 CSS(居中 860x600 / translateX(-50%)) 重新生效
+    ie.style.left=''; ie.style.top=''; ie.style.width='';
+    ie.style.height=''; ie.style.transform='';
   }else{
     ie.classList.add('maximized');
-    ie.style.left='0';ie.style.top='0';
-    ie.style.width='100%';ie.style.height='100%';
+    ie.style.left='0'; ie.style.top='0';
+    ie.style.width='100%'; ie.style.height='100%';
+    ie.style.transform='none';
   }
 }
 
