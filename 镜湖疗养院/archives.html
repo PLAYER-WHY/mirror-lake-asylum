@@ -591,9 +591,9 @@ body.maximized .exp-shell{inset:0}
       <span class="etb-ic">📁</span>
       <span class="cd-badge" id="cd-badge" style="display:none"></span>
       <span class="etb-title">档案管理</span>
-      <span class="etb-btn" title="最小化" onclick="window.close()">_</span>
+      <span class="etb-btn" title="最小化" onclick="backToForum()">_</span>
       <span class="etb-btn" title="最大化" onclick="toggleArchiveMax()">□</span>
-      <span class="etb-btn close" onclick="window.close()">×</span>
+      <span class="etb-btn close" onclick="backToForum()">×</span>
     </div>
     <div class="exp-menubar"><span>文件(F)</span><span>编辑(E)</span><span>查看(V)</span><span>收藏(A)</span><span>工具(T)</span><span>帮助(H)</span></div>
     <div class="exp-toolbar">
@@ -793,8 +793,7 @@ function renderConsentArchive(panel){
           <div class="ff-body">
             死亡时间：2023年8月5日 16:42　　死亡地点：七楼特护病房·14床<br>
             直接死因：心源性猝死　　根本死因：药物过量导致心律失常<br>
-            官方记录：「自杀」　　实际死因：剂量计算错误（使用 M-2 的参数）<br><br>
-            <em style="color:#6a7686">【备注】用量错了？……得记录下来……</em>
+            官方记录：「自杀」　　实际死因：剂量计算错误（使用 M-2 的参数）
           </div>
         </div>
       </div>
@@ -1152,10 +1151,23 @@ function checkL6(){
   }
 }
 
+/* 返回论坛：统一处理（独立标签打开也能回） */
+function backToForum(){
+  var opener=null;
+  try{ opener=window.opener; }catch(e){}
+  if(opener && !opener.closed){
+    try{ if(typeof opener.focus==='function') opener.focus(); }catch(e){}
+    try{ window.close(); }catch(e){}
+    if(!window.closed){ try{ window.location.href='index.html'; }catch(e){} }
+    return;
+  }
+  try{ window.location.href='index.html'; }catch(e){}
+}
+
 /* L6解锁后：返回论坛（结局入口在论坛） */
 function finishAndReturn(){
   showNotif('请返回论坛。有些东西……你在论坛里见过的。','warn');
-  setTimeout(function(){window.close()},1600);
+  setTimeout(function(){ backToForum(); },1600);
 }
 
 /* 通知 */
