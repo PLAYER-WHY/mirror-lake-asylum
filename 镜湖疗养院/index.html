@@ -1675,6 +1675,7 @@ window.addEventListener('DOMContentLoaded',init);
 
 function startOpeningAnimation(){
   if(openingTimer) return;
+  window._openingShownAt=Date.now();
   const ps=document.querySelectorAll('#opening-content p');
   const hint=document.getElementById('opening-hint');
   if(!ps.length) return;
@@ -1696,6 +1697,8 @@ function startOpeningAnimation(){
 
 let openingTimer=null,openingStep=0;
 function skipOpening(){
+  // 前 3 秒防误触：刚进入时点击不响应，避免把开头点掉
+  if(Date.now()-(window._openingShownAt||0)<3000) return;
   if(openingTimer){clearTimeout(openingTimer);openingTimer=null}
   document.getElementById('page-opening').classList.add('hidden');
   const state=loadState();
