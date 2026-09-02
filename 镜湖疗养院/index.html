@@ -464,11 +464,32 @@ img{max-width:100%}
 .wm-titlebtn{width:20px;height:20px;background:linear-gradient(180deg,#e8e4d0,#c8c4a8);border:1px solid #fff;box-shadow:1px 1px 0 #555 inset;color:#000;font-size:11px;font-weight:bold;display:flex;align-items:center;justify-content:center}
 .wm-titlebtn.close{background:linear-gradient(180deg,#e07070,#c03030);color:#fff}
 .wm-body{flex:1;background:#f5f4ea;border-top:1px solid #aca899;overflow:auto;padding:12px 14px;font-family:'宋体',Tahoma;font-size:12px;color:#333;line-height:1.7}
-.wm-fileitem{display:flex;align-items:center;gap:10px;padding:9px 8px;border-bottom:1px solid #e0ddd0;cursor:default}
+.wm-fileitem{display:flex;align-items:center;gap:10px;padding:9px 8px;border-bottom:1px solid #e0ddd0;cursor:pointer}
 .wm-fileitem:hover{background:#eaf2fb}
+.wm-fileitem .wm-arrow{margin-left:auto;color:#aaa;font-size:12px}
 .wm-fileicon{font-size:18px;width:22px;text-align:center;flex-shrink:0}
 .wm-filename{font-size:12px;color:#003366}
 .wm-filedesc{font-size:11px;color:#777}
+/* 便笺：黄色贴纸 + 手写字 */
+.wm-notes-wrap{display:flex;flex-wrap:wrap;gap:16px;padding:12px;align-items:flex-start}
+.wm-note-card{width:190px;min-height:128px;background:linear-gradient(180deg,#fef8cb,#f7ecac);border:1px solid #e8d98a;box-shadow:2px 3px 9px rgba(0,0,0,.16);padding:16px 14px 12px;font-family:'KaiTi','楷体',serif;font-size:13px;color:#5a4a1a;line-height:1.7;position:relative;cursor:pointer;border-radius:2px}
+.wm-note-card:nth-child(odd){transform:rotate(-1.6deg)}
+.wm-note-card:nth-child(even){transform:rotate(1.3deg)}
+.wm-note-card::before{content:'';position:absolute;top:-9px;left:50%;transform:translateX(-50%) rotate(2deg);width:74px;height:17px;background:rgba(205,205,193,.65);box-shadow:0 1px 2px rgba(0,0,0,.14)}
+.wm-note-card.done{opacity:.45;text-decoration:line-through;color:#9a9a75}
+.wm-note-card .nk-check{position:absolute;top:7px;right:10px;font-size:13px;color:#b9ad74}
+.wm-note-card .nk-date{font-size:10px;color:#b3a566;margin-top:8px;text-align:right;font-family:Tahoma,Arial,sans-serif}
+.wm-back{display:inline-block;margin-bottom:10px;cursor:pointer;color:#004488;font-size:12px}
+.wm-back:hover{text-decoration:underline}
+.wm-doc{background:#fffdf5;border:1px solid #d8cfb6;padding:14px 18px;border-radius:2px;box-shadow:1px 1px 0 rgba(0,0,0,.05)}
+.wm-doc h4{margin:0 0 10px;font-size:14px;color:#4a3a20;border-bottom:1px solid #e0d8c0;padding-bottom:6px;letter-spacing:1px}
+.wm-doc p{margin:6px 0;line-height:1.8;font-size:12px;color:#3a332a}
+.wm-doc .wm-lit{color:#7a6a4a;font-size:11px;margin-top:10px;font-style:italic}
+.wm-imgbox{text-align:center;padding:18px;background:#10181f;border:1px solid #0c1218}
+.wm-imgbox .canvas{display:inline-block;width:180px;height:130px;background:linear-gradient(180deg,#0a1c34 0%,#0d2a4a 46%,#071a30 100%);position:relative;border-radius:2px}
+.wm-imgbox .canvas::before{content:'';position:absolute;left:26%;bottom:20%;width:46%;height:8%;background:rgba(238,205,130,.5);filter:blur(2px)}
+.wm-imgbox .canvas::after{content:'';position:absolute;top:14%;right:16%;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 38% 34%,#f4ecd2,#c9b27a);box-shadow:0 0 16px 6px rgba(230,200,130,.35)}
+.wm-imgbox .cap{color:#8aa4bd;font-size:11px;margin-top:8px;font-style:italic}
 .wm-empty{text-align:center;color:#999;padding:30px 0;font-size:12px}
 .wm-note{background:#fff8d6;border:1px solid #e6d98a;padding:10px 14px;border-radius:2px;margin-bottom:8px;font-family:'宋体',serif;font-size:12px;color:#5a4a1a;box-shadow:1px 1px 0 rgba(0,0,0,.05)}
 
@@ -1212,10 +1233,10 @@ const USERS={
   '三号楼老住户':{name:'三号楼老住户',avatar:'楼',color:'#8a7a6a',bio:'',regDate:'2024-09-01',lastActive:'6个月前',posts:0,replies:2,logs:0,online:false,
     nightPct:10,dayPct:60,eveningPct:30,logs:[],messages:[]
   },
-  '李国强':{name:'李国强',avatar:'李',color:'#5a7a8a',bio:'前精神科主任 · JH-022',regDate:'2023-06-01',lastActive:'2个月前',posts:0,replies:1,logs:0,online:false,
+  '李铮':{name:'李铮',avatar:'李',color:'#5a7a8a',bio:'前精神科主任 · JH-022',regDate:'2023-06-01',lastActive:'2个月前',posts:0,replies:1,logs:0,online:false,
     nightPct:20,dayPct:60,eveningPct:20,logs:[],messages:[]
   },
-  '周慧敏':{name:'周慧敏',avatar:'周',color:'#6a8a7a',bio:'前内科主任 · JH-015',regDate:'2023-06-01',lastActive:'2个月前',posts:0,replies:1,logs:0,online:false,
+  '周雯':{name:'周雯',avatar:'周',color:'#6a8a7a',bio:'前内科主任 · JH-015',regDate:'2023-06-01',lastActive:'2个月前',posts:0,replies:1,logs:0,online:false,
     nightPct:20,dayPct:60,eveningPct:20,logs:[],messages:[]
   },
   '陈秀芳':{name:'陈秀芳',avatar:'陈',color:'#7a8a9a',bio:'前护理部主任 · JH-003',regDate:'2023-06-01',lastActive:'1个月前',posts:0,replies:1,logs:0,online:false,
@@ -1393,7 +1414,7 @@ const POSTS={
     content:'<p>我家属在七楼住的时候，我看他的用药单，一天十几种药。</p><p>他本来只是抑郁，不至于吃这么多吧？</p><p>而且有些药的编号我根本看不懂，不是常规药名，是字母加数字的编号。</p><p>我找主治医生问过，方院长说"这是新疗法，你不用操心"。</p><p>后来我家属确实……状态变好了。不抑郁了。但记性也差了。</p><p>我不知道是好事还是坏事。</p>',
     replies:[
       {author:'老陈头',time:'3个月前',daytime:true,content:'我也一样！方医生给我换药，吃了反而更困。而且那个药盒上的编号我也看不懂。'},
-      {author:'李国强',time:'3个月前',daytime:true,content:'我是当时精神科的。客观说一句：七楼的用药方案不完全走常规，我作为非主管医生多次提出要会诊，都被方院长以"特殊病区"为由挡了回来。我不是要下结论，只是想说——这确实不正常。',type:'notice'},
+      {author:'李铮',time:'3个月前',daytime:true,content:'我是当时精神科的。客观说一句：七楼的用药方案不完全走常规，我作为非主管医生多次提出要会诊，都被方院长以"特殊病区"为由挡了回来。我不是要下结论，只是想说——这确实不正常。',type:'notice'},
       {author:'有疑问的人',time:'3个月前',daytime:true,content:'回复1楼：你也是？那说明不只我家属一个。编号是什么样的？',isOP:true},
       {author:'知情人士',time:'2个月前',daytime:true,content:'不知道就对了。知道了还能让你们家属签字吗？……他是疗养院的副院长，又主管着七楼病区。他在做一个研究项目。你们自己品品。'},
       {author:'有疑问的人',time:'2个月前',daytime:true,content:'回复3楼：研究项目？什么研究项目？拿我们家属做实验吗？！',isOP:true}
@@ -1403,7 +1424,7 @@ const POSTS={
     content:'<p>我家属出院后，记性越来越差。</p><p>一开始是忘小事——钥匙放哪了、今天吃了什么。</p><p>后来越来越严重——忘了我的名字，忘了我们结婚几年了。</p><p>但医生说他的病"已经稳定了"。</p><p>稳定了？稳定了怎么还在忘？</p><p>我不知道这是病的自然发展，还是治疗的副作用。</p><p>每天看着他一点点忘记，比病本身更折磨人。</p><p>有家属有类似经历吗？你们怎么应对的？</p>',
     replies:[
       {author:'有疑问的人',time:'2个月前',daytime:true,content:'我家属也是。出院之后就开始忘事。我一度以为是抑郁症的后遗症。但现在看你这条帖子……我开始怀疑是不是跟吃的药有关。'},
-      {author:'周慧敏',time:'2个月前',daytime:true,content:'我是内科的，也接触过几个出院的病人。明说一句：正常认知衰退的进展不会这么快、这么成片地"忘人"。这种像是情景记忆被整体抹掉——但要说明，这不该由内科下结论。我只是提醒：你们问得对。',type:'notice'},
+      {author:'周雯',time:'2个月前',daytime:true,content:'我是内科的，也接触过几个出院的病人。明说一句：正常认知衰退的进展不会这么快、这么成片地"忘人"。这种像是情景记忆被整体抹掉——但要说明，这不该由内科下结论。我只是提醒：你们问得对。',type:'notice'},
       {author:'知情人士',time:'1个月前',daytime:true,content:'不是病的自然发展。是治疗的副作用。有些药物……别查了，对你们没好处。'},
       {author:'旧家属',time:'1个月前',daytime:true,content:'回复2楼：副作用？您是说药的副作用？那我们家属有没有权利知道？',isOP:true}
     ]
@@ -1578,7 +1599,7 @@ const REPLY_KEYWORDS={
     {triggers:['C-7','研究','项目','实验','代号'],response:'那个项目，他自己叫它「意识与记忆分离」，英文名是 Consciousness-Memory Separation，项目就设在七楼。代号怎么来的，你自己拼拼看。',type:'clue'},
     {triggers:['0714','周明远','0714号'],response:'0714不是床号。是日期。那天的情形……（他摇摇头）我到现在都记得。你要是翻到那几页，就知道了。',type:'clue'},
     {triggers:['沈医生','沈望川'],response:'沈望川……疗养院关门之前就不在了。具体怎么回事我也不清楚。',type:'clue'},
-    {triggers:['王磊','死','自杀'],response:'王磊不是自杀。是药物过量。入院前他状态很好，不可能突然自杀。但尸检报告说是自杀。你觉得呢？',type:'clue'},
+    {triggers:['王磊','死','自杀'],response:'王磊入院前状态很好，但尸检报告说是自杀。你觉得呢？……对了，我后来听人说，什么好像算错了…',type:'clue'},
     {triggers:['林夏','14号','七楼14'],response:'林夏。七楼14号床。她的出院手续……有点不对劲。具体哪里不对劲，我说不清，你得自己去翻档案。',type:'clue'}
   ],
   'painter':[
@@ -1705,38 +1726,127 @@ function wsCloseIE(){
 
 /* ================================================================
    桌面应用窗口（便笺/文档/电脑/回收站 — 疗养院日常填充，与主线无关）
+   可点击：文件/磁盘 → 打开内页；回收站可点开/清空；便笺可勾已完成
    ================================================================ */
 var DESKTOP_APPS={
   mydocs:{
     title:'我的文档',
-    body:'<div class="wm-fileitem"><div class="wm-fileicon">📄</div><div><div class="wm-filename">住院须知.doc</div><div class="wm-filedesc">探视时间：周三/周五 14:00–16:00 · 家属凭探视证进入</div></div></div>'+
-      '<div class="wm-fileitem"><div class="wm-fileicon">📄</div><div><div class="wm-filename">内科排班表.xls</div><div class="wm-filedesc">本周值班：白班 8:00–16:00 · 夜班 16:00–次日8:00</div></div></div>'+
-      '<div class="wm-fileitem"><div class="wm-fileicon">📄</div><div><div class="wm-filename">活动室器材清单.doc</div><div class="wm-filedesc">象棋×2、老式收音机×1、画架×3、颜料若干（四楼活动室）</div></div></div>'
+    items:[
+      {icon:'📄',name:'住院须知.doc',desc:'探视时间：周三/周五 14:00–16:00 · 家属凭探视证进入',
+       content:'<div class="wm-doc"><h4>住院须知</h4><p>一、探视时间为每周三、周五 14:00–16:00。</p><p>二、探视须先在前台登记，领取探视证，凭证进入病区。</p><p>三、七楼为特殊护理病区，谢绝探视（详见各楼层公示）。</p><p>四、请勿向病人询问病情及用药明细，医嘱以值班医生为准。</p><p class="wm-lit">—— 护理部 · 2003年3月修订</p></div>'},
+      {icon:'📄',name:'排班表.xls',desc:'本周医护值班 · 各楼层轮值',
+       content:'<div class="wm-doc"><h4>排班表（本周）</h4><p>周一　白：沈望川　夜：周雯</p><p>周二　白：周雯　夜：李铮</p><p>周三　白：王立群　夜：值班医生小吴</p><p>周四　白：沈望川　夜：周雯</p><p>周五　白：王立群　夜：李铮</p><p>周六/日 白：值班医生小吴　夜：轮值</p><p class="wm-lit">※ 神经科病区由院领导直接分管，不参与本排班；各病区按楼层轮值。护理班另行。</p></div>'},
+      {icon:'📄',name:'活动室器材清单.doc',desc:'象棋×2、老式收音机×1、画架×3、颜料若干（四楼活动室）',
+       content:'<div class="wm-doc"><h4>四楼活动室器材清单</h4><p>象棋×2、老式收音机×1、落地镜×1（窗边）、长桌×2、画架×3、颜料/画纸若干。</p><p>备注：画架常用，请勿随意移动；窗边那面镜子不要搬动。</p><p class="wm-lit">—— 更新于半年前，此后未再登记</p></div>'},
+      {icon:'🗂️',name:'出院登记表.xls',desc:'近期出院记录 · 部分字段已涂黑',
+       content:'<div class="wm-doc"><h4>出院登记表（节选）</h4><p>姓名：＿＿＿＿　床号：＿＿　出院日：＿＿＿＿＿＿</p><p>出院方式：______家属接走______</p><p>经办人：＿＿＿＿＿＿　（该列有多处被涂黑，无法辨认）</p><p class="wm-lit">※ 部分记录被涂黑，且家属签字栏多处为空。</p></div>'},
+      {icon:'🎨',name:'画作草稿_湖.jpg',desc:'一张未完成的画（深蓝的湖面）',
+       content:'<div class="wm-imgbox"><div class="canvas"></div><div class="cap">未完成的画——深蓝的湖面，月光碎成一条路。角落有一行小字，笔迹很轻。</div></div>'}
+    ]
   },
   mycomputer:{
     title:'我的电脑',
-    body:'<div class="wm-fileitem"><div class="wm-fileicon">💽</div><div><div class="wm-filename">本地磁盘 (C:)</div><div class="wm-filedesc">系统盘 · Windows 2000 Professional · 已用 2.1 GB / 共 8.0 GB</div></div></div>'+
-      '<div class="wm-fileitem"><div class="wm-fileicon">💽</div><div><div class="wm-filename">数据盘 (D:)</div><div class="wm-filedesc">医院数据库 · 已用 5.6 GB / 共 12.0 GB</div></div></div>'+
-      '<div class="wm-fileitem"><div class="wm-fileicon">📁</div><div><div class="wm-filename">共享文档</div><div class="wm-filedesc">护理部通知 · 食堂菜单 · 职工手册</div></div></div>'
+    items:[
+      {icon:'💽',name:'本地磁盘 (C:)',desc:'系统盘 · Windows 2000 Professional · 已用 2.1 GB / 共 8.0 GB',
+       content:'<div class="wm-doc"><h4>C: 系统盘</h4><p>Windows 2000 Professional</p><p>Program Files · Documents and Settings 等系统目录。</p><p>已用空间：2.1 GB / 共 8.0 GB。</p></div>'},
+      {icon:'💽',name:'数据盘 (D:)',desc:'医院数据库 · 已用 5.6 GB / 共 12.0 GB',
+       content:'<div class="wm-doc"><h4>D: 数据盘</h4><p>内含"病历数据库 / 影像资料 / 值班日志"三个目录。</p><p>已用空间：5.6 GB / 共 12.0 GB。</p><p class="wm-lit">※ 主数据库自 2003-08 起未再更新。</p></div>'},
+      {icon:'📁',name:'共享文档',desc:'护理部通知 · 食堂菜单 · 职工手册',
+       children:[
+         {icon:'📄',name:'护理部通知.doc',desc:'四楼活动室定期消毒',
+          content:'<div class="wm-doc"><h4>护理部通知</h4><p>兹定于每周四下午 3:00 对四楼活动室进行全面消毒，届时请勿逗留。</p><p>活动室内画架、颜料等物品归位摆放，勿随意移动窗边物品。</p><p class="wm-lit">—— 护理部 · 7月</p></div>'},
+         {icon:'📄',name:'食堂本周菜单.doc',desc:'周三糖醋排骨 · 周五清蒸鱼',
+          content:'<div class="wm-doc"><h4>食堂本周菜单</h4><p>周一　萝卜炖肉</p><p>周二　干煸四季豆</p><p>周三　糖醋排骨（老病友最惦记的一顿）</p><p>周四　清炒时蔬</p><p>周五　清蒸鱼</p><p>周六/日 简餐</p><p class="wm-lit">※ 凭饭卡用餐，家属可在探视日按份购买。</p></div>'},
+         {icon:'📖',name:'职工手册.doc',desc:'镜湖疗养院 · 员工手册（2003版）',
+          content:'<div class="wm-doc"><h4>镜湖疗养院 · 职工手册（2003 版）</h4><p>第一章　总则：本院为综合疗养机构，各病区（楼层）独立管理。</p><p>第二章　探视管理：探视须凭探视证登记；<b>特殊病区探视条例</b>见手册第 12 页。</p><p>第三章　值班制度：各楼层按《排班表》轮值，院领导病区不参与常规排班。</p><p>第四章　医疗记录：病历、用药记录一律归档至院档案库，原件不对外调阅。</p><p>第五章　信息保密：涉及病区研究方向的事项，不得向家属及无关人员透露。</p><p>第六章　职工守则：着装整洁、挂牌上岗；病区内保持安静；<b>不得私自带手机进入七楼病区</b>。</p><p>第七章　值班交接：交接班须当面清点药品、器械并登记《交接本》；夜班须双人核对、签字确认。</p><p class="wm-lit">（注：本手册第 12 页“特殊病区探视条例”已被整页撕去，缺失。）</p></div>'}
+       ]}
+    ]
   },
   recycle:{
     title:'回收站',
-    body:'<div class="wm-fileitem"><div class="wm-fileicon">🗑️</div><div><div class="wm-filename">会议记录草稿_0403.doc</div><div class="wm-filedesc">已被删除 · 最近删除于 2003年4月3日</div></div></div>'+
-      '<div class="wm-fileitem"><div class="wm-fileicon">🗑️</div><div><div class="wm-filename">旧照片_湖面.jpg</div><div class="wm-filedesc">已被删除 · 最近删除于 2003年6月</div></div></div>'+
-      '<div class="wm-empty">回收站为空。</div>'
+    items:[
+      {icon:'🗑️',name:'会议记录草稿_0403.doc',desc:'已被删除 · 最近删除于 2003年4月3日',
+       content:'<div class="wm-doc"><h4>会议记录草稿（已删除）</h4><p>……关于七楼下一步安排，与会人员一致认为暂不对家属说明，待"项目研究"后再统一口径。……</p><p class="wm-lit">（文档已被移动至回收站，恢复将需调用旧版本。）</p></div>'},
+      {icon:'🗑️',name:'旧照片_湖面.jpg',desc:'已被删除 · 最近删除于 2003年6月',
+       content:'<div class="wm-imgbox"><div class="canvas"></div><div class="cap">一张湖的照片——对焦有些虚，像是夜里拍的。画面边缘有一小截模糊的人影。</div></div>'},
+      {icon:'🗑️',name:'探视记录_0708.doc',desc:'已被删除 · 最近删除于 2003年7月8日',
+       content:'<div class="wm-doc"><h4>探视记录（已删除）</h4><p>7月8日 周三 14:30　探视人：＿　登记为"家属"。</p><p>备注栏写：该家属未提供有效证件，仅凭口头说明放行。建议下次加强核验。</p></div>'}
+    ],
+    actions:'<div style="text-align:center;margin-top:14px"><button onclick="emptyRecycle()" style="padding:6px 20px;background:#e8e8e8;border:1px solid #999;color:#333;cursor:pointer;font-size:12px">清空回收站</button></div>'
   },
   notes:{
     title:'便笺',
-    body:'<div class="wm-note">【保洁】周四下午 3:00 四楼活动室全面消毒，请勿逗留。</div>'+
-      '<div class="wm-note">【设备科】血糖仪电池用完了，记得去设备科领新的。</div>'+
-      '<div class="wm-note">【食堂】明天中午加菜，凭饭卡领取。</div>'
+    items:[
+      {icon:'📌',name:'【保洁】周四下午 3:00 四楼活动室全面消毒，请勿逗留。',done:false,quick:true,date:'7.28'},
+      {icon:'📌',name:'【设备科】血糖仪电池用完了，记得去设备科领新的。',done:true,quick:true,date:'7.25'},
+      {icon:'📌',name:'【食堂】明天中午加菜，凭饭卡领取。',done:false,quick:true,date:'7.22'},
+      {icon:'📌',name:'【值班】明晚起三楼夜班加派一人（病区床位快满了）。',done:false,quick:true,date:'7.19'},
+      {icon:'📌',name:'【提醒】窗边那面镜子擦过一遍了，角上那行字别蹭掉。',done:false,quick:true,date:'7.15'}
+    ],
+    notesMode:true
   }
 };
 function openDesktopApp(app){
   var d=DESKTOP_APPS[app]; if(!d) return;
   document.getElementById('wm-title').textContent=d.title;
-  document.getElementById('wm-body').innerHTML=d.body;
+  window._wmStack=[{app:app,items:d.items}];
+  renderWmList([{app:app,items:d.items}].slice(-1)[0]);
   document.getElementById('wm-window').style.display='flex';
+}
+function renderWmList(level){
+  var items=level.items; var app=level.app;
+  var wm=document.getElementById('wm-body');
+  if(!items) return;
+  if(DESKTOP_APPS[app]&&DESKTOP_APPS[app].notesMode){
+    var html='<div class="wm-notes-wrap">';
+    DESKTOP_APPS[app].items.forEach(function(n,i){
+      html+='<div class="wm-note-card'+(n.done?' done':'')+'" onclick="toggleNote('+i+')">'+
+        '<span class="nk-check">'+(n.done?'✓ 已完成':'✓')+'</span>'+
+        '<div>'+n.name+'</div><div class="nk-date">'+(n.date||'')+'</div></div>';
+    });
+    html+='</div>';
+    wm.innerHTML=html;
+    return;
+  }
+  var top=window._wmStack[window._wmStack.length-1];
+  var h='';
+  if(window._wmStack.length>1){ h+='<span class="wm-back" onclick="wmBack()">← 返回</span>'; }
+  h+=(DESKTOP_APPS[app]&&DESKTOP_APPS[app].actions)||'';
+  items.forEach(function(it,i){
+    var arrow=it.children?'›':(it.content?'›':'');
+    h+='<div class="wm-fileitem" onclick="wmClick('+i+')"><div class="wm-fileicon">'+it.icon+'</div>'+
+      '<div style="flex:1;min-width:0"><div class="wm-filename">'+it.name+'</div><div class="wm-filedesc">'+it.desc+'</div></div>'+
+      '<div class="wm-arrow">'+arrow+'</div></div>';
+  });
+  wm.innerHTML=h;
+}
+function wmClick(i){
+  var top=window._wmStack[window._wmStack.length-1];
+  var it=top.items[i]; if(!it) return;
+  if(it.children){
+    window._wmStack.push({app:top.app,items:it.children});
+    renderWmList(window._wmStack[window._wmStack.length-1]);
+  }else if(it.content){
+    var wm=document.getElementById('wm-body');
+    wm.innerHTML='<span class="wm-back" onclick="wmBack()">← 返回</span>'+it.content;
+  }
+}
+function wmBack(){
+  if(window._wmStack.length>1) window._wmStack.pop();
+  renderWmList(window._wmStack[window._wmStack.length-1]);
+}
+function toggleNote(i){
+  var n=DESKTOP_APPS.notes.items[i];
+  n.done=!n.done;
+  renderWmList(window._wmStack[window._wmStack.length-1]);
+}
+function emptyRecycle(){
+  if(!confirm('确定要清空回收站吗？此操作不可恢复。')) return;
+  DESKTOP_APPS.recycle.items=[];
+  window._wmStack=[{app:'recycle',items:[]}];
+  renderWmList(window._wmStack[0]);
+  var wm=document.getElementById('wm-body');
+  wm.innerHTML='<div class="wm-empty">回收站已清空。</div>';
 }
 function closeDesktopApp(){
   document.getElementById('wm-window').style.display='none';
@@ -2308,19 +2418,19 @@ function showInnerMonologue(text){
    ================================================================ */
 const DOCTORS=[
   {name:'方致远',avatar:'方',photo:'images/doctor_fang.jpg',id:'JH-001',title:'前副院长',dept:'神经科 · 七楼',specialty:'神经科学 · 记忆编码与认知功能研究',
-    bio:'某医科大学神经学专业博士，从事神经科学研究十余年。在任期间主管七楼特殊护理病区，致力于探索认知功能衰退的创新治疗方向。发表论文多篇，研究方向包括海马体功能、神经递质调控及记忆形成机制。现已离职。',
+    bio:'某医科大学神经学专业博士，从事神经科学研究十余年。在任期间主管七楼特殊护理病区，致力于探索认知功能衰退的创新治疗方向。发表论文多篇，研究方向包括海马体功能、神经递质调控及记忆形成机制。',
     status:'离职'},
   {name:'沈望川',avatar:'沈',photo:'images/doctor_shen.jpg',id:'JH-008',title:'前神经科主治医师',dept:'神经科 · 四楼',specialty:'认知功能评估 · 早发型认知衰退',
-    bio:'从业十余年，擅长认知功能评估与康复指导。负责四楼神经科病区日常诊疗工作，性格温和，深受患者信赖。现已离职。',
+    bio:'从业十余年，擅长认知功能评估与康复指导。负责四楼神经科病区日常诊疗工作，深受患者信赖。',
     status:'离职'},
-  {name:'周慧敏',avatar:'周',photo:'images/doctor_zhou.jpg',id:'JH-015',title:'前内科主任',dept:'综合内科',specialty:'内科 · 慢性病管理',
+  {name:'周雯',avatar:'周',photo:'images/doctor_zhou.jpg',id:'JH-015',title:'前内科主任',dept:'综合内科',specialty:'内科 · 慢性病管理',
     bio:'从事内科临床工作二十年，擅长高血压、糖尿病等慢性病管理。负责全院内科诊疗及健康体检工作。',
     status:'离职'},
-  {name:'李国强',avatar:'李',photo:'images/doctor_li.jpg',id:'JH-022',title:'前精神科主任',dept:'精神科 · 三楼',specialty:'精神病学 · 心理干预',
+  {name:'李铮',avatar:'李',photo:'images/doctor_li.jpg',id:'JH-022',title:'前精神科主任',dept:'精神科 · 三楼',specialty:'精神病学 · 心理干预',
     bio:'国家二级心理咨询师，擅长抑郁症、焦虑症及睡眠障碍的诊疗。主持开展团体心理辅导项目。',
     status:'离职'},
   {name:'陈秀芳',avatar:'陈',photo:'images/doctor_chen.jpg',id:'JH-003',title:'前护理部主任',dept:'护理部',specialty:'护理学 · 重症监护',
-    bio:'主管全院护理工作及护理人员培训。在任期间参与制定各病区护理规程，包括七楼特殊护理期间的专项护理流程。现已退休。',
+    bio:'主管全院护理工作及护理人员培训。在任期间参与制定各病区护理规程，包括七楼特殊护理期间的专项护理流程。',
     status:'退休'},
   {name:'王立群',avatar:'王',photo:'images/doctor_wang.jpg',id:'JH-019',title:'前康复科主任',dept:'康复科 · 二楼',specialty:'康复医学 · 运动功能恢复',
     bio:'擅长神经系统损伤后的康复训练，包括运动功能恢复、语言训练及日常生活能力训练。',
