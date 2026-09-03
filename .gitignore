@@ -14,3 +14,7 @@ Thumbs.db
 # 服务器日志
 *.log
 __pycache__/
+
+# 开发文档（不公开，本地保留）
+*.md
+*.txt
