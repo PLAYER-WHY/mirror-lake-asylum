@@ -2358,10 +2358,11 @@ function openProfile(userName){
       },1000);
     }
   }
-  // 发帖统计（发帖前显示 0，发布后按实际计数）
-  var postedCount=(state.forumNewPosts&&state.forumNewPosts.length)||0;
-  var repliedCount=Object.keys(state.repliedPosts||{}).length;
-  html+='<div class="pp-section"><div class="pp-section-title">发帖统计</div><div class="pp-stats">发帖：'+postedCount+' | 回复：'+repliedCount+' | 日志：'+user.logs+'</div></div>';
+  // 发帖统计（从 POSTS 数据实时计算该用户的实际发帖/回复数）
+  var postedCount=Object.keys(POSTS).filter(function(sid){var p=POSTS[sid];return p&&p.author===userName}).length;
+  var repliedCount=0;
+  Object.keys(POSTS).forEach(function(sid){var p=POSTS[sid];if(p&&p.replies){p.replies.forEach(function(r){if(r.author===userName) repliedCount++;});}});
+  html+='<div class="pp-section"><div class="pp-section-title">发帖统计</div><div class="pp-stats">发帖：'+postedCount+' | 回复：'+repliedCount+' | 日志：'+(user.logs||0)+'</div></div>';
   // 日志
   if(user.logs&&user.logs.length>0){
     html+='<div class="pp-section"><div class="pp-section-title">个人日志</div>';
